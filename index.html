@@ -3,229 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>丫亮校長的 Youtube 影片工具箱</title>
-    <!-- ✅ 改為 Tailwind CDN 版本，適用 GitHub Pages / Netlify / Vercel -->
+    <title>丫亮笑長的 Youtube 工具一條龍</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="./app.js"></script>
-    <style>
-        /* 美化 textarea 的外觀 */
-        #srt-text-area { resize: none; overflow: auto; }
-        /* 簡易替代 @tailwindcss/typography 的 .prose 外觀（CDN 版無外掛） */
-        .prose h1 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; }
-        .prose h2 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; margin-top: 1rem; margin-bottom: .5rem; }
-        .prose p { margin: .5rem 0; }
-        .prose hr { border: 0; border-top: 1px solid #e5e7eb; margin: 1rem 0; }
-        .prose ul { list-style: disc; padding-left: 1.25rem; }
-        .prose a { color: #2563eb; text-decoration: underline; }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-gray-100 font-sans text-gray-800">
+<body class="font-sans">
 
-    <div id="global-loading-overlay" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center hidden z-50">
-        <div class="text-center">
-            <svg class="animate-spin h-10 w-10 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <p class="mt-3 text-white font-semibold text-lg">AI 處理中，請稍候...</p>
-        </div>
-    </div>
+    <div class="container mx-auto p-4 md:p-8">
 
-    <header class="bg-white shadow-md sticky top-0 z-10">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold text-gray-700">丫亮校長的 Youtube 影片工具箱 🛠️</h1>
-            <button id="api-key-button" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-                設定 API KEY
-            </button>
-        </div>
-    </header>
+        <header class="flex flex-col items-center justify-center mb-8">
+            <div class="flex items-center justify-center">
+                <img src="images/Aliang.png" alt="丫亮笑長 Logo" class="h-20 w-20 mr-4 flex-shrink-0">
+                <h1 class="text-5xl font-bold heading-color">丫亮笑長的 Youtube 工具一條龍</h1>
+            </div>
+            <p class="mt-2 text-base">您的全方位 YouTube 內容創作夥伴</p>
+        </header>
 
-    <main class="container mx-auto p-4 mt-4 space-y-6">
-        
-        <div class="flex border-b border-gray-300 mb-6">
-            <button id="tab-subtitle-button" data-tab="subtitle" class="tab-button flex items-center px-8 py-3 text-xl font-semibold border-b-4 border-indigo-600 text-indigo-600 transition duration-300" style="margin-right: 1.25em;">
-                 📝 字幕處理工具
-            </button>
-            <button id="tab-blog-button" data-tab="blog" class="tab-button flex items-center px-8 py-3 text-xl font-semibold border-b-4 border-transparent text-gray-500 hover:text-indigo-600 hover:border-indigo-600 transition duration-300">
-                ✨ 內容產出工具
-            </button>
-        </div>
-        
-        <div id="subtitle-tab-content" class="tab-content w-full space-y-6">
+        <div class="w-full rounded-lg shadow-lg main-card">
 
-            <section id="subtitle-processor-section" class="w-full bg-white p-6 rounded-lg shadow-lg flex flex-col relative">
-                <h2 class="text-2xl font-bold mb-4 border-b pb-2">字幕來源</h2>
-                
-                <div id="srt-input-container">
-                    <input type="file" id="srt-file-input" class="hidden" accept=".srt">
-
-                    <textarea id="srt-text-area" class="w-full h-64 p-4 border-2 border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50" placeholder="請在此貼上 SRT 內容，或將 .srt 檔案拖曳至此處"></textarea>
-
-                    <p class="mt-3 text-center text-gray-600">
-                        📥 貼上內容或拖曳檔案，也可以
-                        <span id="srt-upload-link" class="text-indigo-600 hover:text-indigo-700 font-bold cursor-pointer underline">點擊此處上傳 .srt 檔案</span>
-                    </p>
+            <div class="p-4 border-b border-[var(--card-border)]">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <button id="settings-toggle-btn" class="p-1 rounded-full hover:bg-[var(--gray-bg)] transition-transform duration-300" title="設定 API Key">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </button>
+                        <p id="api-key-status" class="text-sm">狀態：尚未設定。AI 功能目前無法使用。</p>
+                    </div>
                 </div>
+                <div id="api-key-panel" class="collapsible-panel">
+                    <div class="pt-4">
+                         <h3 class="text-lg font-semibold mb-2 heading-color">設定您的 Gemini API Key</h3>
+                        <div class="flex items-center space-x-4">
+                            <input type="password" id="gemini-api-key" placeholder="在此貼上您的 Gemini API Key" class="w-full rounded px-4 py-2">
+                            <button id="save-api-key-btn" class="font-bold py-2 px-4 rounded transition duration-300 btn-primary flex-shrink-0">儲存金鑰</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex border-b border-[var(--card-border)]">
+                <button id="tab1-btn" class="tab-btn active" data-tab="tab1">1. 字幕整理與優化</button>
+                <button id="tab2-btn" class="tab-btn" data-tab="tab2">2. 部落格文章生成</button>
+                <button id="tab3-btn" class="tab-btn" data-tab="tab3" disabled>3. 社群貼文生成</button>
+            </div>
 
-                <div id="subtitle-content-wrapper" class="hidden space-y-4">
-                    <div id="subtitle-preview-container">
-                         <label class="block text-sm font-medium text-gray-700 mb-1">字幕預覽 (唯讀)</label>
-                         <div id="subtitle-preview-area" class="w-full h-80 overflow-auto bg-gray-100 p-3 border rounded-md font-mono text-sm whitespace-pre-wrap">
-                            <p class="text-gray-400 text-center mt-4">已載入的字幕將顯示於此...</p>
-                         </div>
+            <div class="p-6">
+                <div id="tab1" class="tab-content">
+                    <div class="flex flex-col space-y-4">
+                        <div class="flex flex-col h-[500px]">
+                            <h3 class="text-lg font-semibold mb-2 heading-color flex-shrink-0">字幕來源</h3>
+                            <div id="view-toggle-header" class="flex mb-2 border-b border-[var(--card-border)] hidden flex-shrink-0">
+                                <button class="view-btn" data-view="original">原始內容</button>
+                                <button class="view-btn" data-view="processed">處理結果</button>
+                            </div>
+                            <div id="smart-area-container" class="relative flex-grow border border-[var(--card-border)] rounded bg-[var(--gray-bg)]">
+                                <textarea id="smart-area" placeholder="請在此貼上 SRT 內容，或將 .srt 檔案拖曳至此處" class="w-full h-full rounded p-3 bg-transparent focus:outline-none resize-none"></textarea>
+                                <div id="display-original" class="view-content p-3 overflow-y-auto font-mono text-sm whitespace-pre-wrap hidden"></div>
+                                <div id="display-processed" class="view-content p-3 overflow-y-auto font-mono text-sm whitespace-pre-wrap hidden"></div>
+                            </div>
+                            <div class="text-center mt-2 text-sm">
+                                <span>✍️ 貼上內容或拖曳檔案，也可以</span>
+                                <label for="file-input" class="upload-link cursor-pointer">點擊此處上傳 .srt 檔案</label>
+                                <input type="file" id="file-input" accept=".srt,.txt" class="hidden">
+                            </div>
+                        </div>
+
+                        <div id="settings-toolbar" class="p-3 rounded-md bg-[var(--gray-bg)] flex flex-wrap items-center gap-x-6 gap-y-3">
+                            <div class="flex items-center gap-2">
+                                <label for="max-chars-per-line" class="font-semibold whitespace-nowrap">每行最大字數:</label>
+                                <span id="max-chars-value" class="font-bold w-6 text-center">27</span>
+                                <input type="range" id="max-chars-per-line" min="10" max="50" value="27" class="w-24">
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <label for="merge-short-lines-threshold" class="font-semibold whitespace-nowrap">最短行合併字數:</label>
+                                <span id="merge-short-lines-value" class="font-bold w-6 text-center">3</span>
+                                <input type="range" id="merge-short-lines-threshold" min="0" max="10" value="3" class="w-24">
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="keep-punctuation" checked class="form-checkbox h-5 w-5 rounded">
+                                <label for="keep-punctuation" class="ml-2">保留標點符號</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="fix-timestamps" checked class="form-checkbox h-5 w-5 rounded">
+                                <label for="fix-timestamps" class="ml-2">修復時間戳間隔</label>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <label for="timestamp-threshold" class="whitespace-nowrap">間隔閾值 (ms):</label>
+                                <input type="number" id="timestamp-threshold" value="100" class="w-20 rounded p-1 text-center">
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="border-t pt-4">
-                        <div class="flex flex-wrap items-center gap-x-6 gap-y-3 p-4 bg-gray-50 rounded-lg border">
-                            
-                            <div class="flex items-center space-x-2">
-                                <label for="char-limit-input" class="text-sm font-medium text-gray-700 whitespace-nowrap">每行字數限制:</label>
-                                <input type="number" id="char-limit-input" value="27" min="0" class="w-20 p-2 border border-gray-300 rounded-md text-center">
-                                <span class="text-sm font-medium text-gray-700">字</span>
-                            </div>
+                    <hr class="my-8">
 
-                            <div class="flex items-center space-x-2">
-                                <label for="gap-threshold-input" class="text-sm font-medium text-gray-700 whitespace-nowrap">修復間隔 (毫秒):</label>
-                                <input type="number" id="gap-threshold-input" value="100" min="0" class="w-20 p-2 border border-gray-300 rounded-md text-center">
-                                <span class="text-sm font-medium text-gray-700">毫秒</span>
-                            </div>
-                            
-                            <div class="flex items-center space-x-2">
-                                <label for="merge-threshold-input" class="text-sm font-medium text-gray-700 whitespace-nowrap">合併短行 (字數):</label>
-                                <input type="number" id="merge-threshold-input" value="2" min="0" class="w-20 p-2 border border-gray-300 rounded-md text-center">
-                                <span class="text-sm font-medium text-gray-700">字內</span>
-                            </div>
-
-                            <div class="flex items-center space-x-2">
-                                <input id="remove-punctuation-checkbox" type="checkbox" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                                <label for="remove-punctuation-checkbox" class="text-sm font-medium text-gray-700 whitespace-nowrap">移除所有標點符號</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="border-t pt-4 flex flex-wrap justify-end gap-3">
-                        <button id="process-subtitles-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 text-base">⚙️ 處理字幕</button>
-                        <button id="batch-replace-button" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 text-base">批次取代...</button>
-                        <button id="generate-chapters-button" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 text-base disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>▶️ 生成章節</button>
-                        <button id="export-srt-button" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 text-base">📥 匯出檔案</button>
-                        <button id="clear-content-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 text-base">🗑️ 清除內容</button>
+                    <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+                        <button id="process-srt-btn" class="font-bold py-3 px-6 rounded-lg text-lg btn-primary">🚀 開始整理</button>
+                        <button id="export-srt-btn" class="font-bold py-2 px-4 rounded btn-disabled" disabled>匯出 SRT 檔案</button>
+                        <div class="border-l border-gray-300 h-8 mx-2"></div>
+                        <button id="batch-replace-btn" class="font-bold py-2 px-4 rounded btn-secondary">批次取代</button>
+                        <button id="generate-chapters-btn" class="font-bold py-2 px-4 rounded btn-disabled" disabled>生成章節</button>
+                        <div class="border-l border-gray-300 h-8 mx-2"></div>
+                        <button id="clear-content-btn" class="font-bold py-2 px-4 rounded btn-danger">清除內容</button>
                     </div>
                 </div>
-            </section>
-        </div>
 
-        <div id="blog-tab-content" class="tab-content w-full space-y-6 hidden">
-            <section id="content-generation-section" class="w-full bg-white p-6 rounded-lg shadow-lg">
-                 <h2 class="text-2xl font-bold mb-4 border-b pb-2">內容產出設定</h2>
-                <div class="space-y-6">
-                    <div id="blog-generation-section" class="bg-gray-50 p-4 rounded-lg relative border">
-                        <h3 class="font-semibold text-lg mb-3">部落格文章生成器</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div class="space-y-3">
-                                 <div>
-                                    <label for="blog-title-input" class="block text-sm font-medium text-gray-700">文章主題 (必填)</label>
-                                    <input type="text" id="blog-title-input" class="w-full p-2 border border-gray-300 rounded-md" placeholder="請輸入文章標題">
+                <div id="tab2" class="tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-10 gap-8">
+                        <div class="md:col-span-3 flex flex-col">
+                            <h3 class="text-xl font-bold heading-color border-b-2 border-[var(--heading-color)] pb-2">文章生成設定</h3>
+                            <div class="space-y-4 flex-grow mt-4 flex flex-col">
+                                <div class="p-3 rounded-md border border-[var(--card-border)] bg-[var(--gray-bg)]">
+                                    <p id="blog-source-status" class="text-sm font-semibold text-[var(--heading-color)] mb-2">內容來源：字幕原始檔</p>
+                                    <button id="optimize-text-for-blog-btn" class="w-full font-bold py-2 px-4 rounded btn-disabled" disabled>第一步：優化文本</button>
                                 </div>
                                 <div>
-                                    <label for="youtube-id-input" class="block text-sm font-medium text-gray-700">YouTube 影片 ID (必填)</label>
-                                    <input type="text" id="youtube-id-input" class="w-full p-2 border border-gray-300 rounded-md" placeholder="例如：dQw4w9WgXcQ">
+                                    <label for="blog-title" class="font-semibold">文章標題</label>
+                                    <input type="text" id="blog-title" placeholder="請輸入您的文章主標題" class="w-full mt-1 p-2 rounded">
                                 </div>
-                            </div>
-                            <div class="space-y-3">
                                  <div>
-                                    <label for="cta-preset-select" class="block text-sm font-medium text-gray-700">選擇宣傳語句範本</label>
-                                    <select id="cta-preset-select" class="w-full p-2 border border-gray-300 rounded-md">
-                                        <option value="pupu">噗噗聊聊</option>
-                                        <option value="izakaya">居酒屋微醺夜</option>
-                                        <option value="custom">自訂 (下方編輯)</option>
-                                    </select>
+                                    <label for="blog-yt-id" class="font-semibold">YouTube 影片 ID</label>
+                                    <input type="text" id="blog-yt-id" placeholder="例如：dQw4w9WgXcQ" class="w-full mt-1 p-2 rounded">
                                 </div>
-                                <div id="custom-cta-container">
-                                    <label for="cta-input" class="block text-sm font-medium text-gray-700">自訂宣傳語 (將自動儲存)</label>
-                                    <textarea id="cta-input" rows="3" class="w-full p-2 border border-gray-300 rounded-md" placeholder="例如：喜歡這篇文章嗎？歡迎訂閱..."></textarea>
+                                <div>
+                                    <label for="blog-persona" class="font-semibold">寫作人稱</label>
+                                    <select id="blog-persona" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                                </div>
+                                 <div>
+                                    <label for="blog-word-count" class="font-semibold">寫作字數</label>
+                                    <select id="blog-word-count" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                                </div>
+                                 <div>
+                                    <label for="blog-tone" class="font-semibold">寫作語氣</label>
+                                    <select id="blog-tone" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                                </div>
+                                <div class="flex-grow flex flex-col">
+                                    <label for="cta-preset-select" class="font-semibold">宣傳語句 (CTA)</label>
+                                    <select id="cta-preset-select" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)] mb-2"></select>
+                                    <textarea id="blog-cta" placeholder="可在此自訂 CTA，或選擇上方預設" class="w-full flex-grow p-2 rounded"></textarea>
                                 </div>
                             </div>
+                            <button id="generate-blog-btn" class="w-full font-bold py-3 px-6 rounded-lg text-lg btn-primary mt-4">第二步：生成部落格文章</button>
                         </div>
-                        <button id="generate-blog-button" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 mb-4 disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>✨ 生成文章與SEO建議</button>
                         
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div class="border-t pt-2">
-                                 <div class="flex justify-between items-center mb-1">
-                                    <h4 class="font-semibold text-md">成品預覽</h4>
-                                    <button id="download-html-button" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1 px-3 rounded-lg text-sm transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>下載HTML</button>
+                        <div class="md:col-span-7">
+                            <h3 class="text-xl font-bold heading-color border-b-2 border-[var(--heading-color)] pb-2 mb-4">Blog預覽/SEO建議</h3>
+                            <div id="blog-output-container" class="hidden">
+                                <div class="relative p-4 border rounded-lg border-[var(--card-border)] bg-[var(--gray-bg)]">
+                                    <div class="absolute top-2 right-2 space-x-2">
+                                        <button id="download-html-btn" class="font-bold py-1 px-3 rounded btn-secondary text-sm">HTML</button>
+                                        <button id="download-md-btn" class="font-bold py-1 px-3 rounded btn-secondary text-sm">MD</button>
+                                    </div>
+                                    <h4 class="text-lg font-semibold mb-2 heading-color">文章預覽</h4>
+                                    <div id="blog-preview" class="prose max-w-none"></div>
                                 </div>
-                                <div id="blog-preview-output" class="p-3 bg-white border rounded h-96 overflow-y-auto prose max-w-none">
-                                    <p class="text-gray-400">文章成品將預覽於此...</p>
+                                <div class="mt-6 p-4 border rounded-lg border-[var(--card-border)] bg-[var(--gray-bg)]">
+                                     <h4 class="text-lg font-semibold mb-2 heading-color">SEO 建議</h4>
+                                     <div id="blog-seo-suggestions" class="space-y-3 text-sm">
+                                        <div class="flex items-start gap-2">
+                                            <strong class="w-20 inline-block flex-shrink-0">SEO 標題:</strong>
+                                            <span id="seo-title-text" class="flex-grow">...</span>
+                                            <button class="seo-copy-btn" data-copy-target="seo-title-text" title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
+                                        </div>
+                                        <div class="flex items-start gap-2">
+                                            <strong class="w-20 inline-block flex-shrink-0">搜尋描述:</strong>
+                                            <span id="seo-description-text" class="flex-grow">...</span>
+                                            <button class="seo-copy-btn" data-copy-target="seo-description-text" title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
+                                        </div>
+                                        <div class="flex items-start gap-2">
+                                            <strong class="w-20 inline-block flex-shrink-0">固定網址:</strong>
+                                            <span id="seo-permalink-text" class="flex-grow">...</span>
+                                            <button class="seo-copy-btn" data-copy-target="seo-permalink-text" title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
+                                        </div>
+                                        <div class="flex items-start gap-2">
+                                            <strong class="w-20 inline-block flex-shrink-0">標籤:</strong>
+                                            <span id="seo-tags-text" class="flex-grow">...</span>
+                                            <button class="seo-copy-btn" data-copy-target="seo-tags-text" title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
+                                        </div>
+                                     </div>
                                 </div>
                             </div>
-                             <div class="border-t pt-2">
-                                 <h4 class="font-semibold text-md mb-1">SEO 建議</h4>
-                                 <div class="space-y-2 p-3 bg-white border rounded h-96 overflow-y-auto">
-                                    <div class="relative"><label class="block text-xs font-medium text-gray-500">SEO 標題</label><input type="text" id="seo-title-output" class="w-full p-2 pr-10 border border-gray-200 rounded-md bg-gray-50 text-sm" readonly><button id="copy-seo-title-button" class="absolute top-6 right-2 text-gray-400 hover:text-gray-600">📋</button></div>
-                                    <div class="relative"><label class="block text-xs font-medium text-gray-500">固定網址 (Permalink)</label><input type="text" id="permalink-output" class="w-full p-2 pr-10 border border-gray-200 rounded-md bg-gray-50 text-sm" readonly><button id="copy-permalink-button" class="absolute top-6 right-2 text-gray-400 hover:text-gray-600">📋</button></div>
-                                    <div class="relative"><label class="block text-xs font-medium text-gray-500">搜尋描述</label><textarea id="description-output" rows="4" class="w-full p-2 pr-10 border border-gray-200 rounded-md bg-gray-50 text-sm" readonly></textarea><button id="copy-description-button" class="absolute top-6 right-2 text-gray-400 hover:text-gray-600">📋</button></div>
-                                    <div class="relative"><label class="block text-xs font-medium text-gray-500">標籤 (Labels)</label><input type="text" id="labels-output" class="w-full p-2 pr-10 border border-gray-200 rounded-md bg-gray-50 text-sm" readonly><button id="copy-labels-button" class="absolute top-6 right-2 text-gray-400 hover:text-gray-600">📋</button></div>
-                                 </div>
+                            <div id="blog-placeholder" class="text-center py-20 text-[var(--gray-text)]">
+                                <p>請隨時切換至此分頁，</p>
+                                <p class="mt-2">將您的字幕稿轉化為精彩文章！</p>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
-        </div>
-    </main>
 
-    <div id="api-key-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-20">
-       <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md">
-            <h2 class="text-2xl font-bold mb-4">請輸入您的 Gemini API KEY</h2>
-            <p class="text-gray-600 mb-6">您的金鑰只會儲存在此瀏覽器分頁，關閉後即失效，我們不會儲存您的金鑰。</p>
-            <input type="password" id="api-key-input" class="w-full p-2 border border-gray-300 rounded-lg mb-4" placeholder="在此貼上您的 API KEY">
-            <div class="flex justify-end gap-4">
-                <button id="cancel-api-key" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg">取消</button>
-                <button id="save-api-key" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg">儲存</button>
+                <div id="tab3" class="tab-content hidden">社群貼文生成功能將在後續階段開發。</div>
             </div>
         </div>
-    </div>
-    <div id="replace-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-30">
-        <div class="bg-white p-6 rounded-lg shadow-2xl w-full max-w-2xl flex flex-col">
-            <h2 class="text-xl font-bold mb-4">設定批次取代規則</h2>
-            <div id="replace-rules-container" class="space-y-2 mb-4 max-h-96 overflow-y-auto pr-2"></div>
-            <div class="mb-4">
-                <button id="add-rule-button" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg text-sm">+ 新增規則</button>
-            </div>
-            <div class="flex justify-end gap-4 border-t pt-4">
-                <button id="cancel-replace-button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg">取消</button>
-                <button id="apply-replace-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg">套用取代</button>
-            </div>
-        </div>
-    </div>
-    <div id="chapters-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify中心 items-center z-40">
-        <div class="bg-white p-6 rounded-lg shadow-2xl w-full max-w-lg flex flex-col">
-            <h2 class="text-xl font-bold mb-4">影片章節生成結果</h2>
-            <div id="chapters-modal-output" class="text-gray-800 p-4 bg-gray-100 border rounded h-64 overflow-y-auto whitespace-pre-wrap font-mono text-sm"></div>
-            <div class="flex justify-end gap-4 border-t pt-4 mt-4">
-                <button id="copy-chapters-modal-button" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">複製內容</button>
-                <button id="close-chapters-modal-button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg">關閉</button>
+        
+        <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div class="p-6 w-11/12 md:w-1/3 rounded-lg shadow-xl main-card flex flex-col">
+                <h3 id="modal-title" class="text-xl font-bold mb-4 heading-color">提示</h3>
+                <div id="modal-content-wrapper" class="flex-grow">
+                    <p id="modal-message" class="whitespace-pre-wrap"></p>
+                    <div id="modal-progress-bar" class="progress-bar hidden">
+                        <div class="progress-bar-inner"></div>
+                    </div>
+                </div>
+                <div id="modal-custom-buttons" class="mt-6 flex justify-end gap-2 hidden"></div>
+                <div id="modal-default-buttons" class="mt-6 flex justify-end gap-2">
+                    <button id="modal-copy-btn" class="font-bold py-2 px-4 rounded btn-secondary hidden">複製內容</button>
+                    <button id="modal-close-btn" class="font-bold py-2 px-4 rounded btn-primary">關閉</button>
+                </div>
             </div>
         </div>
-    </div>
-    <div id="report-modal" class="fixed inset-0 bg黑 bg-opacity-50 hidden flex justify-center items-center z-40">
-        <div class="bg-white p-6 rounded-lg shadow-2xl w-full max-w-md flex flex-col">
-            <h2 class="text-xl font-bold mb-4 text-indigo-700">⚙️ 字幕處理報告</h2>
-            <div id="report-modal-output" class="text-gray-800 p-4 bg-gray-100 border rounded max-h-64 overflow-y-auto whitespace-pre-wrap font-mono text-sm"></div>
-            <div class="flex justify-end gap-4 border-t pt-4 mt-4">
-                <button id="close-report-modal-button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg">關閉</button>
-            </div>
-        </div>
-    </div>
-    <div id="replace-report-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-40">
-        <div class="bg-white p-6 rounded-lg shadow-2xl w-full max-w-md flex flex-col">
-            <h2 class="text-xl font-bold mb-4 text-green-700">✅ 批次取代已完成</h2>
-            <div id="replace-report-modal-output" class="text-gray-800 text-lg font-semibold text-center py-4"></div>
-            <div class="flex justify-end gap-4 border-t pt-4 mt-4">
-                <button id="close-replace-report-modal-button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg">確定</button>
-            </div>
-        </div>
-    </div>
 
+        <div id="batch-replace-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div class="p-6 w-11/12 md:w-1/2 rounded-lg shadow-xl main-card flex flex-col">
+                <h3 class="text-xl font-bold mb-4 heading-color">批次取代設定</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <input type="text" id="replace-original-input" placeholder="原文 (要被取代的文字)" class="md:col-span-1 rounded p-2">
+                    <input type="text" id="replace-replacement-input" placeholder="取代文字 (新的文字)" class="md:col-span-1 rounded p-2">
+                    <button id="add-replace-rule-btn" class="md:col-span-1 font-bold rounded btn-primary">新增規則</button>
+                </div>
+                <div id="replace-rules-list" class="flex-grow border border-[var(--card-border)] rounded bg-[var(--gray-bg)] p-2 min-h-[256px] overflow-y-auto">
+                </div>
+                <div class="flex-grow mt-2">
+                    <p class="text-xs text-[var(--gray-text)] text-center">提示：此處設定的規則，將在您點擊主畫面的「開始整理」按鈕時統一執行。</p>
+                </div>
+                <div class="mt-6 flex justify-between items-center">
+                    <button id="clear-all-rules-btn" class="font-bold py-2 px-4 rounded btn-danger">全部清除</button>
+                    <button id="close-replace-modal-btn" class="font-bold py-2 px-4 rounded btn-secondary">完成設定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/gemini-api.js"></script>
+    <script src="js/srt-processor.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
