@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let batchReplaceRules = [];
 
     // --- 函式定義 ---
-
+    
     function populateSelectWithOptions(selectElement, options) {
         selectElement.innerHTML = '';
         for (const [value, text] of Object.entries(options)) {

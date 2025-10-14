@@ -80,7 +80,9 @@ function processSubtitles(srtContent, options) {
             }
         });
     }
-    const punctuationRegex = /[.,\/#!$%\^&\*;:{}=\-_`~()\[\]"'?]/g;
+
+    // ## 修正點：更新正規表示式，加入中文標點，並移除引號與括號 ##
+    const punctuationRegex = /[.,\/#!$%\^&\*;:{}=\-_`~?，。？！、；：]/g;
     if (!keepPunctuation) {
         subs.forEach(sub => {
             const matches = sub.text.match(punctuationRegex);
@@ -90,6 +92,7 @@ function processSubtitles(srtContent, options) {
             sub.text = sub.text.replace(punctuationRegex, '');
         });
     }
+
     let mergedSubs = [];
     if (subs.length > 0) {
         mergedSubs.push(subs[0]);
@@ -106,6 +109,7 @@ function processSubtitles(srtContent, options) {
         }
     }
     subs = mergedSubs;
+    
     let newSubs = [];
     subs.forEach(sub => {
         if (sub.text.length <= maxCharsPerLine) {
@@ -145,11 +149,14 @@ function processSubtitles(srtContent, options) {
         }
     });
     subs = newSubs;
+    
     subs.forEach(sub => {
-        while (sub.text.match(/^[.,\/#!$%\^&\*;:{}=\-_`~()\[\]"'?]/) ) {
+        // 更新此處的正規表示式以匹配新的移除規則
+        while (sub.text.match(/^[.,\/#!$%\^&\*;:{}=\-_`~?，。？！、；：]/) ) {
             sub.text = sub.text.substring(1).trim();
         }
     });
+
     if (fixTimestamps && !isPlainText) {
         for (let i = 0; i < subs.length - 1; i++) {
             let current = subs[i];
