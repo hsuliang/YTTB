@@ -1,1 +1,266 @@
+/*
+「焦糖布丁」主題。
+*/
+:root {
+    --bg-color: #fffbeb;
+    --text-color: #78350f;
+    --card-bg: #ffffff;
+    --card-border: #fcd34d;
+    --heading-color: #b45309;
+    --link-color: #d97706;
+    --button-bg: #f59e0b;
+    --button-text: #ffffff;
+    --gray-bg: #fef3c7;
+    --gray-text: #92400e;
+    --disabled-text: #a16207;
+}
 
+/* 全域基礎樣式 */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* 主要容器/卡片樣式 */
+.main-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+}
+
+/* 標題樣式 */
+.heading-color {
+    color: var(--heading-color);
+}
+
+/* 按鈕樣式 */
+.btn-primary {
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    transition: background-color 0.3s;
+}
+.btn-primary:hover {
+    background-color: var(--link-color);
+}
+.btn-secondary {
+    background-color: var(--gray-bg);
+    color: var(--text-color);
+    border: 1px solid var(--card-border);
+    transition: background-color 0.3s;
+}
+.btn-secondary:hover {
+    background-color: #fef9c3; /* yellow-100 */
+}
+.btn-danger {
+    background-color: #ef4444;
+    color: #ffffff;
+}
+.btn-danger:hover {
+     background-color: #dc2626;
+}
+.btn-success {
+    background-color: #22c55e;
+     color: #ffffff;
+}
+.btn-success:hover {
+    background-color: #16a34a;
+}
+.btn-disabled {
+    background-color: #e7e5e4;
+    color: var(--disabled-text);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* 輸入框、文字區樣式 */
+textarea, input[type="text"], input[type="password"], input[type="number"], select {
+    background-color: var(--gray-bg);
+    color: var(--text-color);
+    border: 1px solid var(--card-border);
+}
+textarea:focus, input:focus, select:focus {
+    outline: none;
+    --tw-ring-color: var(--link-color);
+    box-shadow: 0 0 0 2px var(--tw-ring-color);
+}
+::placeholder {
+    color: var(--gray-text);
+}
+.form-checkbox {
+    color: var(--link-color);
+}
+
+/* 上傳連結樣式 */
+.upload-link {
+    color: var(--link-color);
+    text-decoration: underline;
+}
+.upload-link:hover {
+    color: var(--heading-color);
+}
+
+/* 文章預覽區樣式 */
+#blog-preview {
+    max-height: 50vh;
+    overflow-y: auto;
+    padding: 1rem;
+    line-height: 2; /* 增加行高以匹配格線 */
+    background-image: linear-gradient(to bottom, transparent 31px, #fde68a 32px);
+    background-size: 100% 32px;
+}
+
+/* SEO 複製按鈕樣式 */
+.seo-copy-btn {
+    color: var(--gray-text);
+    flex-shrink: 0;
+    transition: color 0.2s;
+}
+.seo-copy-btn:hover {
+    color: var(--link-color);
+}
+
+/* 分隔線 */
+hr {
+    border-color: var(--card-border);
+}
+
+/* 可折疊面板的樣式與動畫 */
+.collapsible-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out;
+}
+.collapsible-panel.open {
+    max-height: 200px;
+}
+#settings-toggle-btn svg {
+    transition: transform 0.3s ease-in-out;
+}
+#settings-toggle-btn.open svg {
+    transform: rotate(90deg);
+}
+
+/* 彈出視窗內容可滾動 */
+#modal-message {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* 進度條樣式與動畫 */
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: var(--gray-bg);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+.progress-bar-inner {
+    width: 100%;
+    height: 100%;
+    background-color: var(--link-color);
+    animation: progress-animation 2s infinite linear;
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+    background-size: 40px 40px;
+}
+@keyframes progress-animation {
+    0% { background-position: 40px 0; }
+    100% { background-position: 0 0; }
+}
+
+.button-flash {
+    animation: button-flash-animation 1.5s 1;
+}
+
+@keyframes button-flash-animation {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
+    }
+}
+
+
+/* 主選項卡按鈕樣式 */
+.tab-btn {
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    background-color: transparent;
+    color: var(--gray-text);
+    border: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+.tab-btn:hover {
+    color: var(--heading-color);
+}
+.tab-btn.active {
+    color: var(--heading-color);
+    border-bottom: 2px solid var(--heading-color);
+}
+.tab-btn:disabled {
+    color: var(--disabled-text);
+    cursor: not-allowed;
+}
+
+/* 顯示區切換按鈕樣式 */
+.view-btn {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    background-color: transparent;
+    color: var(--gray-text);
+    border: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+.view-btn:hover {
+    color: var(--heading-color);
+}
+.view-btn.active {
+    color: var(--link-color);
+    font-weight: 600;
+    border-bottom-color: var(--link-color);
+}
+
+/* 讓 view-content 絕對定位以重疊 */
+.view-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* 智慧區域拖曳效果 */
+#smart-area-container.dragover {
+    border-color: var(--link-color);
+    box-shadow: 0 0 0 2px var(--link-color);
+}
+
+/* 批次取代規則列表樣式 */
+.rule-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--card-border);
+}
+.rule-item:last-child {
+    border-bottom: none;
+}
+.rule-text {
+    flex-grow: 1;
+    padding: 0 0.5rem;
+    color: var(--text-color);
+}
+.rule-delete-btn {
+    flex-shrink: 0;
+    color: #9ca3af; /* gray-400 */
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.rule-delete-btn:hover {
+    color: #ef4444; /* red-500 */
+}
