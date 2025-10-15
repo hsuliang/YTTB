@@ -118,6 +118,18 @@ textarea:focus, input:focus, select:focus {
     color: var(--link-color);
 }
 
+/* 社群貼文卡片樣式 */
+.social-post-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    white-space: pre-wrap;
+    overflow-y: auto;
+}
+
+
 /* 分隔線 */
 hr {
     border-color: var(--card-border);
@@ -180,7 +192,6 @@ hr {
     }
 }
 
-
 /* 主選項卡按鈕樣式 */
 .tab-btn {
     padding: 1rem 1.5rem;
@@ -205,7 +216,7 @@ hr {
 }
 
 /* 顯示區切換按鈕樣式 */
-.view-btn {
+.view-btn, .social-tab-btn {
     padding: 0.5rem 1rem;
     cursor: pointer;
     background-color: transparent;
@@ -215,10 +226,10 @@ hr {
     transition: all 0.3s ease;
     font-weight: 500;
 }
-.view-btn:hover {
+.view-btn:hover, .social-tab-btn:hover {
     color: var(--heading-color);
 }
-.view-btn.active {
+.view-btn.active, .social-tab-btn.active {
     color: var(--link-color);
     font-weight: 600;
     border-bottom-color: var(--link-color);
@@ -257,10 +268,10 @@ hr {
 }
 .rule-delete-btn {
     flex-shrink: 0;
-    color: #9ca3af; /* gray-400 */
+    color: #9ca3af;
     cursor: pointer;
     transition: color 0.2s;
 }
 .rule-delete-btn:hover {
-    color: #ef4444; /* red-500 */
+    color: #ef4444;
 }
