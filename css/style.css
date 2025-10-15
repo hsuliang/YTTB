@@ -1,7 +1,23 @@
 /*
-「焦糖布丁」主題。
+主題變數定義
 */
+
+/* 預設主題：老式報紙 */
 :root {
+    --bg-color: #f1f5f9;
+    --text-color: #000000;
+    --card-bg: #ffffff;
+    --card-border: #e2e8f0;
+    --heading-color: #000000;
+    --link-color: #475569;
+    --button-bg: #1e293b;
+    --button-text: #ffffff;
+    --gray-bg: #e2e8f0;
+    --gray-text: #475569;
+    --disabled-text: #64748b;
+}
+
+body[data-theme="caramel-pudding"] {
     --bg-color: #fffbeb;
     --text-color: #78350f;
     --card-bg: #ffffff;
@@ -15,21 +31,95 @@
     --disabled-text: #a16207;
 }
 
+body[data-theme="muji-style"] {
+    --bg-color: #f5f5f5;
+    --text-color: #333333;
+    --card-bg: #ffffff;
+    --card-border: #e0e0e0;
+    --heading-color: #000000;
+    --link-color: #b91c1c;
+    --button-bg: #b91c1c;
+    --button-text: #ffffff;
+    --gray-bg: #eeeeee;
+    --gray-text: #616161;
+    --disabled-text: #757575;
+}
+
+body[data-theme="black-and-white"] {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --card-bg: #f9f9f9;
+    --card-border: #e0e0e0;
+    --heading-color: #000000;
+    --link-color: #333333;
+    --button-bg: #000000;
+    --button-text: #ffffff;
+    --gray-bg: #f0f0f0;
+    --gray-text: #444444;
+    --disabled-text: #666666;
+}
+
+body[data-theme="blueberry-pancake"] {
+    --bg-color: #eff6ff;
+    --text-color: #1e3a8a;
+    --card-bg: #ffffff;
+    --card-border: #bfdbfe;
+    --heading-color: #1d4ed8;
+    --link-color: #2563eb;
+    --button-bg: #3b82f6;
+    --button-text: #ffffff;
+    --gray-bg: #dbeafe;
+    --gray-text: #374151;
+    --disabled-text: #4b5563;
+}
+
+body[data-theme="lavender-field"] {
+    --bg-color: #f5f3ff;
+    --text-color: #5b21b6;
+    --card-bg: #ffffff;
+    --card-border: #ddd6fe;
+    --heading-color: #6d28d9;
+    --link-color: #7c3aed;
+    --button-bg: #8b5cf6;
+    --button-text: #ffffff;
+    --gray-bg: #ede9fe;
+    --gray-text: #4c1d95;
+    --disabled-text: #5b21b6;
+}
+
+body[data-theme="mint-soda"] {
+    --bg-color: #f0fdfa;
+    --text-color: #0f766e;
+    --card-bg: #ffffff;
+    --card-border: #99f6e4;
+    --heading-color: #0d9488;
+    --link-color: #14b8a6;
+    --button-bg: #2dd4bf;
+    --button-text: #115e59;
+    --gray-bg: #ccfbf1;
+    --gray-text: #0f766e;
+    --disabled-text: #134e4a;
+}
+
+
 /* 全域基礎樣式 */
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
 }
 
 /* 主要容器/卡片樣式 */
 .main-card {
     background-color: var(--card-bg);
     border: 1px solid var(--card-border);
+    transition: background-color 0.3s, border-color 0.3s;
 }
 
 /* 標題樣式 */
 .heading-color {
     color: var(--heading-color);
+    transition: color 0.3s;
 }
 
 /* 按鈕樣式 */
@@ -48,7 +138,7 @@ body {
     transition: background-color 0.3s;
 }
 .btn-secondary:hover {
-    background-color: #fef9c3; /* yellow-100 */
+    opacity: 0.8;
 }
 .btn-danger {
     background-color: #ef4444;
@@ -76,6 +166,7 @@ textarea, input[type="text"], input[type="password"], input[type="number"], sele
     background-color: var(--gray-bg);
     color: var(--text-color);
     border: 1px solid var(--card-border);
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 textarea:focus, input:focus, select:focus {
     outline: none;
@@ -103,8 +194,8 @@ textarea:focus, input:focus, select:focus {
     max-height: 50vh;
     overflow-y: auto;
     padding: 1rem;
-    line-height: 2; /* 增加行高以匹配格線 */
-    background-image: linear-gradient(to bottom, transparent 31px, #fde68a 32px);
+    line-height: 2;
+    background-image: linear-gradient(to bottom, transparent 31px, var(--card-border) 32px);
     background-size: 100% 32px;
 }
 
@@ -149,6 +240,13 @@ hr {
 }
 #settings-toggle-btn.open svg {
     transform: rotate(90deg);
+}
+#theme-dropdown-icon {
+    transform: rotate(0deg);
+    transition: transform 0.2s ease-in-out;
+}
+#theme-dropdown-icon.rotate-180 {
+    transform: rotate(180deg);
 }
 
 /* 彈出視窗內容可滾動 */
@@ -275,3 +373,29 @@ hr {
 .rule-delete-btn:hover {
     color: #ef4444;
 }
+
+/* 新增的主題小圖示樣式 */
+.theme-swatch {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-swatch:hover {
+    transform: scale(1.1);
+}
+
+.theme-swatch.active {
+    border-color: var(--link-color);
+}
+
+.theme-swatch.old-newspaper { background-color: #f1f5f9; }
+.theme-swatch.caramel-pudding { background-color: #fef3c7; }
+.theme-swatch.muji-style { background-color: #eeeeee; }
+.theme-swatch.black-and-white { background-color: #f0f0f0; }
+.theme-swatch.blueberry-pancake { background-color: #dbeafe; }
+.theme-swatch.lavender-field { background-color: #ede9fe; }
+.theme-swatch.mint-soda { background-color: #ccfbf1; }
