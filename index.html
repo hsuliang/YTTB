@@ -7,9 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="font-sans">
+<body class="font-sans flex flex-col min-h-screen">
 
-    <div class="container mx-auto p-4 md:p-8">
+    <div class="container mx-auto p-4 md:p-8 flex-grow">
 
         <header class="flex flex-col items-center justify-center mb-8">
             <div class="flex items-center justify-center">
@@ -31,6 +31,7 @@
                             </svg>
                         </button>
                         <p id="api-key-status" class="text-sm">狀態：尚未設定。AI 功能目前無法使用。</p>
+                        <span id="api-key-countdown" class="ml-2 font-mono text-sm text-[var(--link-color)]"></span>
                     </div>
                 </div>
                 <div id="api-key-panel" class="collapsible-panel">
@@ -47,7 +48,7 @@
             <div class="flex border-b border-[var(--card-border)]">
                 <button id="tab1-btn" class="tab-btn active" data-tab="tab1">1. 字幕整理與優化</button>
                 <button id="tab2-btn" class="tab-btn" data-tab="tab2">2. 部落格文章生成</button>
-                <button id="tab3-btn" class="tab-btn" data-tab="tab3" disabled>3. 社群貼文生成</button>
+                <button id="tab3-btn" class="tab-btn" data-tab="tab3">3. 社群貼文生成</button>
             </div>
 
             <div class="p-6">
@@ -193,7 +194,59 @@
                     </div>
                 </div>
 
-                <div id="tab3" class="tab-content hidden">社群貼文生成功能將在後續階段開發。</div>
+                <div id="tab3" class="tab-content hidden">
+                     <div class="grid grid-cols-1 md:grid-cols-10 gap-8">
+                        <div class="md:col-span-3 space-y-4">
+                            <h3 class="text-xl font-bold heading-color border-b-2 border-[var(--heading-color)] pb-2">貼文生成設定</h3>
+                            <div class="p-3 rounded-md border border-[var(--card-border)] bg-[var(--gray-bg)]">
+                                <div class="flex justify-between items-center">
+                                    <p id="social-source-status" class="text-sm font-semibold text-[var(--heading-color)]">內容來源：字幕原始檔</p>
+                                    <button id="go-to-optimize-btn" class="text-sm upload-link">前往優化 &gt;</button>
+                                </div>
+                            </div>
+                             <div>
+                                <label for="social-objective" class="font-semibold">貼文目標</label>
+                                <select id="social-objective" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                            </div>
+                            <div>
+                                <label for="social-length" class="font-semibold">貼文長度</label>
+                                <select id="social-length" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                            </div>
+                            <div>
+                                <label for="social-tone-select" class="font-semibold">寫作語氣</label>
+                                <select id="social-tone-select" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                            </div>
+                            <div>
+                                <label for="social-hashtags" class="font-semibold">指定 Hashtags</label>
+                                <input type="text" id="social-hashtags" placeholder="例如：#AI #社群行銷" class="w-full mt-1 p-2 rounded">
+                            </div>
+                            <div>
+                                <label for="social-cta" class="font-semibold">行動呼籲 (CTA)</label>
+                                <textarea id="social-cta" rows="3" placeholder="例如：留言分享你的看法！" class="w-full mt-1 p-2 rounded"></textarea>
+                            </div>
+                            <button id="generate-social-btn" class="w-full font-bold py-3 px-6 rounded-lg text-lg btn-disabled" disabled>生成社群貼文</button>
+                        </div>
+                        <div class="md:col-span-7 relative">
+                             <button id="social-copy-btn" class="absolute top-0 right-0 mt-1 mr-1 font-bold py-1 px-3 rounded btn-secondary text-sm z-10 hidden">複製內容</button>
+                             <div class="flex border-b border-[var(--card-border)]">
+                                <button class="social-tab-btn active" data-social-tab="facebook">Facebook</button>
+                                <button class="social-tab-btn" data-social-tab="instagram">Instagram</button>
+                                <button class="social-tab-btn" data-social-tab="line">Line</button>
+                             </div>
+                             <div id="social-output-container" class="relative mt-2 border border-[var(--card-border)] rounded bg-[var(--gray-bg)] h-[600px]">
+                                <div id="facebook-post-output" class="social-post-content p-4"></div>
+                                <div id="instagram-post-output" class="social-post-content p-4 hidden"></div>
+                                <div id="line-post-output" class="social-post-content p-4 hidden"></div>
+                                <div id="social-placeholder" class="flex items-center justify-center h-full text-center text-[var(--gray-text)]">
+                                    <div>
+                                        <p>點擊上方按鈕，</p>
+                                        <p class="mt-2">AI 將為您生成多平台社群貼文。</p>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                     </div>
+                </div>
             </div>
         </div>
         
@@ -235,6 +288,10 @@
         </div>
     </div>
     
+    <footer class="text-center text-xs text-[var(--gray-text)] py-4 mt-8 border-t border-[var(--card-border)]">
+        Design by <a href="https://bit.ly/Aliang" target="_blank" rel="noopener" class="upload-link">ㄚ亮笑長練功坊</a> | 程式簡介與使用說明
+    </footer>
+
     <script src="js/gemini-api.js"></script>
     <script src="js/srt-processor.js"></script>
     <script src="js/main.js"></script>
