@@ -5,10 +5,21 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- 預設資料 ---
+    const THEMES = {
+        'old-newspaper': '老式報紙',
+        'caramel-pudding': '焦糖布丁',
+        'muji-style': '無印風格',
+        'black-and-white': '純粹黑白',
+        'blueberry-pancake': '藍莓鬆餅',
+        'lavender-field': '薰衣草田',
+        'mint-soda': '薄荷蘇打'
+    };
     const PRESET_CTAS = {
         'puchat': {
             title: '噗噗聊聊',
-            content: `<h2>喜歡噗噗聊聊嗎？</h2>\n<p>如果你想要了解更多關於教育及<a href="https://bit.ly/PuChatPodcast" target="_blank" rel="noopener">Podcast</a>的內容，歡迎追蹤我們的節目，一起探索教育的無限可能。</p>\n<ul>\n<li><a href="https://bit.ly/PuChatFB">噗噗聊聊粉絲專頁</a></li>\n<li><a href="https://bit.ly/PuChatYT">噗噗聊聊Youtube頻道</a></li>\n<li><a href="https://bit.ly/PuChatPodcast">噗噗聊聊Podcast</a></li>\n<li><a href="https://bit.ly/aliangblog">ㄚ亮笑長練功坊Blog</a></li>\n</ul>`
+            content: `<h2>喜歡噗噗聊聊嗎？</h2>\n<p>如果你想要了解更多關於教育及<a href="https://bit.ly/PuChatPodcast" target="_blank" rel="noopener">Podcast</a>的內容，歡迎追蹤我們的節目，一起探索教育的無限可能。</p>\n<ul>\n<li><a href="https://bit.ly/PuChatFB">噗噗聊聊粉絲專頁</a></li>\n<li><a href="https://bit.ly/PuChatYT">噗噗聊聊Youtube頻道</a></li>\n<li><a href="https://bit.ly/PuChatPodcast">噗噗聊聊Podcast</a></li>
+<li><a href="https://bit.ly/aliangblog">ㄚ亮笑長練功坊Blog</a></li>
+</ul>`
         },
         'izakaya': {
             title: '居酒屋微醺夜',
@@ -17,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- 元素選擇 (通用) ---
+    const themeSwatchesContainer = document.querySelector('.theme-swatches-container');
     const settingsToggleBtn = document.getElementById('settings-toggle-btn');
     const apiKeyPanel = document.getElementById('api-key-panel');
     const apiKeyInput = document.getElementById('gemini-api-key');
@@ -115,6 +127,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 函式定義 ---
     
+    function applyTheme(themeName) {
+        document.body.dataset.theme = themeName;
+        localStorage.setItem('selectedTheme', themeName);
+        renderThemeSwatches();
+    }
+    
+    function renderThemeSwatches() {
+        themeSwatchesContainer.innerHTML = '';
+        const currentTheme = localStorage.getItem('selectedTheme') || 'old-newspaper';
+        for (const [value, text] of Object.entries(THEMES)) {
+            const swatch = document.createElement('div');
+            swatch.className = `theme-swatch ${value}`;
+            swatch.dataset.themeValue = value;
+            swatch.title = text;
+            if (value === currentTheme) {
+                swatch.classList.add('active');
+            }
+            swatch.addEventListener('click', () => {
+                applyTheme(value);
+            });
+            themeSwatchesContainer.appendChild(swatch);
+        }
+    }
+
     function populateSelectWithOptions(selectElement, options) {
         selectElement.innerHTML = '';
         for (const [value, text] of Object.entries(options)) {
@@ -283,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         sessionStorage.setItem('geminiApiKey', apiKey);
-        const expiryTime = Date.now() + 2 * 60 * 60 * 1000; // 2 hours from now
+        const expiryTime = Date.now() + 2 * 60 * 60 * 1000;
         sessionStorage.setItem('apiKeyExpiry', expiryTime);
 
         updateApiKeyStatus();
@@ -552,7 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (blogSourceType === 'raw' && smartArea.value.trim()) {
             showModal({
                 title: '提醒',
-                message: '您尚未優化文本，直接生成可能會影響貼文品質。確定要繼續嗎？',
+                message: '您尚未優化文本，直接生成可能會影響文章品質。確定要繼續嗎？',
                 buttons: [
                     { text: '取消', class: 'btn-secondary', callback: hideModal },
                     { text: '確定繼續', class: 'btn-primary', callback: () => { hideModal(); proceedGenerateBlogPost(); } }
@@ -567,7 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(!blogArticleContent) return;
         const content = `<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><title>${document.getElementById('seo-title-text').textContent}</title><style>body{font-family:sans-serif;line-height:1.6;} .youtube-embed{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:1rem 0;} .youtube-embed iframe{position:absolute;top:0;left:0;width:100%;height:100%;}</style></head><body>${blogArticleContent}</body></html>`;
         const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
+        const url = URL.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = `${document.getElementById('seo-permalink-text').textContent || 'blog-post'}.html`;
@@ -782,6 +818,11 @@ document.addEventListener('DOMContentLoaded', () => {
         populateSelectWithOptions(socialLengthSelect, socialLengthOptions);
         populateSelectWithOptions(socialToneSelect, toneOptions);
 
+        // 新增主題選擇器邏輯
+        const savedTheme = localStorage.getItem('selectedTheme') || 'old-newspaper';
+        applyTheme(savedTheme);
+        renderThemeSwatches();
+        
         settingsToggleBtn.addEventListener('click', toggleApiKeyPanel);
         saveApiKeyBtn.addEventListener('click', saveApiKey);
         generateChaptersBtn.addEventListener('click', () => handleAiFeature('chapters'));
