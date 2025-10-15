@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const apiKeyInput = document.getElementById('gemini-api-key');
     const saveApiKeyBtn = document.getElementById('save-api-key-btn');
     const apiKeyStatus = document.getElementById('api-key-status');
+    const apiKeyCountdown = document.getElementById('api-key-countdown');
     const allTabButtons = document.querySelectorAll('.tab-btn');
     const allTabContents = document.querySelectorAll('.tab-content');
     const modal = document.getElementById('modal');
@@ -82,15 +83,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadHtmlBtn = document.getElementById('download-html-btn');
     const downloadMdBtn = document.getElementById('download-md-btn');
 
+    // --- 元素選擇 (選項卡三) ---
+    const socialToneSelect = document.getElementById('social-tone-select');
+    const generateSocialBtn = document.getElementById('generate-social-btn');
+    const socialOutputContainer = document.getElementById('social-output-container');
+    const socialPlaceholder = document.getElementById('social-placeholder');
+    const socialPostOutputs = {
+        facebook: document.getElementById('facebook-post-output'),
+        instagram: document.getElementById('instagram-post-output'),
+        line: document.getElementById('line-post-output')
+    };
+    const socialCopyBtn = document.getElementById('social-copy-btn');
+    const socialTabBtns = document.querySelectorAll('.social-tab-btn');
+    const goToOptimizeBtn = document.getElementById('go-to-optimize-btn');
+    const socialObjectiveSelect = document.getElementById('social-objective');
+    const socialLengthSelect = document.getElementById('social-length');
+    const socialHashtagsInput = document.getElementById('social-hashtags');
+    const socialCtaTextarea = document.getElementById('social-cta');
+    const socialSourceStatus = document.getElementById('social-source-status');
+
     // --- 狀態變數 ---
     let originalFileName = ''; 
     let processedSrtResult = ''; 
-    let apiKeyClearTimer = null;
+    let apiKeyCountdownInterval = null;
     let originalContentForPreview = '';
     let optimizedTextForBlog = '';
     let blogArticleContent = '';
     let blogSourceType = 'raw';
     let batchReplaceRules = [];
+    let activeSocialTab = 'facebook';
 
     // --- 函式定義 ---
     
@@ -260,15 +281,11 @@ document.addEventListener('DOMContentLoaded', () => {
             showModal({ title: '錯誤', message: 'API Key 不能為空。' });
             return;
         }
+        
         sessionStorage.setItem('geminiApiKey', apiKey);
-        if (apiKeyClearTimer) {
-            clearTimeout(apiKeyClearTimer);
-        }
-        apiKeyClearTimer = setTimeout(() => {
-            sessionStorage.removeItem('geminiApiKey');
-            updateApiKeyStatus();
-            showModal({ title: '金鑰已過期', message: '基於安全考量，您的 API Key 已被清除，請重新輸入。' });
-        }, 2 * 60 * 60 * 1000);
+        const expiryTime = Date.now() + 2 * 60 * 60 * 1000; // 2 hours from now
+        sessionStorage.setItem('apiKeyExpiry', expiryTime);
+
         updateApiKeyStatus();
         showModal({ title: '成功', message: 'API Key 已儲存。AI 功能現在已啟用。' });
         if (apiKeyPanel.classList.contains('open')) {
@@ -276,9 +293,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function startApiKeyCountdown() {
+        if (apiKeyCountdownInterval) {
+            clearInterval(apiKeyCountdownInterval);
+        }
+        
+        const expiryTime = sessionStorage.getItem('apiKeyExpiry');
+        if (!expiryTime) {
+            apiKeyCountdown.textContent = '';
+            return;
+        }
+
+        apiKeyCountdownInterval = setInterval(() => {
+            const remaining = parseInt(expiryTime, 10) - Date.now();
+            if (remaining <= 0) {
+                clearInterval(apiKeyCountdownInterval);
+                sessionStorage.removeItem('geminiApiKey');
+                sessionStorage.removeItem('apiKeyExpiry');
+                apiKeyCountdown.textContent = '';
+                updateApiKeyStatus();
+                showModal({ title: '金鑰已過期', message: '基於安全考量，您的 API Key 已被清除，請重新輸入。' });
+                return;
+            }
+
+            const hours = Math.floor((remaining / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((remaining / 1000 / 60) % 60);
+            const seconds = Math.floor((remaining / 1000) % 60);
+
+            apiKeyCountdown.textContent = `(尚餘 ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')})`;
+        }, 1000);
+    }
+    
     function updateApiKeyStatus() {
+        const expiry = sessionStorage.getItem('apiKeyExpiry');
+        if (expiry && Date.now() > parseInt(expiry, 10)) {
+            sessionStorage.removeItem('geminiApiKey');
+            sessionStorage.removeItem('apiKeyExpiry');
+        }
+
         const apiKey = sessionStorage.getItem('geminiApiKey');
-        const aiButtons = [generateChaptersBtn, optimizeTextForBlogBtn];
+        const aiButtons = [generateChaptersBtn, optimizeTextForBlogBtn, generateSocialBtn];
         if (apiKey) {
             apiKeyStatus.textContent = '狀態：API Key 已設定，AI 功能已啟用。';
             apiKeyStatus.classList.remove('text-[var(--text-color)]');
@@ -286,9 +340,17 @@ document.addEventListener('DOMContentLoaded', () => {
             aiButtons.forEach(btn => {
                 if (btn) {
                     btn.disabled = false;
-                    btn.className = 'font-bold py-2 px-4 rounded btn-primary';
+                    if(btn.id === 'generate-social-btn') {
+                        btn.className = 'w-full font-bold py-3 px-6 rounded-lg text-lg btn-primary';
+                    } else if (btn.id === 'optimize-text-for-blog-btn') {
+                        btn.className = 'w-full font-bold py-2 px-4 rounded btn-primary';
+                    }
+                    else {
+                        btn.className = 'font-bold py-2 px-4 rounded btn-primary';
+                    }
                 }
             });
+            startApiKeyCountdown();
         } else {
             apiKeyStatus.textContent = '狀態：尚未設定。AI 功能目前無法使用。';
             apiKeyStatus.classList.add('text-[var(--text-color)]');
@@ -296,9 +358,15 @@ document.addEventListener('DOMContentLoaded', () => {
             aiButtons.forEach(btn => {
                 if (btn) {
                     btn.disabled = true;
-                    btn.className = 'font-bold py-2 px-4 rounded btn-disabled';
+                    if(btn.id === 'generate-social-btn') {
+                        btn.className = 'w-full font-bold py-3 px-6 rounded-lg text-lg btn-disabled';
+                    } else {
+                        btn.className = 'font-bold py-2 px-4 rounded btn-disabled';
+                    }
                 }
             });
+            if(apiKeyCountdownInterval) clearInterval(apiKeyCountdownInterval);
+            apiKeyCountdown.textContent = '';
         }
     }
     
@@ -329,10 +397,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function confirmUseOptimizedText(text) {
         optimizedTextForBlog = text;
         blogSourceType = 'optimized';
-        blogSourceStatus.textContent = '內容來源：已優化的文本';
+        const statusText = '內容來源：已優化的文本';
+        blogSourceStatus.textContent = statusText;
+        socialSourceStatus.textContent = statusText;
         blogSourceStatus.classList.add('text-green-600');
+        socialSourceStatus.classList.add('text-green-600');
         hideModal();
-        showModal({ title: '確認', message: '來源已更新為「優化文本」，現在可以生成部落格文章了。' });
+        showModal({ title: '確認', message: '來源已更新為「優化文本」，現在可以生成部落格與社群貼文了。' });
     }
 
     async function optimizeTextForBlog() {
@@ -364,6 +435,61 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         } catch (error) {
             showModal({ title: 'AI 處理失敗', message: `發生錯誤：${error.message}` });
+        }
+    }
+    
+    async function proceedGenerateSocialPosts() {
+        const apiKey = sessionStorage.getItem('geminiApiKey');
+        if (!apiKey) {
+            showModal({ title: '錯誤', message: '請先設定您的 Gemini API Key。' });
+            return;
+        }
+        const sourceText = (blogSourceType === 'optimized') ? optimizedTextForBlog : smartArea.value.trim();
+        if (!sourceText) {
+            showModal({ title: '錯誤', message: '缺少用於生成貼文的來源內容。' });
+            return;
+        }
+        const objective = socialObjectiveSelect.value;
+        const length = socialLengthSelect.value;
+        const tone = socialToneSelect.value;
+        const hashtags = socialHashtagsInput.value;
+        const cta = socialCtaTextarea.value;
+        
+        const prompt = `你是一位專業的社群小編。請根據以下[逐字稿]和指定的[參數]，為 Facebook、Instagram、Line 這三個平台各生成一篇推廣貼文。請嚴格按照指定的格式與分隔標記輸出，不要有任何額外的文字或說明。\n\n[參數]:\n- 貼文目標: ${objective}\n- 貼文長度: ${length}\n- 寫作語氣: ${tone}\n- 指定Hashtags: ${hashtags}\n- 行動呼籲: ${cta}\n\n[FACEBOOK_POST_START]\n(適合 Facebook 的貼文，可包含 Emoji 和 Hashtags)\n[FACEBOOK_POST_END]\n\n[INSTAGRAM_POST_START]\n(適合 Instagram 的貼文，文案較精簡，並在文末附上 5-10 個相關 Hashtags)\n[INSTAGRAM_POST_END]\n\n[LINE_POST_START]\n(適合 Line 的貼文，語氣更口語化、更親切)\n[LINE_POST_END]\n\n[逐字稿]:\n---\n${sourceText}\n---`;
+
+        showModal({ title: 'AI 生成中...', message: '正在為您撰寫三平台社群貼文...', showProgressBar: true });
+
+        try {
+            const fullResponse = await callGeminiAPI(apiKey, prompt);
+            const fbMatch = fullResponse.match(/\[FACEBOOK_POST_START\]([\s\S]*?)\[FACEBOOK_POST_END\]/);
+            const igMatch = fullResponse.match(/\[INSTAGRAM_POST_START\]([\s\S]*?)\[INSTAGRAM_POST_END\]/);
+            const lineMatch = fullResponse.match(/\[LINE_POST_START\]([\s\S]*?)\[LINE_POST_END\]/);
+
+            socialPostOutputs.facebook.textContent = fbMatch ? fbMatch[1].trim() : '無法解析 Facebook 貼文。';
+            socialPostOutputs.instagram.textContent = igMatch ? igMatch[1].trim() : '無法解析 Instagram 貼文。';
+            socialPostOutputs.line.textContent = lineMatch ? lineMatch[1].trim() : '無法解析 Line 貼文。';
+
+            socialPlaceholder.classList.add('hidden');
+            socialOutputContainer.classList.remove('hidden');
+            switchSocialTab('facebook');
+            hideModal();
+        } catch (error) {
+            showModal({ title: '社群貼文生成失敗', message: `發生錯誤：${error.message}` });
+        }
+    }
+
+    function generateSocialPosts() {
+        if (blogSourceType === 'raw' && smartArea.value.trim()) {
+            showModal({
+                title: '提醒',
+                message: '您尚未優化文本，直接生成可能會影響貼文品質。確定要繼續嗎？',
+                buttons: [
+                    { text: '取消', class: 'btn-secondary', callback: hideModal },
+                    { text: '確定繼續', class: 'btn-primary', callback: () => { hideModal(); proceedGenerateSocialPosts(); } }
+                ]
+            });
+        } else {
+            proceedGenerateSocialPosts();
         }
     }
 
@@ -426,7 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (blogSourceType === 'raw' && smartArea.value.trim()) {
             showModal({
                 title: '提醒',
-                message: '您尚未優化文本，直接生成可能會影響文章品質。確定要繼續嗎？',
+                message: '您尚未優化文本，直接生成可能會影響貼文品質。確定要繼續嗎？',
                 buttons: [
                     { text: '取消', class: 'btn-secondary', callback: hideModal },
                     { text: '確定繼續', class: 'btn-primary', callback: () => { hideModal(); proceedGenerateBlogPost(); } }
@@ -487,6 +613,30 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
         document.getElementById(tabId).classList.remove('hidden');
     }
+
+    function switchSocialTab(platform) {
+        activeSocialTab = platform;
+        socialTabBtns.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.socialTab === platform);
+        });
+        for (const key in socialPostOutputs) {
+            socialPostOutputs[key].classList.toggle('hidden', key !== platform);
+        }
+        socialCopyBtn.classList.remove('hidden');
+    }
+
+    function copySocialPost() {
+        const targetElement = socialPostOutputs[activeSocialTab];
+        if (targetElement && targetElement.textContent) {
+            navigator.clipboard.writeText(targetElement.textContent).then(() => {
+                const originalText = socialCopyBtn.textContent;
+                socialCopyBtn.textContent = '已複製!';
+                setTimeout(() => {
+                    socialCopyBtn.textContent = '複製內容';
+                }, 2000);
+            });
+        }
+    }
     
     function switchView(viewToShow) {
         allViewButtons.forEach(btn => btn.classList.remove('active'));
@@ -532,13 +682,24 @@ document.addEventListener('DOMContentLoaded', () => {
         optimizedTextForBlog = '';
         blogArticleContent = '';
         blogSourceStatus.textContent = '內容來源：字幕原始檔';
+        socialSourceStatus.textContent = '內容來源：字幕原始檔';
         blogSourceStatus.classList.remove('text-green-600');
+        socialSourceStatus.classList.remove('text-green-600');
         blogOutputContainer.classList.add('hidden');
         blogPlaceholder.classList.remove('hidden');
         blogTitleInput.value = '';
         blogYtIdInput.value = '';
         ctaPresetSelect.value = 'custom';
         handleCtaChange();
+        
+        socialPlaceholder.classList.remove('hidden');
+        socialOutputContainer.classList.add('hidden');
+        socialCopyBtn.classList.add('hidden');
+        for(const key in socialPostOutputs) {
+            socialPostOutputs[key].textContent = '';
+        }
+        socialHashtagsInput.value = '';
+        socialCtaTextarea.value = '';
 
         showModal({ title: '操作成功', message: '所有內容已清除，您可以開始新的任務。' });
     }
@@ -615,6 +776,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const ctaOptions = { 'custom': '自訂 CTA', ...Object.fromEntries(Object.entries(PRESET_CTAS).map(([key, value]) => [key, value.title])) };
         populateSelectWithOptions(ctaPresetSelect, ctaOptions);
 
+        const socialObjectiveOptions = {'引導觀看 YouTube': '引導觀看 YouTube', '引導閱讀部落格': '引導閱讀部落格', '引發留言互動': '引發留言互動', '分享核心觀點': '分享核心觀點'};
+        const socialLengthOptions = {'簡短': '簡短 (一句話)', '中等': '中等 (一段)', '詳細': '詳細 (多段)'};
+        populateSelectWithOptions(socialObjectiveSelect, socialObjectiveOptions);
+        populateSelectWithOptions(socialLengthSelect, socialLengthOptions);
+        populateSelectWithOptions(socialToneSelect, toneOptions);
+
         settingsToggleBtn.addEventListener('click', toggleApiKeyPanel);
         saveApiKeyBtn.addEventListener('click', saveApiKey);
         generateChaptersBtn.addEventListener('click', () => handleAiFeature('chapters'));
@@ -657,6 +824,13 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadHtmlBtn.addEventListener('click', downloadAsHtml);
         downloadMdBtn.addEventListener('click', downloadAsMarkdown);
         ctaPresetSelect.addEventListener('change', handleCtaChange);
+        
+        goToOptimizeBtn.addEventListener('click', () => switchTab('tab2'));
+        generateSocialBtn.addEventListener('click', generateSocialPosts);
+        socialCopyBtn.addEventListener('click', copySocialPost);
+        socialTabBtns.forEach(btn => {
+            btn.addEventListener('click', () => switchSocialTab(btn.dataset.socialTab));
+        });
 
         seoCopyButtons.forEach(button => {
             button.addEventListener('click', (e) => {
