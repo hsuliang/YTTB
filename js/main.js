@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </ul>`
         },
         'izakaya': {
-            title: '居酒屋微醺夜',
+            title: '居久屋微醺夜',
             content: `<h2>🎁 喜歡我們的課程嗎？</h2>\n<p>如果你想要學習更多學科教學知識與科技應用，歡迎訂閱謙懿科技Youtube頻道，記得按讚追蹤我們的節目，一起探索教育的無限可能。</p>\n<ul>\n<li>謙懿科技Youtube：<a href="http://www.youtube.com/@morganfang0905" target="_blank">http://www.youtube.com/@morganfang0905</a></li>\n<li>ㄚ亮笑長練功坊Blog：<a href="https://bit.ly/aliangblog" target="_blank">https://bit.ly/aliangblog</a></li>\n</ul>`
         }
     };
