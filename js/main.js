@@ -26,6 +26,45 @@ document.addEventListener('DOMContentLoaded', () => {
             content: `<h2>🎁 喜歡我們的課程嗎？</h2>\n<p>如果你想要學習更多學科教學知識與科技應用，歡迎訂閱謙懿科技Youtube頻道，記得按讚追蹤我們的節目，一起探索教育的無限可能。</p>\n<ul>\n<li>謙懿科技Youtube：<a href="http://www.youtube.com/@morganfang0905" target="_blank">http://www.youtube.com/@morganfang0905</a></li>\n<li>ㄚ亮笑長練功坊Blog：<a href="https://bit.ly/aliangblog" target="_blank">https://bit.ly/aliangblog</a></li>\n</ul>`
         }
     };
+    
+    // --- AI 提示訊息輪播列表 (新增) ---
+    const AI_PROMPT_MESSAGES = {
+        chapters: [
+            "AI 正在精讀影片內容，定位關鍵時間點...",
+            "正在為您的影片**建立強而有力的小標題**...",
+            "AI 正在努力思考中... 這可能會需要一點時間 (約 10-30 秒)...",
+            "正在與ㄚ亮笑長討論**最佳章節劃分邏輯**...",
+            "影片章節結構已完成，正在進行最終格式化...",
+            "請保持耐心，AI 正在將您的逐字稿變成導覽地圖！",
+        ],
+        optimize: [
+            "AI 正在仔細傾聽你的逐字稿，**準備修補語句**...",
+            "正在為文本加入**更流暢的標點和分段**，保持耐心...",
+            "AI 正在努力思考中... **優化深度內容需要較長時間** (約 30-60 秒)...",
+            "**語句通順度檢查中**，確保文章口語化且易讀...",
+            "正在深度校對錯別字，同時保留您說話的原味...",
+            "我們正在請 AI 檢查，**是否有任何句子偷偷跑去放假了**...",
+        ],
+        blog: [
+            "AI 正在將口語轉化為**部落格的專業結構**...",
+            "根據您的**人稱與語氣**設定，進行文章重構中...",
+            "AI 正在努力思考中... **請保持耐心，內容發想需要較長時間** (約 45-90 秒)...",
+            "正在為 SEO 目的**調整段落關鍵字密度**...",
+            "文章的結論和 CTA 正在最終定稿，即將完成...",
+            "AI 正在為您的文章**建立強而有力的小標題**...",
+        ],
+        social: [
+            "AI 正在為 Facebook, IG, Line **量身打造多種風格文案**...",
+            "AI 正在確保**每個平台的語氣都符合目標受眾**...",
+            "**最佳化 Hashtags**，讓貼文獲得更多曝光...",
+            "正在撰寫**多個行動呼籲版本**，鼓勵粉絲互動...",
+            "AI 正在確保您的文案**獲得社群平台的最佳演算法青睞**！",
+            "社群貼文的多版本創意發想已進入尾聲...",
+        ]
+    };
+    
+    let currentAiTask = null; // 追蹤當前的 AI 任務類型
+    let promptInterval = null; // 輪播計時器
 
     // --- 元素選擇 (通用) ---
     const themeSwatchesContainer = document.querySelector('.theme-swatches-container');
@@ -259,17 +298,51 @@ document.addEventListener('DOMContentLoaded', () => {
         apiKeyPanel.classList.toggle('open');
         settingsToggleBtn.classList.toggle('open');
     }
+    
+    // 新增：AI 提示訊息輪播邏輯
+    function startPromptRotation(taskType) {
+        currentAiTask = taskType;
+        let messageIndex = 0;
+        const messages = AI_PROMPT_MESSAGES[taskType];
+        
+        // 確保初始顯示第一條訊息
+        modalMessage.textContent = messages[messageIndex];
+        
+        // 設置計時器，每 4 秒輪播一次
+        promptInterval = setInterval(() => {
+            messageIndex = (messageIndex + 1) % messages.length;
+            modalMessage.textContent = messages[messageIndex];
+        }, 4000);
+    }
+    
+    function stopPromptRotation() {
+        if (promptInterval) {
+            clearInterval(promptInterval);
+            promptInterval = null;
+        }
+        currentAiTask = null;
+    }
 
     function showModal(options) {
-        const { title, message, showCopyButton = false, showProgressBar = false, buttons = [] } = options;
+        stopPromptRotation(); // 清除舊的計時器
+        
+        const { title, message, showCopyButton = false, showProgressBar = false, buttons = [], taskType = null } = options;
         modalTitle.textContent = title;
-        modalMessage.textContent = message;
         modalCopyBtn.classList.toggle('hidden', !showCopyButton);
         modalProgressBar.classList.toggle('hidden', !showProgressBar);
-        modalMessage.classList.toggle('hidden', showProgressBar);
+        
         if (showProgressBar) {
-            modalMessage.textContent = "請稍候，AI 正在思考中...";
+            // 如果顯示進度條，則開始訊息輪播
             modalMessage.classList.remove('hidden');
+            if (taskType && AI_PROMPT_MESSAGES[taskType]) {
+                 startPromptRotation(taskType);
+            } else {
+                 modalMessage.textContent = "請稍候，AI 正在思考中...";
+            }
+        } else {
+            // 如果不顯示進度條，則顯示靜態訊息
+            modalMessage.classList.remove('hidden');
+            modalMessage.textContent = message;
         }
 
         if (buttons.length > 0) {
@@ -292,6 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function hideModal() {
+        stopPromptRotation(); // 隱藏時停止輪播
         modal.classList.add('hidden');
     }
 
@@ -420,7 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let prompt;
         if (type === 'chapters') {
             prompt = `你是一個專業的 YouTube 影片剪輯師。請根據以下影片字幕內容，為這部影片生成 YouTube 影片章節。\n規則：\n1. 格式必須是 "時間戳 - 標題" (例如：00:00 - 影片開頭)。\n2. 時間戳必須從 00:00 開始。\n3. 根據影片長度合理分配章節數量，30分鐘內影片最多10個章節，依此類推。\n4. 章節標題需簡潔且能總結該段落的核心內容。\n5. 不要包含前言或結語，直接輸出章節列表。\n\n字幕內容如下：\n---\n${content}\n---`;
-            showModal({ title: 'AI 處理中...', showProgressBar: true });
+            showModal({ title: 'AI 處理中...', showProgressBar: true, taskType: 'chapters' });
             try {
                 const result = await callGeminiAPI(apiKey, prompt);
                 showModal({ title: 'AI 章節生成 完成', message: result, showCopyButton: true });
@@ -456,7 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const prompt = `你是一位專業的文案編輯。請將以下的 SRT 字幕逐字稿，優化成一篇流暢易讀的純文字文章。\n規則：\n1. 加上適當的標點符號與段落，讓文章更通順。\n2. 絕對不可以改寫、改變原文的語意。\n3. 不可新增任何字幕中沒有的資訊或自己的評論。\n4. 修正明顯的錯別字，但保留口語化的風格。\n5. 移除所有時間戳和行號。\n6. 直接輸出優化後的文章，不要有任何前言或結語。\n\n字幕逐字稿如下：\n---\n${content}\n---`;
         
-        showModal({ title: 'AI 優化中...', showProgressBar: true });
+        showModal({ title: 'AI 優化中...', showProgressBar: true, taskType: 'optimize' });
 
         try {
             const result = await callGeminiAPI(apiKey, prompt);
@@ -493,7 +567,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const prompt = `你是一位專業的社群小編。請根據以下[逐字稿]和指定的[參數]，為 Facebook、Instagram、Line 這三個平台各生成一篇推廣貼文。請嚴格按照指定的格式與分隔標記輸出，不要有任何額外的文字或說明。\n\n[參數]:\n- 貼文目標: ${objective}\n- 貼文長度: ${length}\n- 寫作語氣: ${tone}\n- 指定Hashtags: ${hashtags}\n- 行動呼籲: ${cta}\n\n[FACEBOOK_POST_START]\n(適合 Facebook 的貼文，可包含 Emoji 和 Hashtags)\n[FACEBOOK_POST_END]\n\n[INSTAGRAM_POST_START]\n(適合 Instagram 的貼文，文案較精簡，並在文末附上 5-10 個相關 Hashtags)\n[INSTAGRAM_POST_END]\n\n[LINE_POST_START]\n(適合 Line 的貼文，語氣更口語化、更親切)\n[LINE_POST_END]\n\n[逐字稿]:\n---\n${sourceText}\n---`;
 
-        showModal({ title: 'AI 生成中...', message: '正在為您撰寫三平台社群貼文...', showProgressBar: true });
+        showModal({ title: 'AI 生成中...', message: '正在為您撰寫三平台社群貼文...', showProgressBar: true, taskType: 'social' });
 
         try {
             const fullResponse = await callGeminiAPI(apiKey, prompt);
@@ -550,7 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const prompt = `你是一位專業的部落格小編，專門負責將節目逐字稿轉換成格式良好、語氣自然、適合部落格發表的專欄文章。你的身份是[部落格小編]，任務是將節目逐字稿轉換成充滿能量的專欄報導。\n\n你的工作分為兩個部分。請嚴格按照以下格式與分隔標記輸出，不要有任何額外的文字或說明。\n\n[ARTICLE_START]\n請仔細閱讀下方提供的[逐字稿]，並根據以下要求撰寫一篇部落格文章。\n\n- 寫作人稱：${persona}\n- 寫作語氣：${tone}\n- 文章字數：${wordCount}\n- 格式要求：每個段落都需要一個小標題，並用 <h2> 標籤包圍。段落之間必須使用 <hr> 標籤分隔。\n- 文章結尾必須包含以下[宣傳語句]：${cta}\n- 文章前段需自然融入關鍵字但不可過度堆疊。\n[ARTICLE_END]\n\n[SEO_START]\n根據你寫好的文章內容，提供以下 SEO 建議：\n\n- SEO 標題: [請在此生成 SEO 標題]\n- 搜尋描述: [請在此生成一段約 150 字的搜尋描述]\n- 固定網址: [請在此生成小寫英文、單字用-連接的網址]\n- 標籤: [請在此生成用半形逗號,隔開的標籤]\n[SEO_END]\n\n[逐字稿]:\n---\n${sourceText}\n---`;
 
-        showModal({ title: 'AI 生成中...', message: '正在為您撰寫部落格文章，這可能需要一點時間...', showProgressBar: true });
+        showModal({ title: 'AI 生成中...', showProgressBar: true, taskType: 'blog' });
 
         try {
             const fullResponse = await callGeminiAPI(apiKey, prompt);
@@ -603,7 +677,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(!blogArticleContent) return;
         const content = `<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><title>${document.getElementById('seo-title-text').textContent}</title><style>body{font-family:sans-serif;line-height:1.6;} .youtube-embed{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:1rem 0;} .youtube-embed iframe{position:absolute;top:0;left:0;width:100%;height:100%;}</style></head><body>${blogArticleContent}</body></html>`;
         const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
-        const url = URL.URL.createObjectURL(blob);
+        const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = `${document.getElementById('seo-permalink-text').textContent || 'blog-post'}.html`;
