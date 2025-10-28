@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const allTabContents = document.querySelectorAll('.tab-content');
     const modalCloseBtn = document.getElementById('modal-close-btn');
     const modalCopyBtn = document.getElementById('modal-copy-btn');
-    const clearContentBtn = document.getElementById('clear-content-btn');
+    const resetAppBtn = document.getElementById('reset-app-btn'); // 修改: 選擇新的重置按鈕
 
     // --- 全域函式 ---
 
@@ -124,12 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById(tabId).classList.remove('hidden');
     }
 
-    function clearAllContent() {
-        resetTab1();
-        resetTab2();
-        resetTab3();
-        showModal({ title: '操作成功', message: '所有內容已清除，您可以開始新的任務。' });
-    }
+    // --- 刪除: 不再需要 clearAllContent 函數 ---
 
     // --- 初始化函式 ---
     function initialize() {
@@ -147,7 +142,11 @@ document.addEventListener('DOMContentLoaded', () => {
         allTabButtons.forEach(button => button.addEventListener('click', () => !button.disabled && window.switchTab(button.dataset.tab)));
         modalCloseBtn.addEventListener('click', hideModal);
         modalCopyBtn.addEventListener('click', copyModalContent);
-        clearContentBtn.addEventListener('click', clearAllContent);
+        
+        // 修改: 綁定新按鈕的點擊事件為重新整理頁面
+        resetAppBtn.addEventListener('click', () => {
+            location.reload();
+        });
         
         // --- 最終初始化 ---
         updateApiKeyStatus();

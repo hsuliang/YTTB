@@ -124,8 +124,5 @@ function initializeTab2() {
     renderCtaSelect();
     initializeTags();
     
-    // 預設收合
-    // toggleAccordion(aiStyleToggleBtn, aiStylePanel);
-    // toggleAccordion(seoToggleBtn, seoPanel);
     handleCtaChange();
 }

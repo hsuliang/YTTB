@@ -57,12 +57,25 @@ function updateBatchReplaceButtonStatus() {
 
 // --- 清除函式 ---
 function resetTab1() {
-    setMode('input'); 
+    // 步驟 1: 強制還原 UI 介面至最原始的輸入狀態
     
+    // 隱藏「原始內容 / 處理結果」的切換按鈕標頭
+    document.getElementById('view-toggle-header').classList.add('hidden');
+    
+    // 明確地隱藏兩個預覽圖層
+    displayOriginal.classList.add('hidden');
+    displayProcessed.classList.add('hidden');
+
+    // 明確地顯示主要的文字輸入框，並清空其內容
+    smartArea.value = '';
+    smartArea.classList.remove('hidden');
+
+    // 步驟 2: 清理所有相關的狀態變數
     state.originalContentForPreview = '';
     state.processedSrtResult = '';
     state.originalFileName = '';
     
+    // 步驟 3: 重設按鈕的狀態
     exportSrtBtn.disabled = true;
     exportSrtBtn.className = 'font-bold py-2 px-4 rounded btn-disabled';
     
