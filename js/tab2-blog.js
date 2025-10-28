@@ -3,14 +3,37 @@
  * 負責管理第二分頁「部落格文章生成」的所有 UI 互動與邏輯。
  */
 
-// --- 輔助函式 (移至頂層) ---
+// --- 元素選擇 (模組級) ---
+const optimizeTextForBlogBtn = document.getElementById('optimize-text-for-blog-btn');
+const blogSourceStatus = document.getElementById('blog-source-status');
+const generateBlogBtn = document.getElementById('generate-blog-btn');
+const blogTitleInput = document.getElementById('blog-title');
+const blogYtIdInput = document.getElementById('blog-yt-id');
+const blogPersonaSelect = document.getElementById('blog-persona');
+const blogWordCountSelect = document.getElementById('blog-word-count');
+const blogToneSelect = document.getElementById('blog-tone');
+const ctaPresetSelect = document.getElementById('cta-preset-select');
+const blogCtaTextarea = document.getElementById('blog-cta');
+const blogOutputContainer = document.getElementById('blog-output-container');
+const blogPlaceholder = document.getElementById('blog-placeholder');
+const blogPreview = document.getElementById('blog-preview');
+const downloadHtmlBtn = document.getElementById('download-html-btn');
+const downloadMdBtn = document.getElementById('download-md-btn');
+const allBlogViewButtons = document.querySelectorAll('.blog-view-btn');
+const saveCtaBtn = document.getElementById('save-cta-btn');
+const deleteCtaBtn = document.getElementById('delete-cta-btn');
+const tagContainer = document.getElementById('tag-container');
+const tagInput = document.getElementById('tag-input');
+const tagSuggestions = document.getElementById('tag-suggestions');
+const saveTagsBtn = document.getElementById('save-tags-btn');
+const aiStyleToggleBtn = document.getElementById('ai-style-toggle-btn');
+const aiStylePanel = document.getElementById('ai-style-panel');
+const seoToggleBtn = document.getElementById('seo-toggle-btn');
+const seoPanel = document.getElementById('seo-panel');
+
+// --- 輔助函式 (模組級) ---
 function handleCtaChange() {
-    const ctaPresetSelect = document.getElementById('cta-preset-select');
-    const saveCtaBtn = document.getElementById('save-cta-btn');
-    const deleteCtaBtn = document.getElementById('delete-cta-btn');
-    const blogCtaTextarea = document.getElementById('blog-cta');
     const selected = ctaPresetSelect.value;
-    
     saveCtaBtn.classList.toggle('hidden', selected !== 'custom');
     deleteCtaBtn.classList.toggle('hidden', !selected.startsWith('custom_'));
 
@@ -28,24 +51,17 @@ function handleCtaChange() {
         blogCtaTextarea.placeholder = '可在此自訂 CTA，或選擇上方預設';
     }
 }
-
 function loadCustomCTAsFromStorage() { try { const storedCtas = localStorage.getItem(CUSTOM_CTA_STORAGE_KEY); return storedCtas ? JSON.parse(storedCtas) : []; } catch (error) { console.error("無法讀取自訂 CTA:", error); return []; } }
-function renderCtaSelect(selectedValue = 'custom') { const ctaPresetSelect = document.getElementById('cta-preset-select'); const customCtas = loadCustomCTAsFromStorage(); let allCtaOptions = { 'custom': '自訂 CTA', ...Object.fromEntries(Object.entries(PRESET_CTAS).map(([key, value]) => [key, value.title])) }; customCtas.forEach((cta, index) => { allCtaOptions[`custom_${index}`] = `[自訂] ${cta.title}`; }); const currentVal = ctaPresetSelect.value; populateSelectWithOptions(ctaPresetSelect, allCtaOptions); ctaPresetSelect.value = allCtaOptions[currentVal] ? currentVal : selectedValue; }
+function renderCtaSelect(selectedValue = 'custom') { const customCtas = loadCustomCTAsFromStorage(); let allCtaOptions = { 'custom': '自訂 CTA', ...Object.fromEntries(Object.entries(PRESET_CTAS).map(([key, value]) => [key, value.title])) }; customCtas.forEach((cta, index) => { allCtaOptions[`custom_${index}`] = `[自訂] ${cta.title}`; }); const currentVal = ctaPresetSelect.value; populateSelectWithOptions(ctaPresetSelect, allCtaOptions); ctaPresetSelect.value = allCtaOptions[currentVal] ? currentVal : selectedValue; }
 function addTag(tagText) { const trimmedTag = tagText.trim(); if (trimmedTag && !state.currentBlogTags.includes(trimmedTag)) { state.currentBlogTags.push(trimmedTag); renderTags(); } }
 function removeTag(tagToRemove) { state.currentBlogTags = state.currentBlogTags.filter(tag => tag !== tagToRemove); renderTags(); }
-function renderTags() { const tagContainer = document.getElementById('tag-container'); tagContainer.querySelectorAll('.tag-pill').forEach(pill => pill.remove()); [...state.currentBlogTags].reverse().forEach(tag => { const pill = document.createElement('span'); pill.className = 'tag-pill'; pill.textContent = tag; const deleteBtn = document.createElement('span'); deleteBtn.className = 'tag-delete-btn'; deleteBtn.innerHTML = '&times;'; deleteBtn.addEventListener('click', () => removeTag(tag)); pill.appendChild(deleteBtn); tagContainer.prepend(pill); }); }
+function renderTags() { tagContainer.querySelectorAll('.tag-pill').forEach(pill => pill.remove()); [...state.currentBlogTags].reverse().forEach(tag => { const pill = document.createElement('span'); pill.className = 'tag-pill'; pill.textContent = tag; const deleteBtn = document.createElement('span'); deleteBtn.className = 'tag-delete-btn'; deleteBtn.innerHTML = '&times;'; deleteBtn.addEventListener('click', () => removeTag(tag)); pill.appendChild(deleteBtn); tagContainer.prepend(pill); }); }
 function loadCustomTagsFromStorage() { try { const storedTags = localStorage.getItem(CUSTOM_TAGS_STORAGE_KEY); return storedTags ? JSON.parse(storedTags) : []; } catch (error) { console.error("無法讀取自訂標籤:", error); return []; } }
-function renderTagSuggestions() { const tagSuggestions = document.getElementById('tag-suggestions'); tagSuggestions.innerHTML = ''; const customTags = loadCustomTagsFromStorage(); const allSuggestions = [...new Set([...PRESET_TAGS, ...customTags])]; allSuggestions.forEach(tag => { const suggestion = document.createElement('span'); suggestion.className = 'tag-suggestion'; suggestion.textContent = tag; suggestion.addEventListener('click', () => { addTag(tag); }); tagSuggestions.appendChild(suggestion); }); }
+function renderTagSuggestions() { tagSuggestions.innerHTML = ''; const customTags = loadCustomTagsFromStorage(); const allSuggestions = [...new Set([...PRESET_TAGS, ...customTags])]; allSuggestions.forEach(tag => { const suggestion = document.createElement('span'); suggestion.className = 'tag-suggestion'; suggestion.textContent = tag; suggestion.addEventListener('click', () => { addTag(tag); }); tagSuggestions.appendChild(suggestion); }); }
+function confirmUseOptimizedText(text) { state.optimizedTextForBlog = text; state.blogSourceType = 'optimized'; const statusText = '內容來源：已優化的文本'; blogSourceStatus.textContent = statusText; document.getElementById('social-source-status').textContent = statusText; blogSourceStatus.classList.add('text-green-600'); document.getElementById('social-source-status').classList.add('text-green-600'); hideModal(); showModal({ title: '確認', message: '來源已更新為「優化文本」，現在可以生成部落格與社群貼文了。' }); }
 
 // --- 清除函式 ---
 function resetTab2() {
-    const blogSourceStatus = document.getElementById('blog-source-status');
-    const blogOutputContainer = document.getElementById('blog-output-container');
-    const blogPlaceholder = document.getElementById('blog-placeholder');
-    const blogTitleInput = document.getElementById('blog-title');
-    const blogYtIdInput = document.getElementById('blog-yt-id');
-    const ctaPresetSelect = document.getElementById('cta-preset-select');
-
     state.blogSourceType = 'raw';
     state.optimizedTextForBlog = '';
     state.blogArticleContent = '';
@@ -68,31 +84,6 @@ function resetTab2() {
 
 // --- 初始化函式 ---
 function initializeTab2() {
-    // --- 元素選擇 ---
-    const optimizeTextForBlogBtn = document.getElementById('optimize-text-for-blog-btn');
-    const generateBlogBtn = document.getElementById('generate-blog-btn');
-    const blogTitleInput = document.getElementById('blog-title');
-    const blogYtIdInput = document.getElementById('blog-yt-id');
-    const blogPersonaSelect = document.getElementById('blog-persona');
-    const blogWordCountSelect = document.getElementById('blog-word-count');
-    const blogToneSelect = document.getElementById('blog-tone');
-    const ctaPresetSelect = document.getElementById('cta-preset-select');
-    const blogCtaTextarea = document.getElementById('blog-cta');
-    const blogOutputContainer = document.getElementById('blog-output-container');
-    const blogPlaceholder = document.getElementById('blog-placeholder');
-    const blogPreview = document.getElementById('blog-preview');
-    const downloadHtmlBtn = document.getElementById('download-html-btn');
-    const downloadMdBtn = document.getElementById('download-md-btn');
-    const allBlogViewButtons = document.querySelectorAll('.blog-view-btn');
-    const saveCtaBtn = document.getElementById('save-cta-btn');
-    const deleteCtaBtn = document.getElementById('delete-cta-btn');
-    const tagInput = document.getElementById('tag-input');
-    const saveTagsBtn = document.getElementById('save-tags-btn');
-    const aiStyleToggleBtn = document.getElementById('ai-style-toggle-btn');
-    const aiStylePanel = document.getElementById('ai-style-panel');
-    const seoToggleBtn = document.getElementById('seo-toggle-btn');
-    const seoPanel = document.getElementById('seo-panel');
-
     // --- 函式定義 ---
     function saveCustomCTA() { const content = blogCtaTextarea.value.trim(); if (!content) { showModal({ title: '錯誤', message: 'CTA 內容不能為空。' }); return; } const title = prompt('請為這個 CTA 命名（例如：我的個人 Blog 宣傳）：'); if (!title || !title.trim()) { return; } const customCtas = loadCustomCTAsFromStorage(); const newCta = { title: title.trim(), content }; customCtas.push(newCta); try { localStorage.setItem(CUSTOM_CTA_STORAGE_KEY, JSON.stringify(customCtas)); showModal({ title: '成功', message: '自訂 CTA 已儲存！' }); const newKey = `custom_${customCtas.length - 1}`; renderCtaSelect(newKey); handleCtaChange(); } catch (error) { console.error("無法儲存自訂 CTA:", error); showModal({ title: '儲存失敗', message: '無法儲存 CTA，可能是儲存空間已滿。' }); } }
     function deleteCustomCTA() { const selectedValue = ctaPresetSelect.value; if (!selectedValue.startsWith('custom_')) return; const customCtas = loadCustomCTAsFromStorage(); const index = parseInt(selectedValue.split('_')[1], 10); const ctaToDelete = customCtas[index]; if (!ctaToDelete) return; if (confirm(`您確定要刪除「${ctaToDelete.title}」這個 CTA 嗎？`)) { customCtas.splice(index, 1); localStorage.setItem(CUSTOM_CTA_STORAGE_KEY, JSON.stringify(customCtas)); showModal({ title: '成功', message: '自訂 CTA 已刪除。' }); renderCtaSelect('custom'); handleCtaChange(); } }
@@ -105,7 +96,6 @@ function initializeTab2() {
     function convertHtmlToMarkdown(htmlContent) { if (!htmlContent) return ''; let content = htmlContent; content = content.replace(/<h1>(.*?)<\/h1>/g, '# $1'); content = content.replace(/<h2>(.*?)<\/h2>/g, '## $1'); content = content.replace(/<h3>(.*?)<\/h3>/g, '### $1'); content = content.replace(/<hr>/g, '\n---\n'); content = content.replace(/<strong>(.*?)<\/strong>/g, '**$1**'); content = content.replace(/<em>(.*?)<\/em>/g, '*$1*'); content = content.replace(/<li>(.*?)<\/li>/g, '* $1'); content = content.replace(/<a href="(.*?)"[^>]*>(.*?)<\/a>/g, '[$2]($1)'); content = content.replace(/<[^>]*>/g, ''); content = content.replace(/\n{3,}/g, '\n\n'); return content.trim(); }
     function downloadAsMarkdown() { if(!state.blogArticleContent) return; const content = convertHtmlToMarkdown(state.blogArticleContent); const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `${document.getElementById('seo-permalink-text').textContent || 'blog-post'}.md`; a.click(); URL.revokeObjectURL(url); }
     function switchBlogView(viewToShow) { allBlogViewButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.blogView === viewToShow)); document.querySelectorAll('.blog-view-content').forEach(content => content.classList.toggle('hidden', content.id !== `blog-view-${viewToShow}`)); }
-    function confirmUseOptimizedText(text) { state.optimizedTextForBlog = text; state.blogSourceType = 'optimized'; const statusText = '內容來源：已優化的文本'; blogSourceStatus.textContent = statusText; document.getElementById('social-source-status').textContent = statusText; blogSourceStatus.classList.add('text-green-600'); document.getElementById('social-source-status').classList.add('text-green-600'); hideModal(); showModal({ title: '確認', message: '來源已更新為「優化文本」，現在可以生成部落格與社群貼文了。' }); }
     
     // --- 事件監聽 ---
     optimizeTextForBlogBtn.addEventListener('click', optimizeTextForBlog);
@@ -134,7 +124,8 @@ function initializeTab2() {
     renderCtaSelect();
     initializeTags();
     
-   // toggleAccordion(aiStyleToggleBtn, aiStylePanel); // 註解掉
-    // toggleAccordion(seoToggleBtn, seoPanel);         // 註解掉
+    // 預設收合
+    // toggleAccordion(aiStyleToggleBtn, aiStylePanel);
+    // toggleAccordion(seoToggleBtn, seoPanel);
     handleCtaChange();
 }

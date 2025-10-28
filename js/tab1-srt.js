@@ -3,11 +3,34 @@
  * 負責管理第一分頁「字幕整理與優化」的所有 UI 互動與邏輯。
  */
 
-// --- 輔助函式 (移至頂層) ---
+// --- 元素選擇 (模組級) ---
+const generateChaptersBtn = document.getElementById('generate-chapters-btn');
+const allViewButtons = document.querySelectorAll('.view-btn');
+const smartAreaContainer = document.getElementById('smart-area-container');
+const smartArea = document.getElementById('smart-area');
+const displayOriginal = document.getElementById('display-original');
+const displayProcessed = document.getElementById('display-processed');
+const fileInput = document.getElementById('file-input');
+const maxCharsSlider = document.getElementById('max-chars-per-line');
+const maxCharsValue = document.getElementById('max-chars-value');
+const mergeShortLinesSlider = document.getElementById('merge-short-lines-threshold');
+const mergeShortLinesValue = document.getElementById('merge-short-lines-value');
+const keepPunctuationCheckbox = document.getElementById('keep-punctuation');
+const fixTimestampsCheckbox = document.getElementById('fix-timestamps');
+const timestampThresholdInput = document.getElementById('timestamp-threshold');
+const processSrtBtn = document.getElementById('process-srt-btn');
+const exportSrtBtn = document.getElementById('export-srt-btn');
+const batchReplaceBtn = document.getElementById('batch-replace-btn');
+const batchReplaceModal = document.getElementById('batch-replace-modal');
+const closeReplaceModalBtn = document.getElementById('close-replace-modal-btn');
+const addReplaceRuleBtn = document.getElementById('add-replace-rule-btn');
+const replaceOriginalInput = document.getElementById('replace-original-input');
+const replaceReplacementInput = document.getElementById('replace-replacement-input');
+const replaceRulesList = document.getElementById('replace-rules-list');
+const clearAllRulesBtn = document.getElementById('clear-all-rules-btn');
+
+// --- 輔助函式 (模組級) ---
 function setMode(mode) {
-    const smartArea = document.getElementById('smart-area');
-    const displayOriginal = document.getElementById('display-original');
-    const displayProcessed = document.getElementById('display-processed');
     const viewToggleHeader = document.getElementById('view-toggle-header');
     if (mode === 'input') {
         viewToggleHeader.classList.add('hidden');
@@ -23,7 +46,6 @@ function setMode(mode) {
 }
 
 function updateBatchReplaceButtonStatus() {
-    const batchReplaceBtn = document.getElementById('batch-replace-btn');
     if (state.batchReplaceRules.length > 0) {
         batchReplaceBtn.textContent = `批次取代 (已設定 ${state.batchReplaceRules.length} 條)`;
         batchReplaceBtn.classList.add('active');
@@ -41,7 +63,6 @@ function resetTab1() {
     state.processedSrtResult = '';
     state.originalFileName = '';
     
-    const exportSrtBtn = document.getElementById('export-srt-btn');
     exportSrtBtn.disabled = true;
     exportSrtBtn.className = 'font-bold py-2 px-4 rounded btn-disabled';
     
@@ -51,34 +72,7 @@ function resetTab1() {
 
 // --- 初始化函式 ---
 function initializeTab1() {
-    // --- 元素選擇 ---
-    const generateChaptersBtn = document.getElementById('generate-chapters-btn');
-    const allViewButtons = document.querySelectorAll('.view-btn');
-    const smartAreaContainer = document.getElementById('smart-area-container');
-    const smartArea = document.getElementById('smart-area');
-    const displayOriginal = document.getElementById('display-original');
-    const displayProcessed = document.getElementById('display-processed');
-    const fileInput = document.getElementById('file-input');
-    const maxCharsSlider = document.getElementById('max-chars-per-line');
-    const maxCharsValue = document.getElementById('max-chars-value');
-    const mergeShortLinesSlider = document.getElementById('merge-short-lines-threshold');
-    const mergeShortLinesValue = document.getElementById('merge-short-lines-value');
-    const keepPunctuationCheckbox = document.getElementById('keep-punctuation');
-    const fixTimestampsCheckbox = document.getElementById('fix-timestamps');
-    const timestampThresholdInput = document.getElementById('timestamp-threshold');
-    const processSrtBtn = document.getElementById('process-srt-btn');
-    const exportSrtBtn = document.getElementById('export-srt-btn');
-    const batchReplaceBtn = document.getElementById('batch-replace-btn');
-    const batchReplaceModal = document.getElementById('batch-replace-modal');
-    const closeReplaceModalBtn = document.getElementById('close-replace-modal-btn');
-    const addReplaceRuleBtn = document.getElementById('add-replace-rule-btn');
-    const replaceOriginalInput = document.getElementById('replace-original-input');
-    const replaceReplacementInput = document.getElementById('replace-replacement-input');
-    const replaceRulesList = document.getElementById('replace-rules-list');
-    const clearAllRulesBtn = document.getElementById('clear-all-rules-btn');
-
     // --- 函式定義 ---
-
     async function handleAiFeature(type) {
         const apiKey = sessionStorage.getItem('geminiApiKey');
         if (!apiKey) {

@@ -3,19 +3,37 @@
  * 負責管理第三分頁「社群貼文生成」的所有 UI 互動與邏輯。
  */
 
-function resetTab3() {
-    const socialSourceStatus = document.getElementById('social-source-status');
-    const socialPlaceholder = document.getElementById('social-placeholder');
-    const socialOutputContainer = document.getElementById('social-output-container');
-    const socialCopyBtn = document.getElementById('social-copy-btn');
-    const socialHashtagsInput = document.getElementById('social-hashtags');
-    const socialCtaTextarea = document.getElementById('social-cta');
-    const socialPostOutputs = {
-        facebook: document.getElementById('facebook-post-output'),
-        instagram: document.getElementById('instagram-post-output'),
-        line: document.getElementById('line-post-output')
-    };
+// --- 元素選擇 (模組級) ---
+const generateSocialBtn = document.getElementById('generate-social-btn');
+const socialOutputContainer = document.getElementById('social-output-container');
+const socialPlaceholder = document.getElementById('social-placeholder');
+const socialPostOutputs = {
+    facebook: document.getElementById('facebook-post-output'),
+    instagram: document.getElementById('instagram-post-output'),
+    line: document.getElementById('line-post-output')
+};
+const socialCopyBtn = document.getElementById('social-copy-btn');
+const socialTabBtns = document.querySelectorAll('.social-tab-btn');
+const goToOptimizeBtn = document.getElementById('go-to-optimize-btn');
+const socialObjectiveSelect = document.getElementById('social-objective');
+const socialLengthSelect = document.getElementById('social-length');
+const socialToneSelect = document.getElementById('social-tone-select');
+const socialHashtagsInput = document.getElementById('social-hashtags');
+const socialCtaTextarea = document.getElementById('social-cta');
+const socialSourceStatus = document.getElementById('social-source-status');
 
+// --- 輔助函式 (模組級) ---
+function switchSocialTab(platform) {
+    state.activeSocialTab = platform;
+    socialTabBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.socialTab === platform));
+    for (const key in socialPostOutputs) {
+        socialPostOutputs[key].classList.toggle('hidden', key !== platform);
+    }
+    socialCopyBtn.classList.remove('hidden');
+}
+
+// --- 清除函式 ---
+function resetTab3() {
     socialSourceStatus.textContent = '內容來源：字幕原始檔';
     socialSourceStatus.classList.remove('text-green-600');
     
@@ -31,27 +49,9 @@ function resetTab3() {
     socialCtaTextarea.value = '';
 }
 
+// --- 初始化函式 ---
 function initializeTab3() {
-    // --- 元素選擇 ---
-    const generateSocialBtn = document.getElementById('generate-social-btn');
-    const socialOutputContainer = document.getElementById('social-output-container');
-    const socialPlaceholder = document.getElementById('social-placeholder');
-    const socialPostOutputs = {
-        facebook: document.getElementById('facebook-post-output'),
-        instagram: document.getElementById('instagram-post-output'),
-        line: document.getElementById('line-post-output')
-    };
-    const socialCopyBtn = document.getElementById('social-copy-btn');
-    const socialTabBtns = document.querySelectorAll('.social-tab-btn');
-    const goToOptimizeBtn = document.getElementById('go-to-optimize-btn');
-    const socialObjectiveSelect = document.getElementById('social-objective');
-    const socialLengthSelect = document.getElementById('social-length');
-    const socialToneSelect = document.getElementById('social-tone-select');
-    const socialHashtagsInput = document.getElementById('social-hashtags');
-    const socialCtaTextarea = document.getElementById('social-cta');
-
     // --- 函式定義 ---
-    
     async function proceedGenerateSocialPosts() {
         const apiKey = sessionStorage.getItem('geminiApiKey');
         if (!apiKey) {
@@ -102,15 +102,6 @@ function initializeTab3() {
         }
     }
 
-    function switchSocialTab(platform) {
-        state.activeSocialTab = platform;
-        socialTabBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.socialTab === platform));
-        for (const key in socialPostOutputs) {
-            socialPostOutputs[key].classList.toggle('hidden', key !== platform);
-        }
-        socialCopyBtn.classList.remove('hidden');
-    }
-
     function copySocialPost() {
         const targetElement = socialPostOutputs[state.activeSocialTab];
         if (targetElement && targetElement.textContent) {
@@ -122,7 +113,7 @@ function initializeTab3() {
     }
 
     // --- 事件監聽 ---
-    goToOptimizeBtn.addEventListener('click', () => window.switchTab('tab2')); // Use window.switchTab
+    goToOptimizeBtn.addEventListener('click', () => window.switchTab('tab2'));
     generateSocialBtn.addEventListener('click', generateSocialPosts);
     socialCopyBtn.addEventListener('click', copySocialPost);
     socialTabBtns.forEach(btn => btn.addEventListener('click', () => switchSocialTab(btn.dataset.socialTab)));
