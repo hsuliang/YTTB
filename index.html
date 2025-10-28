@@ -47,8 +47,7 @@
                         <div>
                             <h3 class="text-lg font-semibold mb-2 heading-color">佈景主題</h3>
                             <div class="flex flex-wrap gap-4 theme-swatches-container">
-                                <!-- Themes will be rendered here by JS -->
-                            </div>
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -126,78 +125,155 @@
                 <div id="tab2" class="tab-content hidden">
                     <div class="grid grid-cols-1 md:grid-cols-10 gap-8">
                         <div class="md:col-span-3 flex flex-col">
-                            <h3 class="text-xl font-bold heading-color border-b-2 border-[var(--heading-color)] pb-2">文章生成設定</h3>
-                            <div class="space-y-4 flex-grow mt-4 flex flex-col">
-                                <div class="p-3 rounded-md border border-[var(--card-border)] bg-[var(--gray-bg)]">
-                                    <p id="blog-source-status" class="text-sm font-semibold text-[var(--heading-color)] mb-2">內容來源：字幕原始檔</p>
-                                    <button id="optimize-text-for-blog-btn" class="w-full font-bold py-2 px-4 rounded btn-disabled" disabled>第一步：優化文本</button>
-                                </div>
-                                <div>
-                                    <label for="blog-title" class="font-semibold">文章標題</label>
-                                    <input type="text" id="blog-title" placeholder="請輸入您的文章主標題" class="w-full mt-1 p-2 rounded">
-                                </div>
-                                 <div>
-                                    <label for="blog-yt-id" class="font-semibold">YouTube 影片 ID</label>
-                                    <input type="text" id="blog-yt-id" placeholder="例如：dQw4w9WgXcQ" class="w-full mt-1 p-2 rounded">
-                                </div>
-                                <div>
-                                    <label for="blog-persona" class="font-semibold">寫作人稱</label>
-                                    <select id="blog-persona" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
-                                </div>
-                                 <div>
-                                    <label for="blog-word-count" class="font-semibold">寫作字數</label>
-                                    <select id="blog-word-count" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
-                                </div>
-                                 <div>
-                                    <label for="blog-tone" class="font-semibold">寫作語氣</label>
-                                    <select id="blog-tone" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
-                                </div>
-                                <div class="flex-grow flex flex-col">
-                                    <label for="cta-preset-select" class="font-semibold">宣傳語句 (CTA)</label>
-                                    <select id="cta-preset-select" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)] mb-2"></select>
-                                    <textarea id="blog-cta" placeholder="可在此自訂 CTA，或選擇上方預設" class="w-full flex-grow p-2 rounded"></textarea>
+                            <div class="flex-grow">
+                                <h3 class="text-xl font-bold heading-color border-b-2 border-[var(--heading-color)] pb-2">文章生成設定</h3>
+                                <div class="space-y-6 mt-4">
+                                    <div class="p-3 rounded-md border border-[var(--card-border)] bg-[var(--gray-bg)]">
+                                        <p id="blog-source-status" class="text-sm font-semibold text-[var(--heading-color)] mb-2">內容來源：字幕原始檔</p>
+                                        <button id="optimize-text-for-blog-btn" class="w-full font-bold py-2 px-4 rounded btn-disabled" disabled>第一步：優化文本</button>
+                                    </div>
+                                    
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label for="blog-title" class="font-semibold">文章標題</label>
+                                            <input type="text" id="blog-title" placeholder="請輸入您的文章主標題" class="w-full mt-1 p-2 rounded">
+                                        </div>
+                                        <div>
+                                            <label for="blog-yt-id" class="font-semibold">YouTube 影片 ID</label>
+                                            <input type="text" id="blog-yt-id" placeholder="例如：dQw4w9WgXcQ" class="w-full mt-1 p-2 rounded">
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <button id="ai-style-toggle-btn" class="accordion-toggle">
+                                            <span>AI 風格設定</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                        <div id="ai-style-panel" class="accordion-panel">
+                                            <div class="accordion-content">
+                                                <div class="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <label for="blog-persona" class="font-semibold text-sm">寫作人稱</label>
+                                                        <select id="blog-persona" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                                                    </div>
+                                                    <div>
+                                                        <label for="blog-word-count" class="font-semibold text-sm">寫作字數</label>
+                                                        <select id="blog-word-count" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                                                    </div>
+                                                    <div class="col-span-2">
+                                                        <label for="blog-tone" class="font-semibold text-sm">寫作語氣</label>
+                                                        <select id="blog-tone" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <button id="seo-toggle-btn" class="accordion-toggle">
+                                            <span>SEO 與宣傳</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                        <div id="seo-panel" class="accordion-panel">
+                                             <div class="accordion-content space-y-4">
+                                                <div>
+                                                    <label class="font-semibold text-sm">文章標籤 (Tags)</label>
+                                                    <div id="tag-container" class="tag-container mt-1">
+                                                        <input type="text" id="tag-input" class="tag-input" placeholder="輸入標籤後按 Enter...">
+                                                    </div>
+                                                    <div id="tag-suggestions" class="tag-suggestions mt-2"></div>
+                                                    <div class="text-right mt-2">
+                                                         <button id="save-tags-btn" class="font-bold py-1 px-3 rounded btn-secondary text-sm">儲存自訂標籤</button>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label for="cta-preset-select" class="font-semibold text-sm">宣傳語句 (CTA)</label>
+                                                    <select id="cta-preset-select" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)] mb-2"></select>
+                                                    <textarea id="blog-cta" placeholder="可在此自訂 CTA，或選擇上方預設" class="w-full p-2 rounded" rows="5"></textarea>
+                                                    <div class="flex justify-end gap-2 mt-2">
+                                                        <button id="delete-cta-btn" class="font-bold py-1 px-3 rounded btn-danger text-sm hidden">刪除此 CTA</button>
+                                                        <button id="save-cta-btn" class="font-bold py-1 px-3 rounded btn-secondary text-sm hidden">儲存此自訂 CTA</button>
+                                                    </div>
+                                                </div>
+                                             </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <button id="generate-blog-btn" class="w-full font-bold py-3 px-6 rounded-lg text-lg btn-primary mt-4">第二步：生成部落格文章</button>
                         </div>
                         
                         <div class="md:col-span-7">
-                            <h3 class="text-xl font-bold heading-color border-b-2 border-[var(--heading-color)] pb-2 mb-4">Blog預覽/SEO建議</h3>
+                            <div class="flex border-b border-[var(--card-border)] mb-4">
+                                <button class="blog-view-btn active" data-blog-view="preview">文章預覽</button>
+                                <button class="blog-view-btn" data-blog-view="html">HTML 原始碼</button>
+                                <button class="blog-view-btn" data-blog-view="markdown">Markdown 原始碼</button>
+                                <button class="blog-view-btn" data-blog-view="seo">SEO 建議</button>
+                            </div>
+                            
                             <div id="blog-output-container" class="hidden">
-                                <div class="relative p-4 border rounded-lg border-[var(--card-border)] bg-[var(--gray-bg)]">
-                                    <div class="absolute top-2 right-2 space-x-2">
-                                        <button id="download-html-btn" class="font-bold py-1 px-3 rounded btn-secondary text-sm">HTML</button>
-                                        <button id="download-md-btn" class="font-bold py-1 px-3 rounded btn-secondary text-sm">MD</button>
+                                <div id="blog-view-preview" class="blog-view-content">
+                                    <div class="relative p-4 border rounded-lg border-[var(--card-border)] bg-[var(--gray-bg)]">
+                                        <div class="absolute top-2 right-2 space-x-2">
+                                            <button id="download-html-btn" class="font-bold py-1 px-3 rounded btn-secondary text-sm">HTML</button>
+                                            <button id="download-md-btn" class="font-bold py-1 px-3 rounded btn-secondary text-sm">MD</button>
+                                        </div>
+                                        <h4 class="text-lg font-semibold mb-2 heading-color">文章預覽</h4>
+                                        <div id="blog-preview" class="prose max-w-none"></div>
                                     </div>
-                                    <h4 class="text-lg font-semibold mb-2 heading-color">文章預覽</h4>
-                                    <div id="blog-preview" class="prose max-w-none"></div>
                                 </div>
-                                <div class="mt-6 p-4 border rounded-lg border-[var(--card-border)] bg-[var(--gray-bg)]">
-                                     <h4 class="text-lg font-semibold mb-2 heading-color">SEO 建議</h4>
-                                     <div id="blog-seo-suggestions" class="space-y-3 text-sm">
-                                        <div class="flex items-start gap-2">
-                                            <strong class="w-20 inline-block flex-shrink-0">SEO 標題:</strong>
-                                            <span id="seo-title-text" class="flex-grow">...</span>
-                                            <button class="seo-copy-btn" data-copy-target="seo-title-text" title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
-                                        </div>
-                                        <div class="flex items-start gap-2">
-                                            <strong class="w-20 inline-block flex-shrink-0">搜尋描述:</strong>
-                                            <span id="seo-description-text" class="flex-grow">...</span>
-                                            <button class="seo-copy-btn" data-copy-target="seo-description-text" title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
-                                        </div>
-                                        <div class="flex items-start gap-2">
-                                            <strong class="w-20 inline-block flex-shrink-0">固定網址:</strong>
-                                            <span id="seo-permalink-text" class="flex-grow">...</span>
-                                            <button class="seo-copy-btn" data-copy-target="seo-permalink-text" title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
-                                        </div>
-                                        <div class="flex items-start gap-2">
-                                            <strong class="w-20 inline-block flex-shrink-0">標籤:</strong>
-                                            <span id="seo-tags-text" class="flex-grow">...</span>
-                                            <button class="seo-copy-btn" data-copy-target="seo-tags-text" title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
-                                        </div>
+                                
+                                <div id="blog-view-html" class="blog-view-content hidden">
+                                     <div class="relative h-[80vh]">
+                                        <button class="source-copy-btn absolute top-2 right-2 z-10" data-copy-target="html-source-preview" title="複製原始碼">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                        </button>
+                                        <textarea id="html-source-preview" readonly class="w-full h-full rounded p-3 bg-[var(--gray-bg)] border border-[var(--card-border)] focus:outline-none resize-none font-mono text-sm"></textarea>
                                      </div>
                                 </div>
+
+                                <div id="blog-view-markdown" class="blog-view-content hidden">
+                                    <div class="relative h-[80vh]">
+                                        <button class="source-copy-btn absolute top-2 right-2 z-10" data-copy-target="markdown-source-preview" title="複製原始碼">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                        </button>
+                                        <textarea id="markdown-source-preview" readonly class="w-full h-full rounded p-3 bg-[var(--gray-bg)] border border-[var(--card-border)] focus:outline-none resize-none font-mono text-sm"></textarea>
+                                    </div>
+                                </div>
+                                
+                                <div id="blog-view-seo" class="blog-view-content hidden">
+                                    <div class="mt-6 p-4 border rounded-lg border-[var(--card-border)] bg-[var(--gray-bg)]">
+                                        <h4 class="text-lg font-semibold mb-2 heading-color">SEO 建議</h4>
+                                        <div id="blog-seo-suggestions" class="space-y-3 text-sm">
+                                            <div class="flex items-start gap-2">
+                                                <strong class="w-20 inline-block flex-shrink-0">SEO 標題:</strong>
+                                                <span id="seo-title-text" class="flex-grow">...</span>
+                                                <button class="seo-copy-btn" data-copy-target="seo-title-text" title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
+                                            </div>
+                                            <div class="flex items-start gap-2">
+                                                <strong class="w-20 inline-block flex-shrink-0">搜尋描述:</strong>
+                                                <span id="seo-description-text" class="flex-grow">...</span>
+                                                <button class="seo-copy-btn" data-copy-target="seo-description-text" title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
+                                            </div>
+                                            <div class="flex items-start gap-2">
+                                                <strong class="w-20 inline-block flex-shrink-0">固定網址:</strong>
+                                                <span id="seo-permalink-text" class="flex-grow">...</span>
+                                                <button class="seo-copy-btn" data-copy-target="seo-permalink-text" title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
+                                            </div>
+                                            <div class="flex items-start gap-2">
+                                                <strong class="w-20 inline-block flex-shrink-0">標籤:</strong>
+                                                <span id="seo-tags-text" class="flex-grow">...</span>
+                                                <button class="seo-copy-btn" data-copy-target="seo-tags-text" title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                            
                             <div id="blog-placeholder" class="text-center py-20 text-[var(--gray-text)]">
                                 <p>請隨時切換至此分頁，</p>
                                 <p class="mt-2">將您的字幕稿轉化為精彩文章！</p>
@@ -304,8 +380,13 @@
         Design by <a href="https://bit.ly/Aliang" target="_blank" rel="noopener" class="upload-link">ㄚ亮笑長練功坊</a> | 程式簡介與使用說明
     </footer>
 
+   <script src="js/state.js"></script>
     <script src="js/gemini-api.js"></script>
     <script src="js/srt-processor.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/ui-components.js"></script>
+    <script src="js/tab1-srt.js"></script>
+    <script src="js/tab2-blog.js"></script>
+    <script src="js/tab3-social.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>
