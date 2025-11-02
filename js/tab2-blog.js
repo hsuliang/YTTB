@@ -1,6 +1,6 @@
 /**
  * tab2-blog.js
- * 負責管理第二分頁「部落格文章生成」的所有 UI 互動與邏輯。
+ * 負責管理第二分頁「部落格文章生成」的所有 UI 互動與 logique。
  */
 
 const SETTINGS_STORAGE_KEYS = {
@@ -66,27 +66,55 @@ function convertHtmlToMarkdown(htmlContent) {
     if (!htmlContent) return ''; let content = htmlContent; content = content.replace(/<h1>(.*?)<\/h1>/g, '# $1'); content = content.replace(/<h2>(.*?)<\/h2>/g, '## $1'); content = content.replace(/<h3>(.*?)<\/h3>/g, '### $1'); content = content.replace(/<hr>/g, '\n---\n'); content = content.replace(/<strong>(.*?)<\/strong>/g, '**$1**'); content = content.replace(/<em>(.*?)<\/em>/g, '*$1*'); content = content.replace(/<li>(.*?)<\/li>/g, '* $1'); content = content.replace(/<a href="(.*?)"[^>]*>(.*?)<\/a>/g, '[$2]($1)'); content = content.replace(/<[^>]*>/g, ''); content = content.replace(/\n{3,}/g, '\n\n'); return content.trim(); 
 }
 
+// ### 修改處：更新整個 updateStepperUI 函式 ###
 window.updateStepperUI = function() {
     const step1 = document.getElementById('stepper-step-1');
     const step2 = document.getElementById('stepper-step-2');
     const step3 = document.getElementById('stepper-step-3');
     
-    [step1, step2, step3].forEach(step => step.classList.remove('active', 'completed'));
+    // 將所有步驟和它們的 SVG checkmark 先重置
+    [step1, step2, step3].forEach(step => {
+        step.classList.remove('active', 'completed');
+        // 找到內部的 stepper-check 並隱藏它
+        const check = step.querySelector('.stepper-check');
+        if (check) {
+            check.classList.remove('opacity-100');
+            check.classList.add('opacity-0');
+        }
+    });
 
     const hasSourceContent = document.getElementById('smart-area').value.trim().length > 0;
     const isOptimized = state.blogSourceType === 'optimized';
     const hasGeneratedBlog = state.blogArticleContent.trim().length > 0;
 
-    if (hasSourceContent || window.hasBlogDraft()) { step1.classList.add('completed'); } 
-    else { step1.classList.add('active'); return; }
+    // 定義一個輔助函式，專門用來設定步驟為「完成」狀態
+    function setStepCompleted(stepElement) {
+        stepElement.classList.add('completed');
+        const check = stepElement.querySelector('.stepper-check');
+        if (check) {
+            check.classList.remove('opacity-0');
+            check.classList.add('opacity-100'); // 直接用 Tailwind class 顯示勾勾
+        }
+    }
 
-    if (isOptimized) { step2.classList.add('completed'); } 
-    else { step2.classList.add('active'); }
+    // 開始判斷狀態
+    if (hasSourceContent || window.hasBlogDraft()) { 
+        setStepCompleted(step1);
+    } else { 
+        step1.classList.add('active'); 
+        return; 
+    }
+
+    if (isOptimized) { 
+        setStepCompleted(step2);
+    } else { 
+        step2.classList.add('active'); 
+    }
     
     if (hasGeneratedBlog) {
-        step1.classList.add('completed');
-        step2.classList.add('completed');
-        step3.classList.add('completed');
+        setStepCompleted(step1); // 確保前面都打勾
+        setStepCompleted(step2);
+        setStepCompleted(step3);
         document.getElementById('generate-blog-btn').textContent = "重新生成文章";
     } else if (hasSourceContent || window.hasBlogDraft()) {
         step3.classList.add('active');
