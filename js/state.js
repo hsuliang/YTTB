@@ -8,9 +8,7 @@ const THEMES = {
     'old-newspaper': '老式報紙',
     'caramel-pudding': '焦糖布丁',
     'muji-style': '無印風格',
-    'black-and-white': '純粹黑白',
     'blueberry-pancake': '藍莓鬆餅',
-    'lavender-field': '薰衣草田',
     'mint-soda': '薄荷蘇打',
     'dark-knight': '暗夜騎士'
 };

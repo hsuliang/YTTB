@@ -5,6 +5,7 @@
 
 // --- 元素選擇 (模組級) ---
 const generateChaptersBtn = document.getElementById('generate-chapters-btn');
+const generateSummaryBtn = document.getElementById('generate-summary-btn');
 const allViewButtons = document.querySelectorAll('.view-btn');
 const smartAreaContainer = document.getElementById('smart-area-container');
 const smartArea = document.getElementById('smart-area');
@@ -28,6 +29,8 @@ const replaceOriginalInput = document.getElementById('replace-original-input');
 const replaceReplacementInput = document.getElementById('replace-replacement-input');
 const replaceRulesList = document.getElementById('replace-rules-list');
 const clearAllRulesBtn = document.getElementById('clear-all-rules-btn');
+// ### 新增：選擇時間平移輸入框 ###
+const timelineShiftInput = document.getElementById('timeline-shift');
 
 // --- 輔助函式 (模組級) ---
 function setMode(mode) {
@@ -57,28 +60,16 @@ function updateBatchReplaceButtonStatus() {
 
 // --- 清除函式 ---
 function resetTab1() {
-    // 步驟 1: 強制還原 UI 介面至最原始的輸入狀態
-    
-    // 隱藏「原始內容 / 處理結果」的切換按鈕標頭
     document.getElementById('view-toggle-header').classList.add('hidden');
-    
-    // 明確地隱藏兩個預覽圖層
     displayOriginal.classList.add('hidden');
     displayProcessed.classList.add('hidden');
-
-    // 明確地顯示主要的文字輸入框，並清空其內容
     smartArea.value = '';
     smartArea.classList.remove('hidden');
-
-    // 步驟 2: 清理所有相關的狀態變數
     state.originalContentForPreview = '';
     state.processedSrtResult = '';
     state.originalFileName = '';
-    
-    // 步驟 3: 重設按鈕的狀態
     exportSrtBtn.disabled = true;
     exportSrtBtn.className = 'font-bold py-2 px-4 rounded btn-disabled';
-    
     state.batchReplaceRules = [];
     updateBatchReplaceButtonStatus();
 }
@@ -97,15 +88,49 @@ function initializeTab1() {
             showModal({ title: '錯誤', message: '沒有可用於 AI 處理的字幕內容。' });
             return;
         }
+
+        const btn = type === 'chapters' ? generateChaptersBtn : generateSummaryBtn;
+        const originalText = btn.textContent;
+        let prompt = '';
+        let modalTitle = 'AI 處理中...';
+        let successTitle = 'AI 處理完成';
+
+        btn.disabled = true;
+        btn.classList.add('btn-loading');
+
         if (type === 'chapters') {
-            const prompt = `你是一個專業的 YouTube 影片剪輯師。請根據以下影片字幕內容，為這部影片生成 YouTube 影片章節。\n規則：\n1. 格式必須是 "時間戳 - 標題" (例如：00:00 - 影片開頭)。\n2. 時間戳必須從 00:00 開始。\n3. 根據影片長度合理分配章節數量，30分鐘內影片最多10個章節，依此類推。\n4. 章節標題需簡潔且能總結該段落的核心內容。\n5. 不要包含前言或結語，直接輸出章節列表。\n\n字幕內容如下：\n---\n${content}\n---`;
-            showModal({ title: 'AI 處理中...', showProgressBar: true, taskType: 'chapters' });
-            try {
-                const result = await callGeminiAPI(apiKey, prompt);
-                showModal({ title: 'AI 章節生成 完成', message: result, showCopyButton: true });
-            } catch (error) {
+            prompt = `你是一個專業的 YouTube 影片剪輯師。請根據以下影片字幕內容，為這部影片生成 YouTube 影片章節。\n規則：\n1. 格式必須是 "時間戳 - 標題" (例如：00:00 - 影片開頭)。\n2. 時間戳必須從 00:00 開始。\n3. 根據影片長度合理分配章節數量，30分鐘內影片最多10個章節，依此類推。\n4. 章節標題需簡潔且能總結該段落的核心內容。\n5. 不要包含前言或結語，直接輸出章節列表。\n\n字幕內容如下：\n---\n${content}\n---`;
+            successTitle = 'AI 章節生成 完成';
+        } else if (type === 'summary') {
+            prompt = `你是一位專業的 YouTube 內容策劃。請根據下方的影片逐字稿，撰寫一段約 150 字左右、引人入勝的影片摘要，用於 YouTube 的說明欄。\n規則：\n1. 摘要需包含影片的核心觀點和最吸引人的亮點。\n2. 語氣需充滿能量與好奇心，鼓勵觀眾觀看影片。\n3. 不要使用任何 markdown 語法，直接輸出純文字段落。\n4. 直接輸出摘要內容，不要有任何前言或結語 (例如不要寫「這是一段摘要」)。\n\n影片逐字稿如下：\n---\n${content}\n---`;
+            successTitle = 'AI 影片摘要 完成';
+        }
+        
+        showModal({ title: modalTitle, showProgressBar: true, taskType: 'chapters' });
+
+        try {
+            const result = await callGeminiAPI(apiKey, prompt);
+            showModal({ title: successTitle, message: result, showCopyButton: true });
+        } catch (error) {
+            if (error.message && error.message.includes('overloaded')) {
+                showModal({ 
+                    title: 'AI 正在尖峰時段，請稍候！', 
+                    message: '別擔心，這不是您的程式或 API Key 有問題。\n\n這代表 Gemini AI 模型目前正處於全球使用的高峰期，就像一位超級名廚的廚房突然湧入了大量訂單一樣。\n\n建議您稍等一兩分鐘後，再點擊一次「生成」按鈕即可。\n\n感謝您的耐心！',
+                    buttons: [
+                        { text: '關閉', class: 'btn-secondary', callback: hideModal },
+                        { text: '立即重試', class: 'btn-primary', callback: () => { 
+                            hideModal(); 
+                            handleAiFeature(type); 
+                        } }
+                    ]
+                });
+            } else {
                 showModal({ title: 'AI 處理失敗', message: `發生錯誤：${error.message}` });
             }
+        } finally {
+            btn.disabled = false;
+            btn.classList.remove('btn-loading');
+            btn.textContent = originalText;
         }
     }
 
@@ -164,6 +189,7 @@ function initializeTab1() {
     function updateContent(content, fileName = '') {
         smartArea.value = content;
         state.originalFileName = fileName;
+        smartArea.dispatchEvent(new Event('input'));
     }
 
     function handleFile(file) {
@@ -197,14 +223,19 @@ function initializeTab1() {
             return;
         }
         state.originalContentForPreview = currentSrtContent;
+        
+        // ### 修改開始：補上讀取 timeline-shift 的值 ###
         const options = {
             maxCharsPerLine: parseInt(maxCharsSlider.value, 10),
             mergeShortLinesThreshold: parseInt(mergeShortLinesSlider.value, 10),
             keepPunctuation: keepPunctuationCheckbox.checked,
             fixTimestamps: fixTimestampsCheckbox.checked,
             timestampThreshold: parseInt(timestampThresholdInput.value, 10),
-            batchReplaceRules: state.batchReplaceRules
+            batchReplaceRules: state.batchReplaceRules,
+            timelineShift: parseInt(timelineShiftInput.value, 10) || 0
         };
+        // ### 修改結束 ###
+
         try {
             const result = processSubtitles(currentSrtContent, options);
             state.processedSrtResult = result.processedSrt;
@@ -212,7 +243,24 @@ function initializeTab1() {
             displayOriginal.textContent = formatSrtForDisplay(state.originalContentForPreview, '');
             displayProcessed.textContent = formatSrtForDisplay(state.processedSrtResult, '');
             switchView('processed');
-            const reportMsg = `處理完成！\n\n- 批次取代文字: ${result.report.replacementsMade} 處\n- 移除標點符號: ${result.report.punctuationsRemoved} 個\n- 分割長句: ${result.report.linesSplit} 次\n- 合併短句: ${result.report.linesMerged} 次\n- 修復時間間隔: ${result.report.fixedGaps} 處\n- 修復時間重疊: ${result.report.fixedOverlaps} 處`;
+            
+            // ### 修改開始：更新報告內容 ###
+            let reportParts = [
+                `- 批次取代文字: ${result.report.replacementsMade} 處`,
+                `- 移除標點符號: ${result.report.punctuationsRemoved} 個`,
+                `- 分割長句: ${result.report.linesSplit} 次`,
+                `- 合併短句: ${result.report.linesMerged} 次`
+            ];
+            if(result.report.timelineShifted !== 0) {
+                 reportParts.push(`- 執行時間軸平移: ${result.report.timelineShifted > 0 ? '+' : ''}${result.report.timelineShifted} ms`);
+            }
+            if(options.fixTimestamps) {
+                reportParts.push(`- 修復時間間隔: ${result.report.fixedGaps} 處`);
+                reportParts.push(`- 修復時間重疊: ${result.report.fixedOverlaps} 處`);
+            }
+            const reportMsg = `處理完成！\n\n` + reportParts.join('\n');
+            // ### 修改結束 ###
+
             showModal({ title: '字幕處理報告', message: reportMsg });
             exportSrtBtn.disabled = false;
             exportSrtBtn.className = 'font-bold py-2 px-4 rounded btn-success';
@@ -241,6 +289,7 @@ function initializeTab1() {
 
     // --- 事件監聽 ---
     generateChaptersBtn.addEventListener('click', () => handleAiFeature('chapters'));
+    generateSummaryBtn.addEventListener('click', () => handleAiFeature('summary'));
     allViewButtons.forEach(button => button.addEventListener('click', () => switchView(button.dataset.view)));
     maxCharsSlider.addEventListener('input', (e) => { maxCharsValue.textContent = e.target.value; });
     mergeShortLinesSlider.addEventListener('input', (e) => { mergeShortLinesValue.textContent = e.target.value; });
@@ -248,6 +297,12 @@ function initializeTab1() {
         timestampThresholdInput.disabled = !fixTimestampsCheckbox.checked;
         timestampThresholdInput.classList.toggle('opacity-50', !fixTimestampsCheckbox.checked);
     });
+    
+    smartArea.addEventListener('input', () => {
+        if (window.updateTabAvailability) window.updateTabAvailability();
+        if (window.updateAiButtonStatus) window.updateAiButtonStatus();
+    });
+
     smartAreaContainer.addEventListener('dragover', (e) => { e.preventDefault(); smartAreaContainer.classList.add('dragover'); });
     smartAreaContainer.addEventListener('dragleave', (e) => { e.preventDefault(); smartAreaContainer.classList.remove('dragover'); });
     smartAreaContainer.addEventListener('drop', (e) => { e.preventDefault(); smartAreaContainer.classList.remove('dragover'); if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });

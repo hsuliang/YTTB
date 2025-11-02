@@ -3,21 +3,87 @@
  * 負責管理通用的 UI 元件，如彈出視窗、主題、摺疊面板等。
  */
 
+// 元素選擇 (新增)
+const modeToggleBtn = document.getElementById('mode-toggle-btn');
+const sunIcon = document.getElementById('sun-icon');
+const moonIcon = document.getElementById('moon-icon');
+
+// 函式 (新增)
+function applyMode(mode) {
+    if (mode === 'dark') {
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+        // 如果當前是亮色主題，切換到預設的暗色主題
+        if (document.body.dataset.theme !== 'dark-knight') {
+             applyTheme('dark-knight');
+        }
+    } else {
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+        // 如果當前是暗色主題，切換回預設的亮色主題
+        if (document.body.dataset.theme === 'dark-knight') {
+            applyTheme(localStorage.getItem('selectedLightTheme') || 'old-newspaper');
+        }
+    }
+    localStorage.setItem('selectedMode', mode);
+}
+
+// 函式 (新增)
+function toggleMode() {
+    const currentMode = localStorage.getItem('selectedMode') || 'light';
+    applyMode(currentMode === 'light' ? 'dark' : 'light');
+}
+
+// 函式 (修改)
 function applyTheme(themeName) {
     document.body.dataset.theme = themeName;
-    localStorage.setItem('selectedTheme', themeName);
+
+    // 判斷主題是亮色還是暗色，並儲存對應的偏好
+    if (themeName === 'dark-knight') {
+        localStorage.setItem('selectedMode', 'dark');
+        // 暗黑模式下，不需要儲存 selectedTheme，因為它代表的是暗色本身
+    } else {
+        localStorage.setItem('selectedMode', 'light');
+        localStorage.setItem('selectedLightTheme', themeName); // 記住使用者選擇的亮色主題
+    }
+    
     renderThemeSwatches();
+    updateModeIcons();
 }
+
+// 函式 (新增)
+function updateModeIcons() {
+     const currentMode = localStorage.getItem('selectedMode') || 'light';
+     if (currentMode === 'dark') {
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+     } else {
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+     }
+}
+
+// 事件監聽 (新增)
+modeToggleBtn.addEventListener('click', toggleMode);
+
 
 function renderThemeSwatches() {
     const themeSwatchesContainer = document.querySelector('.theme-swatches-container');
+    if (!themeSwatchesContainer) return; // Add a guard clause
     themeSwatchesContainer.innerHTML = '';
-    const currentTheme = localStorage.getItem('selectedTheme') || 'old-newspaper';
-    for (const [value, text] of Object.entries(THEMES)) {
+    
+    const currentTheme = document.body.dataset.theme || 'old-newspaper';
+    
+    // 過濾掉暗黑模式，它由獨立的按鈕控制
+    const lightThemes = Object.entries(THEMES).filter(([value]) => value !== 'dark-knight');
+
+    for (const [value, text] of lightThemes) {
         const swatch = document.createElement('div');
         swatch.className = `theme-swatch ${value}`;
         swatch.dataset.themeValue = value;
         swatch.title = text;
+        swatch.setAttribute('role', 'button');
+        swatch.setAttribute('tabindex', '0');
         if (value === currentTheme) {
             swatch.classList.add('active');
         }
@@ -47,6 +113,31 @@ function startPromptRotation(taskType) {
         modalMessage.textContent = messages[messageIndex];
     }, 4000);
 }
+
+// ### 新增開始 ###
+/**
+ * 顯示一個自動消失的 Toast 通知。
+ * @param {string} message - 要顯示的訊息。
+ * @param {string} [type='success'] - 通知的類型 ('success' 或 'error')。
+ * @param {number} [duration=3000] - 顯示的持續時間 (毫秒)。
+ */
+function showToast(message, type = 'success', duration = 3000) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+
+    container.appendChild(toast);
+
+    // 在動畫結束後自動從 DOM 中移除元素
+    setTimeout(() => {
+        toast.remove();
+    }, duration);
+}
+// ### 新增結束 ###
+
 
 function showModal(options) {
     stopPromptRotation();
@@ -126,3 +217,13 @@ function populateSelectWithOptions(selectElement, options) {
         selectElement.appendChild(option);
     }
 }
+
+// 頁面載入時，立即檢查並套用儲存的模式
+document.addEventListener('DOMContentLoaded', () => {
+    const savedMode = localStorage.getItem('selectedMode') || 'light';
+    const savedTheme = savedMode === 'dark' 
+        ? 'dark-knight' 
+        : (localStorage.getItem('selectedLightTheme') || 'old-newspaper');
+    
+    applyTheme(savedTheme);
+});

@@ -54,9 +54,10 @@ function stringifySrt(subtitles) {
 }
 
 function processSubtitles(srtContent, options) {
-    const { maxCharsPerLine, keepPunctuation, fixTimestamps, timestampThreshold, batchReplaceRules, mergeShortLinesThreshold } = options;
-    let report = { fixedGaps: 0, fixedOverlaps: 0, linesSplit: 0, linesMerged: 0, replacementsMade: 0, punctuationsRemoved: 0 };
+    const { maxCharsPerLine, keepPunctuation, fixTimestamps, timestampThreshold, batchReplaceRules, mergeShortLinesThreshold, timelineShift } = options;
+    let report = { fixedGaps: 0, fixedOverlaps: 0, linesSplit: 0, linesMerged: 0, replacementsMade: 0, punctuationsRemoved: 0, timelineShifted: 0 };
     let isPlainText = false;
+
     if (!srtContent.includes('-->')) {
         isPlainText = true;
         srtContent = srtContent.trim().split(/\n+/).map((line, index) => {
@@ -65,7 +66,19 @@ function processSubtitles(srtContent, options) {
             return `${index + 1}\n${start} --> ${end}\n${line}`;
         }).join('\n\n');
     }
+    
     let subs = parseSrt(srtContent);
+
+    if (timelineShift && !isNaN(timelineShift) && timelineShift !== 0) {
+        report.timelineShifted = timelineShift;
+        subs.forEach(sub => {
+            sub.startMs += timelineShift;
+            sub.endMs += timelineShift;
+            if (sub.startMs < 0) sub.startMs = 0;
+            if (sub.endMs < 0) sub.endMs = 0;
+        });
+    }
+
     if (batchReplaceRules.length > 0) {
         subs.forEach(sub => {
             for (const rule of batchReplaceRules) {
@@ -81,7 +94,6 @@ function processSubtitles(srtContent, options) {
         });
     }
 
-    // ## 修正點：更新正規表示式，加入中文標點，並移除引號與括號 ##
     const punctuationRegex = /[.,\/#!$%\^&\*;:{}=\-_`~?，。？！、；：]/g;
     if (!keepPunctuation) {
         subs.forEach(sub => {
@@ -151,7 +163,6 @@ function processSubtitles(srtContent, options) {
     subs = newSubs;
     
     subs.forEach(sub => {
-        // 更新此處的正規表示式以匹配新的移除規則
         while (sub.text.match(/^[.,\/#!$%\^&\*;:{}=\-_`~?，。？！、；：]/) ) {
             sub.text = sub.text.substring(1).trim();
         }
