@@ -45,20 +45,6 @@ body[data-theme="muji-style"] {
     --disabled-text: #757575;
 }
 
-body[data-theme="black-and-white"] {
-    --bg-color: #ffffff;
-    --text-color: #000000;
-    --card-bg: #f9f9f9;
-    --card-border: #e0e0e0;
-    --heading-color: #000000;
-    --link-color: #333333;
-    --button-bg: #000000;
-    --button-text: #ffffff;
-    --gray-bg: #f0f0f0;
-    --gray-text: #444444;
-    --disabled-text: #666666;
-}
-
 body[data-theme="blueberry-pancake"] {
     --bg-color: #eff6ff;
     --text-color: #1e3a8a;
@@ -73,20 +59,6 @@ body[data-theme="blueberry-pancake"] {
     --disabled-text: #4b5563;
 }
 
-body[data-theme="lavender-field"] {
-    --bg-color: #f5f3ff;
-    --text-color: #5b21b6;
-    --card-bg: #ffffff;
-    --card-border: #ddd6fe;
-    --heading-color: #6d28d9;
-    --link-color: #7c3aed;
-    --button-bg: #8b5cf6;
-    --button-text: #ffffff;
-    --gray-bg: #ede9fe;
-    --gray-text: #4c1d95;
-    --disabled-text: #5b21b6;
-}
-
 body[data-theme="mint-soda"] {
     --bg-color: #f0fdfa;
     --text-color: #0f766e;
@@ -99,6 +71,20 @@ body[data-theme="mint-soda"] {
     --gray-bg: #ccfbf1;
     --gray-text: #0f766e;
     --disabled-text: #134e4a;
+}
+
+body[data-theme="dark-knight"] {
+    --bg-color: #0f172a;      /* 深藍黑背景 */
+    --text-color: #cbd5e1;    /* 淺灰色文字 */
+    --card-bg: #1e293b;      /* 次級藍黑卡片背景 */
+    --card-border: #334155;  /* 深灰色邊框 */
+    --heading-color: #ffffff; /* 白色標題 */
+    --link-color: #7dd3fc;    /* 亮藍色連結 */
+    --button-bg: #38bdf8;    /* 天藍色按鈕 */
+    --button-text: #0f172a;    /* 按鈕上的深色文字 */
+    --gray-bg: #334155;      /* 深灰色輸入框背景 */
+    --gray-text: #94a3b8;    /* 中灰色提示文字 */
+    --disabled-text: #64748b;/* 禁用文字 */
 }
 
 
@@ -299,7 +285,7 @@ hr {
     border-color: var(--card-border);
 }
 
-/* 可折疊面板的樣式與動畫 (舊) */
+/* 可折疊面板的樣式與動畫 (舊) - 保留給分頁二使用 */
 .collapsible-panel {
     max-height: 0;
     overflow: hidden;
@@ -343,11 +329,9 @@ hr {
     overflow: hidden;
     transition: max-height 0.5s ease-in-out;
 }
-/* ### 修改開始 ### */
 .accordion-panel.open {
-    max-height: 800px; /* 從 500px 增加到 800px */
+    max-height: 800px; 
 }
-/* ### 修改結束 ### */
 .accordion-content {
     padding: 1rem;
     border: 1px solid var(--card-border);
@@ -510,7 +494,224 @@ hr {
 .theme-swatch.old-newspaper { background-color: #f1f5f9; }
 .theme-swatch.caramel-pudding { background-color: #fef3c7; }
 .theme-swatch.muji-style { background-color: #eeeeee; }
-.theme-swatch.black-and-white { background-color: #f0f0f0; }
 .theme-swatch.blueberry-pancake { background-color: #dbeafe; }
-.theme-swatch.lavender-field { background-color: #ede9fe; }
 .theme-swatch.mint-soda { background-color: #ccfbf1; }
+.theme-swatch.dark-knight { 
+    background-color: #1e293b;
+    border: 1px solid #334155;
+}
+
+/* 按鈕載入中樣式 */
+.btn-loading {
+    cursor: not-allowed;
+    opacity: 0.75;
+    position: relative;
+    color: transparent !important; /* 隱藏按鈕原始文字 */
+}
+
+.btn-loading::after {
+    content: '';
+    display: block;
+    width: 1.25rem; /* 20px */
+    height: 1.25rem; /* 20px */
+    border: 3px solid var(--button-text);
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    position: absolute;
+    top: calc(50% - 0.625rem);
+    left: calc(50% - 0.625rem);
+    animation: spin 0.8s linear infinite;
+}
+
+/* 確保暗黑模式下的旋轉圖示顏色正確 */
+body[data-theme="dark-knight"] .btn-loading::after {
+     border: 3px solid var(--button-text); /* button-text 在暗黑模式下是深色 */
+     border-bottom-color: transparent;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 通知提示點樣式 */
+.notification-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: var(--link-color);
+    border-radius: 50%;
+    margin-left: 8px;
+    vertical-align: middle; /* 垂直置中對齊 */
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Toast 通知樣式 */
+.toast {
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    opacity: 0;
+    transform: translateY(-40px);
+    animation: slide-in-out 3s forwards;
+    width: fit-content;
+    min-width: 250px;
+    text-align: center;
+}
+
+.toast-success {
+    background-color: #22c55e;
+}
+
+.toast-error {
+    background-color: #ef4444;
+}
+
+@keyframes slide-in-out {
+    0% {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+    15%, 85% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+}
+
+/* ### 修改開始：新增右上角設定區和外觀面板的樣式 ### */
+.header-actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* 12px */
+    padding: 0.5rem;
+}
+
+.header-icon-btn {
+    padding: 0.5rem; /* 8px */
+    border-radius: 9999px; /* rounded-full */
+    transition: background-color 0.2s;
+}
+
+.header-icon-btn:hover {
+    background-color: var(--gray-bg);
+}
+
+.appearance-panel {
+    position: absolute;
+    top: 5rem; /* 80px, 根據 header 高度微調 */
+    right: 0;
+    width: 320px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 0.5rem; /* rounded-lg */
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    z-index: 40;
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.appearance-panel.hidden {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+}
+/* ### 修改結束 ### */
+
+/* ### 修改開始：新增 Stepper 樣式 ### */
+.stepper-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 100%;
+}
+.stepper-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 80px;
+    transition: all 0.3s ease;
+    color: var(--gray-text);
+}
+.stepper-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--card-border);
+    background-color: var(--gray-bg);
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    position: relative;
+}
+.stepper-number {
+    transition: opacity 0.2s ease;
+}
+.stepper-check {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+.stepper-label {
+    font-size: 0.875rem;
+    text-align: center;
+    font-weight: 500;
+}
+.stepper-line {
+    flex-grow: 1;
+    height: 2px;
+    background-color: var(--card-border);
+    margin: 20px -10px 0; /* Align with middle of the circle */
+    transition: background-color 0.3s ease;
+}
+
+/* Active State */
+.stepper-item.active .stepper-circle {
+    border-color: var(--link-color);
+    background-color: var(--card-bg);
+}
+.stepper-item.active .stepper-label, .stepper-item.active .stepper-number {
+    color: var(--heading-color);
+}
+
+/* Completed State */
+.stepper-item.completed .stepper-circle {
+    border-color: #22c55e;
+    background-color: #22c55e;
+}
+.stepper-item.completed .stepper-number {
+    opacity: 0;
+}
+.stepper-item.completed .stepper-check {
+    opacity: 1;
+}
+.stepper-item.completed .stepper-label {
+    color: var(--text-color);
+}
+.stepper-item.completed + .stepper-line {
+    background-color: #22c55e;
+}
+/* ### 修改結束 ### */
