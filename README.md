@@ -115,6 +115,3 @@
 
 Design by [**ㄚ亮笑長練功坊**](https://bit.ly/Aliang)
 
-## 📄 授權
-
-This project is licensed under the MIT License.
