@@ -29,10 +29,20 @@ const replaceOriginalInput = document.getElementById('replace-original-input');
 const replaceReplacementInput = document.getElementById('replace-replacement-input');
 const replaceRulesList = document.getElementById('replace-rules-list');
 const clearAllRulesBtn = document.getElementById('clear-all-rules-btn');
-// ### 新增：選擇時間平移輸入框 ###
 const timelineShiftInput = document.getElementById('timeline-shift');
+// [第二階段優化] - 新增返回編輯按鈕的選擇器
+const returnToEditBtn = document.getElementById('return-to-edit-btn');
+
 
 // --- 輔助函式 (模組級) ---
+function updateCharCount(text = '') {
+    const count = text.length;
+    const display = document.getElementById('char-count-display');
+    if (display) {
+        display.textContent = `字數: ${count}`;
+    }
+}
+
 function setMode(mode) {
     const viewToggleHeader = document.getElementById('view-toggle-header');
     if (mode === 'input') {
@@ -40,8 +50,9 @@ function setMode(mode) {
         smartArea.classList.remove('hidden');
         displayOriginal.classList.add('hidden');
         displayProcessed.classList.add('hidden');
-        smartArea.value = '';
+        // smartArea.value = ''; // 返回編輯時不清空
         smartArea.placeholder = "請在此貼上 SRT 內容，或將 .srt 檔案拖曳至此處";
+        updateCharCount(smartArea.value);
     } else if (mode === 'preview') {
         viewToggleHeader.classList.remove('hidden');
         smartArea.classList.add('hidden');
@@ -58,6 +69,14 @@ function updateBatchReplaceButtonStatus() {
     }
 }
 
+// [第二階段優化] - 新增返回編輯模式的函式
+function returnToEditMode() {
+    setMode('input');
+    smartArea.value = state.originalContentForPreview;
+    smartArea.dispatchEvent(new Event('input')); // 觸發 input 事件以更新UI
+    smartArea.focus();
+}
+
 // --- 清除函式 ---
 function resetTab1() {
     document.getElementById('view-toggle-header').classList.add('hidden');
@@ -72,17 +91,22 @@ function resetTab1() {
     exportSrtBtn.className = 'font-bold py-2 px-4 rounded btn-disabled';
     state.batchReplaceRules = [];
     updateBatchReplaceButtonStatus();
+    updateCharCount();
 }
 
 // --- 初始化函式 ---
 function initializeTab1() {
     // --- 函式定義 ---
     async function handleAiFeature(type) {
+        // [第二階段優化] - 智慧 API Key 檢查
         const apiKey = sessionStorage.getItem('geminiApiKey');
         if (!apiKey) {
-            showModal({ title: '錯誤', message: '請先設定您的 Gemini API Key。' });
+            // 直接呼叫全域函式 showApiKeyModal
+            if(window.showApiKeyModal) window.showApiKeyModal();
+            else alert('請先設定您的 Gemini API Key。');
             return;
         }
+
         const content = state.processedSrtResult.trim() || smartArea.value.trim();
         if (!content) {
             showModal({ title: '錯誤', message: '沒有可用於 AI 處理的字幕內容。' });
@@ -177,12 +201,15 @@ function initializeTab1() {
     function switchView(viewToShow) {
         allViewButtons.forEach(btn => btn.classList.remove('active'));
         document.querySelector(`.view-btn[data-view="${viewToShow}"]`).classList.add('active');
+
         if (viewToShow === 'original') {
             displayOriginal.classList.remove('hidden');
             displayProcessed.classList.add('hidden');
+            updateCharCount(state.originalContentForPreview);
         } else {
             displayOriginal.classList.add('hidden');
             displayProcessed.classList.remove('hidden');
+            updateCharCount(state.processedSrtResult);
         }
     }
 
@@ -224,7 +251,6 @@ function initializeTab1() {
         }
         state.originalContentForPreview = currentSrtContent;
         
-        // ### 修改開始：補上讀取 timeline-shift 的值 ###
         const options = {
             maxCharsPerLine: parseInt(maxCharsSlider.value, 10),
             mergeShortLinesThreshold: parseInt(mergeShortLinesSlider.value, 10),
@@ -234,7 +260,6 @@ function initializeTab1() {
             batchReplaceRules: state.batchReplaceRules,
             timelineShift: parseInt(timelineShiftInput.value, 10) || 0
         };
-        // ### 修改結束 ###
 
         try {
             const result = processSubtitles(currentSrtContent, options);
@@ -243,25 +268,17 @@ function initializeTab1() {
             displayOriginal.textContent = formatSrtForDisplay(state.originalContentForPreview, '');
             displayProcessed.textContent = formatSrtForDisplay(state.processedSrtResult, '');
             switchView('processed');
+            updateCharCount(state.processedSrtResult);
             
-            // ### 修改開始：更新報告內容 ###
-            let reportParts = [
-                `- 批次取代文字: ${result.report.replacementsMade} 處`,
-                `- 移除標點符號: ${result.report.punctuationsRemoved} 個`,
-                `- 分割長句: ${result.report.linesSplit} 次`,
-                `- 合併短句: ${result.report.linesMerged} 次`
-            ];
-            if(result.report.timelineShifted !== 0) {
-                 reportParts.push(`- 執行時間軸平移: ${result.report.timelineShifted > 0 ? '+' : ''}${result.report.timelineShifted} ms`);
-            }
-            if(options.fixTimestamps) {
-                reportParts.push(`- 修復時間間隔: ${result.report.fixedGaps} 處`);
-                reportParts.push(`- 修復時間重疊: ${result.report.fixedOverlaps} 處`);
-            }
-            const reportMsg = `處理完成！\n\n` + reportParts.join('\n');
-            // ### 修改結束 ###
-
-            showModal({ title: '字幕處理報告', message: reportMsg });
+            // [第二階段優化] - 使用帶有按鈕的 Toast 進行流程引導
+            showToast('字幕整理完成！', {
+                type: 'success',
+                action: {
+                    text: '前往生成文章 >',
+                    callback: () => window.switchTab('tab2')
+                }
+            });
+            
             exportSrtBtn.disabled = false;
             exportSrtBtn.className = 'font-bold py-2 px-4 rounded btn-success';
         } catch (error) {
@@ -298,7 +315,13 @@ function initializeTab1() {
         timestampThresholdInput.classList.toggle('opacity-50', !fixTimestampsCheckbox.checked);
     });
     
+    // [第二階段優化] - 為返回編輯按鈕綁定事件
+    if(returnToEditBtn) {
+        returnToEditBtn.addEventListener('click', returnToEditMode);
+    }
+    
     smartArea.addEventListener('input', () => {
+        updateCharCount(smartArea.value);
         if (window.updateTabAvailability) window.updateTabAvailability();
         if (window.updateAiButtonStatus) window.updateAiButtonStatus();
     });

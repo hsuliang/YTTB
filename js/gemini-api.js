@@ -12,10 +12,11 @@
  * @throws {Error} 如果 API 請求最終失敗，則拋出錯誤。
  */
 async function callGeminiAPI(apiKey, prompt) {
-    // ### 修改開始 ###
-    // 根據您的指定，更新 API 呼叫網址為 gemini-2.5-flash 模型
+    // ### 修正：API URL 已恢復為您指定的版本 ###
     const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-    // ### 修改結束 ###
+    
+    // 新增強制使用繁體中文的指令
+    const finalPrompt = `請注意：你必須且只能使用「繁體中文（台灣）」進行回覆，絕對不可以使用簡體中文。\n\n${prompt}`;
     
     // --- 自動重試與指數退避策略 ---
     const MAX_RETRIES = 3;    // 最多重試 3 次
@@ -27,7 +28,7 @@ async function callGeminiAPI(apiKey, prompt) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
+                    contents: [{ parts: [{ text: finalPrompt }] }], // 使用加上指令的 finalPrompt
                 }),
             });
 

@@ -114,29 +114,53 @@ function startPromptRotation(taskType) {
     }, 4000);
 }
 
-// ### 新增開始 ###
+// [第二階段優化] - 強化 showToast 函式，使其可以包含可點擊的按鈕
 /**
  * 顯示一個自動消失的 Toast 通知。
  * @param {string} message - 要顯示的訊息。
- * @param {string} [type='success'] - 通知的類型 ('success' 或 'error')。
- * @param {number} [duration=3000] - 顯示的持續時間 (毫秒)。
+ * @param {object} [options={}] - 通知的選項。
+ * @param {string} [options.type='success'] - 類型 ('success' 或 'error')。
+ * @param {number} [options.duration=3000] - 持續時間 (毫秒)。
+ * @param {object} [options.action=null] - 附加操作。
+ * @param {string} options.action.text - 按鈕文字。
+ * @param {function} options.action.callback - 按鈕點擊後的回呼函式。
  */
-function showToast(message, type = 'success', duration = 3000) {
+function showToast(message, options = {}) {
+    const { type = 'success', duration = 5000, action = null } = options;
     const container = document.getElementById('toast-container');
     if (!container) return;
 
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
-    toast.textContent = message;
+    
+    const messageSpan = document.createElement('span');
+    messageSpan.textContent = message;
+    toast.appendChild(messageSpan);
+
+    if (action && action.text && typeof action.callback === 'function') {
+        toast.classList.add('toast-with-action');
+        const actionButton = document.createElement('button');
+        actionButton.className = 'toast-action-btn';
+        actionButton.textContent = action.text;
+        actionButton.onclick = () => {
+            action.callback();
+            // 點擊按鈕後立即移除 toast，避免計時器再次觸發
+            if (toast.parentNode) {
+                toast.remove();
+            }
+        };
+        toast.appendChild(actionButton);
+    }
 
     container.appendChild(toast);
 
-    // 在動畫結束後自動從 DOM 中移除元素
     setTimeout(() => {
-        toast.remove();
+        // 確保元素還在 DOM 中再移除
+        if (toast.parentNode) {
+            toast.remove();
+        }
     }, duration);
 }
-// ### 新增結束 ###
 
 
 function showModal(options) {

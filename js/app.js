@@ -28,26 +28,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasSourceContent = document.getElementById('smart-area').value.trim().length > 0;
         
         const tab1AiButtons = [document.getElementById('generate-chapters-btn'), document.getElementById('generate-summary-btn')];
-        const isTab1AiEnabled = apiKey && hasSourceContent;
+        
+        // [第二階段優化] - 禁用邏輯只判斷是否有內容，不再判斷 apiKey
+        const isTab1ContentAvailable = hasSourceContent;
+        const isTab1ButtonStyledAsActive = apiKey && isTab1ContentAvailable;
+
         tab1AiButtons.forEach(btn => {
             if (btn) {
-                btn.disabled = !isTab1AiEnabled;
-                btn.className = isTab1AiEnabled ? 'font-bold py-2 px-4 rounded btn-primary' : 'font-bold py-2 px-4 rounded btn-disabled';
+                btn.disabled = !isTab1ContentAvailable; // 只根據內容判斷是否禁用
+                // 樣式依然可以根據是否有 key 改變，給予視覺提示
+                btn.className = isTab1ButtonStyledAsActive ? 'font-bold py-2 px-4 rounded btn-primary' : 'font-bold py-2 px-4 rounded btn-disabled';
             }
         });
 
         const tab2AiButton = document.getElementById('optimize-text-for-blog-btn');
         const tab3AiButton = document.getElementById('generate-social-btn');
+        
         const hasAnyContent = hasSourceContent || (window.hasBlogDraft && window.hasBlogDraft()) || (window.hasSocialDraft && window.hasSocialDraft());
-        const isOtherAiEnabled = apiKey && hasAnyContent;
+        // [第二階段優化] - 禁用邏輯只判斷是否有內容，不再判斷 apiKey
+        const isOtherContentAvailable = hasAnyContent;
+        const isOtherButtonStyledAsActive = apiKey && isOtherContentAvailable;
 
         if (tab2AiButton) {
-            tab2AiButton.disabled = !isOtherAiEnabled;
-            tab2AiButton.className = isOtherAiEnabled ? 'w-full font-bold py-2 px-4 rounded btn-primary' : 'w-full font-bold py-2 px-4 rounded btn-disabled';
+            tab2AiButton.disabled = !isOtherContentAvailable;
+            tab2AiButton.className = isOtherButtonStyledAsActive ? 'w-full font-bold py-2 px-4 rounded btn-primary' : 'w-full font-bold py-2 px-4 rounded btn-disabled';
         }
         if (tab3AiButton) {
-            tab3AiButton.disabled = !isOtherAiEnabled;
-            tab3AiButton.className = isOtherAiEnabled ? 'w-full font-bold py-3 px-6 rounded-lg text-lg btn-primary' : 'w-full font-bold py-3 px-6 rounded-lg text-lg btn-disabled';
+            tab3AiButton.disabled = !isOtherContentAvailable;
+            tab3AiButton.className = isOtherButtonStyledAsActive ? 'w-full font-bold py-3 px-6 rounded-lg text-lg btn-primary' : 'w-full font-bold py-3 px-6 rounded-lg text-lg btn-disabled';
         }
     }
     
@@ -86,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function saveApiKey() {
         const apiKey = apiKeyInput.value.trim();
-        if (!apiKey) { showToast('API Key 不能為空。', 'error'); return; }
+        if (!apiKey) { showToast('API Key 不能為空。', {type: 'error'}); return; }
         sessionStorage.setItem('geminiApiKey', apiKey);
         const expiryTime = Date.now() + 2 * 60 * 60 * 1000;
         sessionStorage.setItem('apiKeyExpiry', expiryTime);
