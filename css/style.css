@@ -108,11 +108,17 @@ body {
     transition: color 0.3s;
 }
 
+/* [第一階段優化] - 為所有互動元素增加平滑過渡效果 */
+.btn-primary, .btn-secondary, .btn-danger, .btn-success,
+.tab-btn, .view-btn, .social-tab-btn, .blog-view-btn,
+.accordion-toggle, .header-icon-btn, .tag-suggestion, .theme-swatch {
+    transition: all 0.2s ease-in-out;
+}
+
 /* 按鈕樣式 */
 .btn-primary {
     background-color: var(--button-bg);
     color: var(--button-text);
-    transition: background-color 0.3s;
 }
 .btn-primary:hover {
     background-color: var(--link-color);
@@ -121,7 +127,6 @@ body {
     background-color: var(--gray-bg);
     color: var(--text-color);
     border: 1px solid var(--card-border);
-    transition: background-color 0.3s;
 }
 .btn-secondary:hover {
     opacity: 0.8;
@@ -273,7 +278,6 @@ textarea:focus, input:focus, select:focus {
     background-color: var(--gray-bg);
     border: 1px solid var(--card-border);
     font-size: 0.875rem;
-    transition: background-color 0.2s;
 }
 .tag-suggestion:hover {
     background-color: var(--card-border);
@@ -283,6 +287,11 @@ textarea:focus, input:focus, select:focus {
 /* 分隔線 */
 hr {
     border-color: var(--card-border);
+}
+
+.char-count-prominent {
+    color: var(--link-color);
+    font-weight: 600;
 }
 
 /* 可折疊面板的樣式與動畫 (舊) - 保留給分頁二使用 */
@@ -313,7 +322,6 @@ hr {
     border: 1px solid var(--card-border);
     border-radius: 0.375rem;
     cursor: pointer;
-    transition: background-color 0.2s;
 }
 .accordion-toggle:hover {
     background-color: var(--card-border);
@@ -397,7 +405,6 @@ hr {
     color: var(--gray-text);
     border: none;
     border-bottom: 2px solid transparent;
-    transition: all 0.3s ease;
     font-weight: 600;
 }
 .tab-btn:hover {
@@ -420,7 +427,6 @@ hr {
     color: var(--gray-text);
     border: none;
     border-bottom: 2px solid transparent;
-    transition: all 0.3s ease;
     font-weight: 500;
 }
 .view-btn:hover, .social-tab-btn:hover, .blog-view-btn:hover {
@@ -480,7 +486,6 @@ hr {
     border-radius: 8px;
     cursor: pointer;
     border: 2px solid transparent;
-    transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .theme-swatch:hover {
@@ -564,7 +569,7 @@ body[data-theme="dark-knight"] .btn-loading::after {
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     opacity: 0;
     transform: translateY(-40px);
-    animation: slide-in-out 3s forwards;
+    animation: slide-in-out 5s forwards;
     width: fit-content;
     min-width: 250px;
     text-align: center;
@@ -578,12 +583,36 @@ body[data-theme="dark-knight"] .btn-loading::after {
     background-color: #ef4444;
 }
 
+/* [第二階段優化] - 新增帶有按鈕的 Toast 樣式 */
+.toast-with-action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.toast-action-btn {
+    background-color: rgba(0,0,0,0.2);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.toast-action-btn:hover {
+    background-color: rgba(0,0,0,0.4);
+}
+
 @keyframes slide-in-out {
     0% {
         opacity: 0;
         transform: translateY(-40px);
     }
-    15%, 85% {
+    10%, 90% {
         opacity: 1;
         transform: translateY(0);
     }
@@ -607,7 +636,6 @@ body[data-theme="dark-knight"] .btn-loading::after {
 .header-icon-btn {
     padding: 0.5rem; /* 8px */
     border-radius: 9999px; /* rounded-full */
-    transition: background-color 0.2s;
 }
 
 .header-icon-btn:hover {
@@ -713,5 +741,96 @@ body[data-theme="dark-knight"] .btn-loading::after {
 }
 .stepper-item.completed + .stepper-line {
     background-color: #22c55e;
+}
+/* ### 修改結束 ### */
+
+/* ### 新增：Prompt Wizard 樣式 ### */
+.wizard-section {
+    padding: 1rem;
+    border: 1px solid var(--card-border);
+    border-radius: 0.5rem; /* rounded-lg */
+    background-color: var(--gray-bg);
+}
+
+.wizard-section-title {
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 700; /* font-bold */
+    color: var(--heading-color);
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.wizard-question {
+    font-weight: 600; /* font-semibold */
+    color: var(--text-color);
+}
+
+.wizard-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.form-checkbox, .form-radio {
+    margin-right: 0.75rem;
+    color: var(--link-color);
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.form-checkbox:focus, .form-radio:focus {
+     --tw-ring-color: var(--link-color);
+}
+
+#prompt-wizard-content::-webkit-scrollbar {
+  width: 8px;
+}
+#prompt-wizard-content::-webkit-scrollbar-track {
+  background: var(--gray-bg);
+  border-radius: 4px;
+}
+#prompt-wizard-content::-webkit-scrollbar-thumb {
+  background: var(--gray-text);
+  border-radius: 4px;
+}
+#prompt-wizard-content::-webkit-scrollbar-thumb:hover {
+  background: var(--link-color);
+}
+
+/* ### 修改開始：新增進階 SEO 面板樣式 ### */
+.internal-link-suggestion {
+    padding: 0.75rem; /* p-3 */
+    border-radius: 0.375rem; /* rounded-md */
+    border: 1px solid var(--card-border);
+    background-color: var(--bg-color);
+    font-size: 0.875rem; /* text-sm */
+}
+
+.internal-link-suggestion strong {
+    color: var(--heading-color);
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.internal-link-suggestion blockquote {
+    border-left: 3px solid var(--link-color);
+    padding-left: 0.75rem;
+    margin: 0.5rem 0;
+    font-style: italic;
+    color: var(--gray-text);
+}
+
+.internal-link-suggestion .suggestion-target {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--card-border);
+}
+
+.internal-link-suggestion .suggestion-target a {
+    color: var(--link-color);
+    font-weight: 600;
+    word-break: break-all;
 }
 /* ### 修改結束 ### */
