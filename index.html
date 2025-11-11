@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>丫亮笑長的 Youtube 工具一條龍</title>
+    <link rel="icon" href="data:,">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ########## NEW: QUILL.JS EDITOR LIBS ########## -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <!-- ########## END NEW ########## -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="font-sans flex flex-col min-h-screen">
@@ -37,8 +42,9 @@
 
             <div class="flex border-b border-[var(--card-border)]">
                 <button id="tab1-btn" class="tab-btn active" data-tab="tab1">1. 字幕整理與優化</button>
-                <button id="tab2-btn" class="tab-btn" data-tab="tab2">2. 部落格文章生成<span id="tab2-dot" class="notification-dot hidden"></span></button>
-                <button id="tab3-btn" class="tab-btn" data-tab="tab3">3. 社群貼文生成<span id="tab3-dot" class="notification-dot hidden"></span></button>
+                <button id="tab2-btn" class="tab-btn" data-tab="tab2" disabled title="請先在分頁 1 輸入內容並設定 API Key">2. 部落格文章生成<span id="tab2-dot" class="notification-dot hidden"></span></button>
+                <button id="tab3-btn" class="tab-btn" data-tab="tab3" disabled title="請先在分頁 1 輸入內容並設定 API Key">3. 社群貼文生成<span id="tab3-dot" class="notification-dot hidden"></span></button>
+                <button id="tab4-btn" class="tab-btn" data-tab="tab4" disabled title="請先在分頁 1 輸入內容並設定 API Key">4. 電子報內容生成<span id="tab4-dot" class="notification-dot hidden"></span></button>
             </div>
 
             <div class="p-6">
@@ -106,8 +112,8 @@
                         <button id="export-srt-btn" class="font-bold py-2 px-4 rounded btn-disabled" disabled>匯出 SRT 檔案</button>
                         <div class="border-l border-gray-300 h-8 mx-2"></div>
                         <button id="batch-replace-btn" class="font-bold py-2 px-4 rounded btn-secondary">批次取代</button>
-                        <button id="generate-summary-btn" class="font-bold py-2 px-4 rounded btn-disabled" disabled>生成摘要</button>
-                        <button id="generate-chapters-btn" class="font-bold py-2 px-4 rounded btn-disabled" disabled>生成章節</button>
+                        <button id="generate-summary-btn" class="font-bold py-2 px-4 rounded btn-disabled" disabled title="請先輸入內容並設定 API Key">生成摘要</button>
+                        <button id="generate-chapters-btn" class="font-bold py-2 px-4 rounded btn-disabled" disabled title="請先輸入內容並設定 API Key">生成章節</button>
                         <div class="border-l border-gray-300 h-8 mx-2"></div>
                         <button id="reset-app-btn" class="font-bold py-2 px-4 rounded btn-danger">重置頁面</button>
                         </div>
@@ -253,14 +259,16 @@
                             </div>
                             
                             <div id="blog-output-container" class="hidden">
+                                <!-- ########## REFACTORED: BLOG PREVIEW TO EDITOR ########## -->
                                 <div id="blog-view-preview" class="blog-view-content">
-                                    <div class="relative p-4 border rounded-lg border-[var(--card-border)] bg-[var(--gray-bg)]">
-                                        <div class="absolute top-2 right-2 space-x-2">
+                                    <div class="relative">
+                                        <div class="absolute top-2 right-2 space-x-2 z-20">
                                             <button id="download-html-btn" class="font-bold py-1 px-3 rounded btn-secondary text-sm">HTML</button>
                                             <button id="download-md-btn" class="font-bold py-1 px-3 rounded btn-secondary text-sm">MD</button>
                                         </div>
-                                        <h4 class="text-lg font-semibold mb-2 heading-color">文章預覽</h4>
-                                        <div id="blog-preview" class="prose max-w-none"></div>
+                                        <div id="blog-editor-container" class="bg-white rounded-lg">
+                                            <!-- Quill Editor will be initialized here -->
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -382,10 +390,8 @@
                                 </button>
                             </div>
                             <div class="p-3 rounded-md border border-[var(--card-border)] bg-[var(--gray-bg)] mt-4">
-                                <div class="flex justify-between items-center">
-                                    <p id="social-source-status" class="text-sm font-semibold text-[var(--heading-color)]"><span id="social-status-icon" class="hidden">✔️ </span>內容來源：字幕原始檔</p>
-                                    <button id="go-to-optimize-btn" class="text-sm upload-link">前往優化 &gt;</button>
-                                </div>
+                                <p id="social-source-status" class="text-sm font-semibold text-[var(--heading-color)] mb-2"><span id="social-status-icon" class="hidden">✔️ </span>內容來源：字幕原始檔</p>
+                                <button id="social-go-to-optimize-btn" class="w-full font-bold py-2 px-4 rounded btn-secondary">🚀 前往優化文本 (建議)</button>
                             </div>
                              <div>
                                 <label for="social-objective" class="font-semibold">貼文目標</label>
@@ -407,34 +413,30 @@
                                 <label for="social-cta" class="font-semibold">行動呼籲 (CTA)</label>
                                 <textarea id="social-cta" rows="3" placeholder="例如：留言分享你的看法！" class="w-full mt-1 p-2 rounded"></textarea>
                             </div>
-                            <!-- ### 修改開始：新增社群貼文的多版本生成按鈕 ### -->
                             <div class="flex items-center gap-2">
                                 <button id="generate-social-btn" class="w-full font-bold py-3 px-6 rounded-lg text-lg btn-disabled" disabled>生成社群貼文</button>
                                 <button id="generate-social-variation-btn" class="font-bold py-2 px-4 rounded-lg btn-secondary text-sm whitespace-nowrap" disabled title="生成不同風格的版本">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" viewBox="0 0 20 20" fill="currentColor">
                                       <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
                                     </svg>
+                                    另一版本
                                 </button>
                             </div>
-                             <!-- ### 修改結束 ### -->
                         </div>
                         <div class="md:col-span-7 relative">
-                             <button id="social-copy-btn" class="absolute top-0 right-0 mt-1 mr-1 font-bold py-1 px-3 rounded btn-secondary text-sm z-10 hidden">複製內容</button>
-                             <!-- ### 修改開始：新增社群貼文版本切換的容器 ### -->
                              <div id="social-versions-tabs-container" class="flex border-b border-[var(--card-border)]">
-                                <!-- Social version tabs will be dynamically inserted here -->
                              </div>
-                              <!-- ### 修改結束 ### -->
                              <div class="flex border-b border-[var(--card-border)]">
                                 <button class="social-tab-btn active" data-social-tab="facebook">Facebook</button>
                                 <button class="social-tab-btn" data-social-tab="instagram">Instagram</button>
                                 <button class="social-tab-btn" data-social-tab="line">Line</button>
+                                <button id="social-copy-btn" class="ml-auto font-bold py-1 px-3 my-1 rounded btn-secondary text-sm z-10 hidden">複製內容</button>
                              </div>
                              <div id="social-output-container" class="relative mt-2 border border-[var(--card-border)] rounded bg-[var(--gray-bg)] h-[600px]">
                                 <div id="facebook-post-output" class="social-post-content p-4"></div>
                                 <div id="instagram-post-output" class="social-post-content p-4 hidden"></div>
                                 <div id="line-post-output" class="social-post-content p-4 hidden"></div>
-                                <div id="social-placeholder" class="flex items-center justify-center h-full text-center text-[var(--gray-text)]">
+                                <div id="social-placeholder" class="flex items-center justify-center h-full text-center text-gray-500">
                                     <div class="flex flex-col items-center justify-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
                                           <path stroke-linecap="round" stroke-linejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2V7a2 2 0 012-2h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H17z" />
@@ -447,6 +449,64 @@
                         </div>
                      </div>
                 </div>
+
+                <div id="tab4" class="tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-10 gap-8">
+                        <div class="md:col-span-3 space-y-4">
+                            <div class="border-b-2 border-[var(--heading-color)] pb-2">
+                                <h3 class="text-xl font-bold heading-color">電子報設定</h3>
+                            </div>
+                            <div class="p-3 rounded-md border border-[var(--card-border)] bg-[var(--gray-bg)]">
+                                <p id="edm-source-status" class="text-sm font-semibold text-[var(--heading-color)] mb-2">內容來源：字幕原始檔</p>
+                                <button id="edm-go-to-optimize-btn" class="w-full font-bold py-2 px-4 rounded btn-secondary">🚀 前往優化文本 (建議)</button>
+                            </div>
+                            
+                            <div>
+                                <label for="edm-audience" class="font-semibold">目標讀者</label>
+                                <select id="edm-audience" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                            </div>
+                            <div>
+                                <label for="edm-style" class="font-semibold">寫作風格</label>
+                                <select id="edm-style" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button id="generate-edm-btn" class="w-full font-bold py-3 px-6 rounded-lg text-lg btn-primary">生成電子報內容</button>
+                                <button id="generate-edm-variation-btn" class="font-bold py-2 px-4 rounded-lg btn-secondary text-sm whitespace-nowrap" disabled title="生成不同風格的版本">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" viewBox="0 0 20 20" fill="currentColor">
+                                      <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
+                                    </svg>
+                                    另一版本
+                                </button>
+                            </div>
+                        </div>
+                        <div class="md:col-span-7 relative">
+                            <div id="edm-versions-tabs-container" class="flex border-b border-[var(--card-border)]">
+                            </div>
+                            <div class="flex border-b border-[var(--card-border)] items-center mb-2">
+                                <h4 class="text-lg font-semibold heading-color px-4 py-2">電子報內容預覽</h4>
+                                <button id="copy-edm-html-btn" class="ml-auto font-bold py-1 px-3 my-1 mr-2 rounded btn-secondary text-sm z-10 hidden">複製 HTML</button>
+                            </div>
+                            <div id="edm-output-container" class="relative border border-[var(--card-border)] rounded bg-white h-[70vh] p-4 overflow-y-auto hidden">
+                                <div id="edm-preview" class="prose max-w-none">
+                                </div>
+                            </div>
+                            <div id="edm-placeholder" class="flex items-center justify-center h-[70vh] text-center text-gray-500 border border-dashed border-[var(--card-border)] rounded">
+                                <div class="flex flex-col items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    <p class="font-semibold text-lg">將您的內容轉化為引人入勝的電子報</p>
+                                    <p class="mt-2 text-sm max-w-sm">
+                                        為了獲得最佳生成效果，AI 會優先使用您已生成的「部落格文章」或「優化文本」。
+                                        <br>
+                                        您可以點擊左側的「優化文本」按鈕來提升內容品質，或直接開始生成。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
         
@@ -652,15 +712,20 @@
             </div>
         </div>
     </div>
-
+    <script type="module">
+        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+        window.GoogleGenerativeAI = GoogleGenerativeAI;
+    </script>
 
    <script src="js/state.js"></script>
     <script src="js/gemini-api.js"></script>
     <script src="js/srt-processor.js"></script>
     <script src="js/ui-components.js"></script>
+    <script src="js/optimization-service.js"></script>
     <script src="js/tab1-srt.js"></script>
     <script src="js/tab2-blog.js"></script>
     <script src="js/tab3-social.js"></script>
+    <script src="js/tab4-edm.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
