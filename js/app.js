@@ -23,69 +23,104 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 全域函式 ---
 
+    // ########## REFACTORED ##########
     window.updateAiButtonStatus = function() {
-        const apiKey = sessionStorage.getItem('geminiApiKey');
-        const hasSourceContent = document.getElementById('smart-area').value.trim().length > 0;
+        const hasContent = document.getElementById('smart-area').value.trim().length > 0;
+        const hasApiKey = !!sessionStorage.getItem('geminiApiKey');
         
-        const tab1AiButtons = [document.getElementById('generate-chapters-btn'), document.getElementById('generate-summary-btn')];
-        
-        // [第二階段優化] - 禁用邏輯只判斷是否有內容，不再判斷 apiKey
-        const isTab1ContentAvailable = hasSourceContent;
-        const isTab1ButtonStyledAsActive = apiKey && isTab1ContentAvailable;
+        const isAiDisabled = !hasContent || !hasApiKey;
+        let tooltip = '';
+        if (isAiDisabled) {
+            if (!hasContent && !hasApiKey) tooltip = '請先輸入內容並設定 API Key';
+            else if (!hasContent) tooltip = '請先貼上字幕內容';
+            else tooltip = '請先設定 API Key';
+        }
 
-        tab1AiButtons.forEach(btn => {
+        const updateButtonState = (btn, defaultTitle, isDisabled, customTooltip) => {
             if (btn) {
-                btn.disabled = !isTab1ContentAvailable; // 只根據內容判斷是否禁用
-                // 樣式依然可以根據是否有 key 改變，給予視覺提示
-                btn.className = isTab1ButtonStyledAsActive ? 'font-bold py-2 px-4 rounded btn-primary' : 'font-bold py-2 px-4 rounded btn-disabled';
+                btn.disabled = isDisabled;
+                btn.title = isDisabled ? (customTooltip || tooltip) : defaultTitle;
+                
+                let baseClasses = btn.className.split(' ').filter(c => !['btn-primary', 'btn-disabled'].includes(c)).join(' ');
+                btn.className = `${baseClasses} ${isDisabled ? 'btn-disabled' : 'btn-primary'}`;
             }
-        });
+        };
 
-        const tab2AiButton = document.getElementById('optimize-text-for-blog-btn');
-        const tab3AiButton = document.getElementById('generate-social-btn');
+        // Tab 1 AI buttons
+        updateButtonState(document.getElementById('generate-summary-btn'), '生成摘要', isAiDisabled);
+        updateButtonState(document.getElementById('generate-chapters-btn'), '生成章節', isAiDisabled);
         
-        const hasAnyContent = hasSourceContent || (window.hasBlogDraft && window.hasBlogDraft()) || (window.hasSocialDraft && window.hasSocialDraft());
-        // [第二階段優化] - 禁用邏輯只判斷是否有內容，不再判斷 apiKey
-        const isOtherContentAvailable = hasAnyContent;
-        const isOtherButtonStyledAsActive = apiKey && isOtherContentAvailable;
+        // ########## CRITICAL FIX START ##########
+        // 優化文本按鈕的邏輯修正
+        const optimizeBtn = document.getElementById('optimize-text-for-blog-btn');
+        if(optimizeBtn) {
+            optimizeBtn.disabled = isAiDisabled;
+            optimizeBtn.title = isAiDisabled ? tooltip : '使用 AI 將逐字稿優化為流暢文章 (建議)';
+            if (isAiDisabled) {
+                optimizeBtn.classList.remove('btn-primary');
+                optimizeBtn.classList.add('btn-disabled');
+            } else {
+                optimizeBtn.classList.remove('btn-disabled');
+                optimizeBtn.classList.add('btn-primary');
+            }
+        }
+        // ########## CRITICAL FIX END ##########
 
-        if (tab2AiButton) {
-            tab2AiButton.disabled = !isOtherContentAvailable;
-            tab2AiButton.className = isOtherButtonStyledAsActive ? 'w-full font-bold py-2 px-4 rounded btn-primary' : 'w-full font-bold py-2 px-4 rounded btn-disabled';
-        }
-        if (tab3AiButton) {
-            tab3AiButton.disabled = !isOtherContentAvailable;
-            tab3AiButton.className = isOtherButtonStyledAsActive ? 'w-full font-bold py-3 px-6 rounded-lg text-lg btn-primary' : 'w-full font-bold py-3 px-6 rounded-lg text-lg btn-disabled';
-        }
+        // Tab 2, 3, 4 Main AI buttons
+        updateButtonState(document.getElementById('generate-blog-btn'), '生成部落格文章', isAiDisabled);
+        updateButtonState(document.getElementById('generate-social-btn'), '生成社群貼文', isAiDisabled);
+        updateButtonState(document.getElementById('generate-edm-btn'), '生成電子報內容', isAiDisabled);
+
+        // 處理 Variation 按鈕的禁用狀態
+        const blogVariationBtn = document.getElementById('generate-blog-variation-btn');
+        if(blogVariationBtn) blogVariationBtn.disabled = state.blogArticleVersions.length === 0;
+
+        const socialVariationBtn = document.getElementById('generate-social-variation-btn');
+        if(socialVariationBtn) socialVariationBtn.disabled = state.socialPostVersions.length === 0;
+        
+        const edmVariationBtn = document.getElementById('generate-edm-variation-btn');
+        if(edmVariationBtn) edmVariationBtn.disabled = state.edmVersions.length === 0;
     }
     
-    // ### 新增：建立統一的來源狀態更新函式 ###
-    window.updateSourceStatusUI = function(sourceType) {
-        const blogSourceStatus = document.getElementById('blog-source-status');
-        const socialSourceStatus = document.getElementById('social-source-status');
+    window.updateSourceStatusUI = function() {
+        const hasOptimizedText = state.optimizedTextForBlog && state.optimizedTextForBlog.trim().length > 0;
+        const hasGeneratedBlog = state.blogArticleVersions && state.blogArticleVersions.length > 0;
         
-        const optimizedText = '<span class="">✔️ </span>內容來源：已優化的文本';
-        const rawText = '<span class="hidden">✔️ </span>內容來源：字幕原始檔';
+        let sourceType = 'raw';
+        if (hasGeneratedBlog) sourceType = 'blog';
+        else if (hasOptimizedText) sourceType = 'optimized';
 
-        if (sourceType === 'optimized') {
-            if (blogSourceStatus) {
-                blogSourceStatus.innerHTML = optimizedText;
-                blogSourceStatus.classList.add('text-green-600');
+        const statusMap = {
+            raw: '內容來源：字幕原始檔',
+            optimized: '✔️ 內容來源：已優化的文本',
+            blog: '🏆 內容來源：已生成的部落格文章 (品質最佳)'
+        };
+
+        const buttonMap = {
+            raw: { text: '🚀 優化文本以提升品質', action: () => optimizationService.optimizeSourceText() },
+            optimized: { text: '📝 前往生成部落格 (可選)', action: () => window.switchTab('tab2') },
+        };
+
+        const updateElements = (prefix) => {
+            const statusEl = document.getElementById(`${prefix}-source-status`);
+            const buttonEl = document.getElementById(`${prefix}-go-to-optimize-btn`);
+
+            if (statusEl) {
+                statusEl.innerHTML = statusMap[sourceType];
+                statusEl.classList.toggle('text-green-600', sourceType !== 'raw');
             }
-            if (socialSourceStatus) {
-                socialSourceStatus.innerHTML = optimizedText;
-                socialSourceStatus.classList.add('text-green-600');
+            if (buttonEl) {
+                if (sourceType === 'blog') {
+                    buttonEl.classList.add('hidden');
+                } else {
+                    buttonEl.textContent = buttonMap[sourceType].text;
+                    buttonEl.onclick = buttonMap[sourceType].action;
+                    buttonEl.classList.remove('hidden');
+                }
             }
-        } else {
-            if (blogSourceStatus) {
-                blogSourceStatus.innerHTML = rawText;
-                blogSourceStatus.classList.remove('text-green-600');
-            }
-            if (socialSourceStatus) {
-                socialSourceStatus.innerHTML = rawText;
-                socialSourceStatus.classList.remove('text-green-600');
-            }
-        }
+        };
+
+        ['blog', 'social', 'edm'].forEach(updateElements);
     }
 
     function toggleAppearancePanel() { appearancePanel.classList.toggle('hidden'); }
@@ -151,31 +186,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     window.updateTabAvailability = function() {
-        const hasSourceContent = document.getElementById('smart-area').value.trim().length > 0;
+        const hasContent = document.getElementById('smart-area').value.trim().length > 0;
+        
+        const tabs = [
+            { btn: document.getElementById('tab2-btn'), dot: document.getElementById('tab2-dot'), defaultTitle: '將字幕稿轉為部落格文章' },
+            { btn: document.getElementById('tab3-btn'), dot: document.getElementById('tab3-dot'), defaultTitle: '為多個社群平台生成貼文' },
+            { btn: document.getElementById('tab4-btn'), dot: document.getElementById('tab4-dot'), defaultTitle: '將文章內容生成電子報' }
+        ];
+
+        tabs.forEach(tab => {
+            if (tab.btn) {
+                tab.btn.disabled = !hasContent;
+                tab.btn.title = hasContent ? tab.defaultTitle : '請先在分頁 1 貼上您的字幕內容';
+            }
+        });
+        
         const hasTab2Draft = window.hasBlogDraft && window.hasBlogDraft();
+        document.getElementById('tab2-dot').classList.toggle('hidden', !hasTab2Draft);
         const hasTab3Draft = window.hasSocialDraft && window.hasSocialDraft();
-
-        const tab2Btn = document.getElementById('tab2-btn');
-        const tab3Btn = document.getElementById('tab3-btn');
-        const tab2Dot = document.getElementById('tab2-dot');
-        const tab3Dot = document.getElementById('tab3-dot');
-
-        if (hasSourceContent || hasTab2Draft) {
-            tab2Btn.disabled = false;
-            tab2Dot.classList.toggle('hidden', !hasTab2Draft);
-        } else {
-            tab2Btn.disabled = true;
-            tab2Dot.classList.add('hidden');
-        }
-
-        if (hasSourceContent || hasTab3Draft) {
-            tab3Btn.disabled = false;
-            tab3Dot.classList.toggle('hidden', !hasTab3Draft);
-        } else {
-            tab3Btn.disabled = true;
-            tab3Dot.classList.add('hidden');
-        }
+        document.getElementById('tab3-dot').classList.toggle('hidden', !hasTab3Draft);
+        
+        window.updateSourceStatusUI();
     }
+
 
     window.switchTab = (tabId) => {
         allTabButtons.forEach(btn => btn.classList.remove('active'));
@@ -189,15 +222,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dot) { dot.classList.add('hidden'); }
 
         if (tabId === 'tab2' && window.updateStepperUI) { window.updateStepperUI(); }
+        window.updateSourceStatusUI();
     }
     
     function initialize() {
         initializeTab1();
         initializeTab2();
         initializeTab3();
+        initializeTab4();
 
-        window.updateTabAvailability();
-        window.updateAiButtonStatus();
+        updateApiKeyStatus();
 
         appearanceBtn.addEventListener('click', toggleAppearancePanel);
         apiKeyBtn.addEventListener('click', showApiKeyModal);
@@ -210,7 +244,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        allTabButtons.forEach(button => button.addEventListener('click', () => !button.disabled && window.switchTab(button.dataset.tab)));
+        allTabButtons.forEach(button => button.addEventListener('click', () => {
+            if (!button.disabled) {
+                window.switchTab(button.dataset.tab);
+            }
+        }));
+        
         modalCloseBtn.addEventListener('click', hideModal);
         modalCopyBtn.addEventListener('click', copyModalContent);
         
@@ -222,8 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => { location.reload(); }, 500);
             }
         });
-        
-        updateApiKeyStatus();
     }
 
     initialize();

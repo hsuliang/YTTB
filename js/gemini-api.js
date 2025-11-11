@@ -1,84 +1,61 @@
 /**
  * gemini-api.js
  * 封裝所有與 Google Gemini API 互動的邏輯。
- * 包含自動重試與指數退避策略。
+ * 使用官方 @google/generative-ai SDK。
  */
 
 /**
+ * 【使用官方 SDK 版本】
  * 呼叫 Gemini API 並獲取回應。
+ * SDK 會自動處理重試與指數退避。
+ *
  * @param {string} apiKey - 您的 Gemini API Key。
  * @param {string} prompt - 要發送給模型的提示詞。
+ * @param {boolean} forceJson - 是否強制使用 JSON 輸出模式。
  * @returns {Promise<string>} AI 生成的文本內容。
  * @throws {Error} 如果 API 請求最終失敗，則拋出錯誤。
  */
-async function callGeminiAPI(apiKey, prompt) {
-    // ### 修正：API URL 已恢復為您指定的版本 ###
-    const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+async function callGeminiAPI(apiKey, prompt, forceJson = false) {
     
-    // 新增強制使用繁體中文的指令
-    const finalPrompt = `請注意：你必須且只能使用「繁體中文（台灣）」進行回覆，絕對不可以使用簡體中文。\n\n${prompt}`;
-    
-    // --- 自動重試與指數退避策略 ---
-    const MAX_RETRIES = 3;    // 最多重試 3 次
-    let delay = 2000;         // 初始等待 2 秒
+    if (!window.GoogleGenerativeAI) {
+        throw new Error("Google AI SDK 尚未載入。");
+    }
 
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: finalPrompt }] }], // 使用加上指令的 finalPrompt
-                }),
-            });
+    try {
+        const genAI = new window.GoogleGenerativeAI(apiKey);
 
-            if (!response.ok) {
-                const error = new Error(`HTTP error! status: ${response.status}`);
-                error.status = response.status;
-                try {
-                    const errorBody = await response.json();
-                    if (errorBody.error && errorBody.error.message) {
-                        error.message = errorBody.error.message;
-                    }
-                } catch (e) {
-                    // 忽略 non-json 錯誤
-                }
-                throw error;
-            }
+        const generationConfig = {
+            responseMimeType: forceJson ? "application/json" : "text/plain",
+        };
+        
+        const systemInstruction = {
+            role: "system",
+            parts: [{ text: "請注意：你必須且只能使用「繁體中文（台灣）」進行回覆，絕對不可以使用簡體中文。"}]
+        };
 
-            const data = await response.json();
-            
-            // 檢查 API 回應結構是否符合預期
-            if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
-                console.log(`Gemini API call successful on attempt ${attempt}.`);
-                return data.candidates[0].content.parts[0].text;
-            } else {
-                // 如果回應結構不符，可能是因為模型被安全設定阻擋
-                console.error("API response structure is unexpected. It might be blocked due to safety settings.", data);
-                throw new Error("模型未返回有效內容，可能已被安全設定阻擋。");
-            }
+        // ########## UPDATED: USE ALIAS VERSION ##########
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-flash",
+            generationConfig: generationConfig,
+            systemInstruction: systemInstruction,
+        });
 
-        } catch (error) {
-            console.error(`Gemini API call attempt ${attempt} failed:`, error.message);
-            
-            const isRetriable = 
-                error.status === 503 ||
-                error.status === 429 ||
-                error.status === 500 ||
-                (error.message && error.message.toLowerCase().includes('overloaded'));
+        console.log("Calling Gemini SDK with model: gemini-1.5-flash-latest");
+        const result = await model.generateContent(prompt);
+        const response = result.response;
 
-            if (isRetriable) {
-                if (attempt === MAX_RETRIES) {
-                    console.error("Max retries reached. Failing permanently.");
-                    throw error; 
-                }
-                console.warn(`Attempt ${attempt} failed with a retriable error. Retrying in ${delay / 1000}s...`);
-                await new Promise(resolve => setTimeout(resolve, delay));
-                delay *= 2;
-            } else {
-                console.error("Non-retriable error encountered. Failing immediately.");
-                throw error; 
-            }
+        if (response.promptFeedback && response.promptFeedback.blockReason) {
+             throw new Error(`請求因安全設定而被阻擋，原因：${response.promptFeedback.blockReason}`);
         }
+        
+        if (!response.candidates || response.candidates[0].finishReason === 'SAFETY') {
+             throw new Error("內容因違反安全政策而被 Google AI 阻擋。請檢查您的原始字幕內容是否包含敏感詞彙。");
+        }
+
+        return response.text();
+
+    } catch (error) {
+        console.error("Gemini SDK 呼叫失敗:", error);
+        throw new Error(`API 請求失敗：${error.message}`);
     }
 }

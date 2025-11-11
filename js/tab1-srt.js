@@ -98,14 +98,10 @@ function resetTab1() {
 function initializeTab1() {
     // --- 函式定義 ---
     async function handleAiFeature(type) {
-        // [第二階段優化] - 智慧 API Key 檢查
+        // ########## FIX START ##########
+        // 移除內部的 API Key 檢查，因為外部的 app.js 邏輯已確保按鈕在無 Key 時被禁用
         const apiKey = sessionStorage.getItem('geminiApiKey');
-        if (!apiKey) {
-            // 直接呼叫全域函式 showApiKeyModal
-            if(window.showApiKeyModal) window.showApiKeyModal();
-            else alert('請先設定您的 Gemini API Key。');
-            return;
-        }
+        // ########## FIX END ##########
 
         const content = state.processedSrtResult.trim() || smartArea.value.trim();
         if (!content) {
@@ -315,7 +311,6 @@ function initializeTab1() {
         timestampThresholdInput.classList.toggle('opacity-50', !fixTimestampsCheckbox.checked);
     });
     
-    // [第二階段優化] - 為返回編輯按鈕綁定事件
     if(returnToEditBtn) {
         returnToEditBtn.addEventListener('click', returnToEditMode);
     }

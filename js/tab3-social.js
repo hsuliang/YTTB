@@ -23,7 +23,6 @@ window.restoreSocialDraft = function() {
         document.getElementById('smart-area').value = draft.sourceContent || '';
         state.optimizedTextForBlog = draft.optimizedContent || '';
         state.blogSourceType = draft.sourceType || 'raw';
-        if(window.updateSourceStatusUI) window.updateSourceStatusUI(state.blogSourceType);
         
         document.getElementById('social-objective').value = draft.objective || '引導觀看 YouTube';
         document.getElementById('social-length').value = draft.length || '中等';
@@ -109,7 +108,6 @@ ${sourceText}
 ---`;
 }
 
-// ### 新增：多版本 UI 管理函式 ###
 function renderSocialVersionTabs() {
     const tabsContainer = document.getElementById('social-versions-tabs-container');
     tabsContainer.innerHTML = '';
@@ -139,7 +137,6 @@ function renderCurrentSocialVersionUI() {
     document.getElementById('instagram-post-output').textContent = currentVersion.instagram;
     document.getElementById('line-post-output').textContent = currentVersion.line;
 
-    // 確保當前平台的顯示是正確的
     switchSocialTab(state.activeSocialTab);
 }
 
@@ -147,7 +144,6 @@ function renderCurrentSocialVersionUI() {
 function initializeTab3() {
     const generateSocialBtn = document.getElementById('generate-social-btn');
     const generateSocialVariationBtn = document.getElementById('generate-social-variation-btn');
-    const socialVersionsTabsContainer = document.getElementById('social-versions-tabs-container');
     const socialOutputContainer = document.getElementById('social-output-container');
     const socialPlaceholder = document.getElementById('social-placeholder');
     const socialPostOutputs = {
@@ -157,7 +153,6 @@ function initializeTab3() {
     };
     const socialCopyBtn = document.getElementById('social-copy-btn');
     const socialTabBtns = document.querySelectorAll('.social-tab-btn');
-    const goToOptimizeBtn = document.getElementById('go-to-optimize-btn');
     const socialObjectiveSelect = document.getElementById('social-objective');
     const socialLengthSelect = document.getElementById('social-length');
     const socialToneSelect = document.getElementById('social-tone-select');
@@ -255,7 +250,14 @@ function initializeTab3() {
         const apiKey = sessionStorage.getItem('geminiApiKey');
         if (!apiKey) { if(window.showApiKeyModal) window.showApiKeyModal(); return; } 
 
-        const sourceText = (state.blogSourceType === 'optimized') ? state.optimizedTextForBlog : document.getElementById('smart-area').value.trim();
+        let sourceText = '';
+        const hasGeneratedBlog = state.blogArticleVersions && state.blogArticleVersions.length > 0;
+        const hasOptimizedText = state.optimizedTextForBlog && state.optimizedTextForBlog.trim().length > 0;
+
+        if (hasGeneratedBlog) sourceText = state.blogArticleVersions[state.currentBlogVersionIndex].htmlContent.replace(/<[^>]+>/g, ' ');
+        else if (hasOptimizedText) sourceText = state.optimizedTextForBlog;
+        else sourceText = document.getElementById('smart-area').value.trim();
+
         if (!sourceText) { showModal({ title: '錯誤', message: '缺少用於生成貼文的來源內容。' }); return; }
         
         let variationModifier = null;
@@ -280,7 +282,7 @@ function initializeTab3() {
         try {
             let fullResponse = '';
             let isValidResponse = false;
-            for (let i = 0; i < 2; i++) { // 最多重試1次
+            for (let i = 0; i < 2; i++) {
                 fullResponse = await callGeminiAPI(apiKey, prompt);
                 if (fullResponse.includes('[FACEBOOK_POST_START]') && fullResponse.includes('[INSTAGRAM_POST_START]') && fullResponse.includes('[LINE_POST_START]')) {
                     isValidResponse = true;
@@ -338,11 +340,7 @@ function initializeTab3() {
         if (state.socialPostVersions.length > 0 && !confirm("這將會清除所有已生成的版本並重新開始，您確定嗎？")) {
             return;
         }
-        if (state.blogSourceType === 'raw' && document.getElementById('smart-area').value.trim()) {
-            showModal({ title: '提醒', message: '您尚未優化文本...', buttons: [ { text: '取消', class: 'btn-secondary', callback: hideModal }, { text: '確定繼續', class: 'btn-primary', callback: () => { hideModal(); proceedGenerateSocialPosts(false); } } ] });
-        } else {
-            proceedGenerateSocialPosts(false);
-        }
+        proceedGenerateSocialPosts(false);
     }
 
     function generateSocialVariation() {
@@ -360,8 +358,7 @@ function initializeTab3() {
     closeSocialWizardBtn.addEventListener('click', closeSocialWizard);
     saveSocialWizardBtn.addEventListener('click', saveSocialWizardSettings);
     restoreSocialWizardDefaultsBtn.addEventListener('click', restoreSocialWizardDefaults);
-
-    goToOptimizeBtn.addEventListener('click', () => window.switchTab('tab2'));
+    
     generateSocialBtn.addEventListener('click', generateSocialPosts);
     generateSocialVariationBtn.addEventListener('click', generateSocialVariation);
     socialCopyBtn.addEventListener('click', copySocialPost);
