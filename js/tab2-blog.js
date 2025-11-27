@@ -470,7 +470,71 @@ function initializeTab2() {
         const apiKey = sessionStorage.getItem('geminiApiKey'); 
         if (!apiKey) { if(window.showApiKeyModal) window.showApiKeyModal(); return; } 
 
-        const content = document.getElementById('smart-area').value.trim(); if (!content) { showModal({ title: '錯誤', message: '請先在「智慧區域」中輸入內容。' }); return; } const prompt = `你是一位專業的文案編輯。請將以下的 SRT 字幕逐字稿，優化成一篇流暢易讀的純文字文章。\n規則：\n1. 加上適當的標點符號與段落，讓文章更通順。\n2. 絕對不可以改寫、改變原文的語意。\n3. 不可新增任何字幕中沒有的資訊或自己的評論。\n4. 修正明顯的錯別字，但保留口語化的風格。\n5. 移除所有時間戳和行號。\n6. 直接輸出優化後的文章，不要有任何前言或結語。\n\n字幕逐字稿如下：\n---\n${content}\n---`; showModal({ title: 'AI 優化中...', showProgressBar: true, taskType: 'optimize' }); const btn = optimizeTextForBlogBtn; btn.disabled = true; btn.classList.add('btn-loading'); try { const result = await callGeminiAPI(apiKey, prompt); showModal({ title: '文本優化完成', message: result, showCopyButton: true, buttons: [ { text: '取消', class: 'btn-secondary', callback: hideModal }, { text: '確認使用此版本', class: 'btn-primary', callback: () => confirmUseOptimizedText(result) } ] }); } catch (error) { if (error.message && error.message.includes('overloaded')) { showModal({ title: 'AI 正在尖峰時段，請稍候！', message: '別擔心...', buttons: [ { text: '關閉', class: 'btn-secondary', callback: hideModal }, { text: '立即重試', class: 'btn-primary', callback: () => { hideModal(); optimizeTextForBlog(); } } ] }); } else { showModal({ title: 'AI 處理失敗', message: `發生錯誤：${error.message}` }); } } finally { btn.disabled = false; btn.classList.remove('btn-loading'); } }
+        // 1. 定義來源：優先檢查是否有「已整理」的文本，若無則取用輸入框的原始文本
+        const processedContent = state.processedSrtResult ? state.processedSrtResult.trim() : '';
+        const rawContent = document.getElementById('smart-area').value.trim();
+
+        // 2. 定義執行 AI 優化的內部函式 (避免程式碼重複)
+        const executeOptimization = async (contentToUse) => {
+            const prompt = `你是一位專業的文案編輯。請將以下的 SRT 字幕逐字稿，優化成一篇流暢易讀的純文字文章。\n規則：\n1. 加上適當的標點符號與段落，讓文章更通順。\n2. 絕對不可以改寫、改變原文的語意。\n3. 不可新增任何字幕中沒有的資訊或自己的評論。\n4. 修正明顯的錯別字，但保留口語化的風格。\n5. 移除所有時間戳和行號。\n6. 直接輸出優化後的文章，不要有任何前言或結語。\n\n字幕逐字稿如下：\n---\n${contentToUse}\n---`; 
+            
+            showModal({ title: 'AI 優化中...', showProgressBar: true, taskType: 'optimize' }); 
+            const btn = optimizeTextForBlogBtn; 
+            btn.disabled = true; 
+            btn.classList.add('btn-loading'); 
+            
+            try { 
+                const result = await callGeminiAPI(apiKey, prompt); 
+                showModal({ 
+                    title: '文本優化完成', 
+                    message: result, 
+                    showCopyButton: true, 
+                    buttons: [ 
+                        { text: '取消', class: 'btn-secondary', callback: hideModal }, 
+                        { text: '確認使用此版本', class: 'btn-primary', callback: () => confirmUseOptimizedText(result) } 
+                    ] 
+                }); 
+            } catch (error) { 
+                if (error.message && error.message.includes('overloaded')) { 
+                    showModal({ 
+                        title: 'AI 正在尖峰時段，請稍候！', 
+                        message: '別擔心...', 
+                        buttons: [ 
+                            { text: '關閉', class: 'btn-secondary', callback: hideModal }, 
+                            { text: '立即重試', class: 'btn-primary', callback: () => { hideModal(); executeOptimization(contentToUse); } } 
+                        ] 
+                    }); 
+                } else { 
+                    showModal({ title: 'AI 處理失敗', message: `發生錯誤：${error.message}` }); 
+                } 
+            } finally { 
+                btn.disabled = false; 
+                btn.classList.remove('btn-loading'); 
+            }
+        };
+
+        // 3. 邏輯判斷流程
+        if (processedContent) {
+            // 情況 A：已經有整理過的文本 -> 直接執行
+            await executeOptimization(processedContent);
+        } else if (rawContent) {
+            // 情況 B：只有原始文本 (未經過 Tab 1 整理) -> 詢問使用者
+            showModal({
+                title: '提醒：尚未整理字幕',
+                message: '系統偵測到您尚未在分頁 1 執行「開始整理」。\n\n直接使用原始字幕（包含時間軸與換行）進行優化，可能會因為雜訊過多影響 AI 的產出品質。\n\n建議您先回到分頁 1 點擊「開始整理」按鈕。',
+                buttons: [
+                    { text: '取消，回去整理', class: 'btn-secondary', callback: hideModal },
+                    { text: '沒關係，繼續執行', class: 'btn-primary', callback: () => { 
+                        hideModal(); 
+                        executeOptimization(rawContent); 
+                    }}
+                ]
+            });
+        } else {
+            // 情況 C：完全沒有內容
+            showModal({ title: '錯誤', message: '請先在「智慧區域」中輸入內容。' }); 
+        }
+    }
     
     async function analyzeKeywords() {
         const apiKey = sessionStorage.getItem('geminiApiKey');

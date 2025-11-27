@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveApiKeyBtn = document.getElementById('save-api-key-btn');
     const apiKeyStatus = document.getElementById('api-key-status');
     const apiKeyCountdown = document.getElementById('api-key-countdown');
+    const toggleApiHelpBtn = document.getElementById('toggle-api-help-btn');
+    const apiKeyHelpPanel = document.getElementById('api-key-help-panel');
     const allTabButtons = document.querySelectorAll('.tab-btn');
     const allTabContents = document.querySelectorAll('.tab-content');
     const modalCloseBtn = document.getElementById('modal-close-btn');
@@ -237,6 +239,16 @@ document.addEventListener('DOMContentLoaded', () => {
         apiKeyBtn.addEventListener('click', showApiKeyModal);
         closeApiKeyModalBtn.addEventListener('click', hideApiKeyModal);
         saveApiKeyBtn.addEventListener('click', saveApiKey);
+        
+        if (toggleApiHelpBtn && apiKeyHelpPanel) {
+            toggleApiHelpBtn.addEventListener('click', () => {
+                apiKeyHelpPanel.classList.toggle('hidden');
+                const svg = toggleApiHelpBtn.querySelector('svg');
+                if (svg) {
+                    svg.classList.toggle('rotate-180');
+                }
+            });
+        }
 
         document.addEventListener('click', (event) => {
             if (!appearancePanel.classList.contains('hidden') && !appearancePanel.contains(event.target) && !appearanceBtn.contains(event.target)) {

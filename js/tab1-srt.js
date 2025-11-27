@@ -30,8 +30,16 @@ const replaceReplacementInput = document.getElementById('replace-replacement-inp
 const replaceRulesList = document.getElementById('replace-rules-list');
 const clearAllRulesBtn = document.getElementById('clear-all-rules-btn');
 const timelineShiftInput = document.getElementById('timeline-shift');
+const loadPresetRulesBtn = document.getElementById('load-preset-rules-btn');
+const savePresetRulesBtn = document.getElementById('save-preset-rules-btn');
+
 // [第二階段優化] - 新增返回編輯按鈕的選擇器
 const returnToEditBtn = document.getElementById('return-to-edit-btn');
+// [第三階段優化] - 新增字幕教學面板選擇器
+const toggleSubtitleHelpBtn = document.getElementById('toggle-subtitle-help-btn');
+const subtitleHelpPanel = document.getElementById('subtitle-help-panel');
+
+const STORAGE_KEY_REPLACE_RULES = 'aliang-yttb-replace-rules-preset';
 
 
 // --- 輔助函式 (模組級) ---
@@ -194,6 +202,49 @@ function initializeTab1() {
         renderReplaceRules();
     }
 
+    function savePresetRules() {
+        if (state.batchReplaceRules.length === 0) {
+            showToast('目前沒有規則可儲存。', { type: 'error' });
+            return;
+        }
+        try {
+            localStorage.setItem(STORAGE_KEY_REPLACE_RULES, JSON.stringify(state.batchReplaceRules));
+            showToast('✅ 已將目前規則儲存為常用範本！');
+        } catch (e) {
+            console.error('儲存失敗:', e);
+            showToast('儲存失敗，可能是儲存空間不足。', { type: 'error' });
+        }
+    }
+
+    function loadPresetRules() {
+        try {
+            const savedRules = localStorage.getItem(STORAGE_KEY_REPLACE_RULES);
+            if (!savedRules) {
+                showToast('尚無儲存的常用範本。', { type: 'error' });
+                return;
+            }
+            
+            const rules = JSON.parse(savedRules);
+            if (Array.isArray(rules) && rules.length > 0) {
+                // 混合模式策略：載入範本時，覆蓋當前暫存規則
+                if (state.batchReplaceRules.length > 0) {
+                    if (!confirm('載入範本將會清除目前未儲存的規則，確定要繼續嗎？')) {
+                        return;
+                    }
+                }
+                
+                state.batchReplaceRules = rules;
+                renderReplaceRules();
+                showToast(`📥 已載入 ${rules.length} 條常用規則！`);
+            } else {
+                showToast('儲存的範本格式錯誤或為空。', { type: 'error' });
+            }
+        } catch (e) {
+            console.error('載入失敗:', e);
+            showToast('載入失敗，請重試。', { type: 'error' });
+        }
+    }
+
     function switchView(viewToShow) {
         allViewButtons.forEach(btn => btn.classList.remove('active'));
         document.querySelector(`.view-btn[data-view="${viewToShow}"]`).classList.add('active');
@@ -260,21 +311,60 @@ function initializeTab1() {
         try {
             const result = processSubtitles(currentSrtContent, options);
             state.processedSrtResult = result.processedSrt;
+            const report = result.report;
+
             setMode('preview');
             displayOriginal.textContent = formatSrtForDisplay(state.originalContentForPreview, '');
             displayProcessed.textContent = formatSrtForDisplay(state.processedSrtResult, '');
             switchView('processed');
             updateCharCount(state.processedSrtResult);
             
-            // [第二階段優化] - 使用帶有按鈕的 Toast 進行流程引導
-            showToast('字幕整理完成！', {
-                type: 'success',
-                action: {
-                    text: '前往生成文章 >',
-                    callback: () => window.switchTab('tab2')
-                }
-            });
+            // 計算行數縮減百分比
+            let reductionPercent = 0;
+            if (report.originalLineCount > 0) {
+                reductionPercent = Math.round(((report.originalLineCount - report.finalLineCount) / report.originalLineCount) * 100);
+            }
             
+            // 構建報告訊息 HTML (使用字串組裝以避免換行符號造成的空白)
+            let listItems = '';
+            
+            // 1. 行數縮減
+            listItems += `<li class="flex flex-row items-center m-0 p-0"><span class="flex-shrink-0 w-6 text-center mr-2 text-base">📉</span><span><strong>行數縮減：</strong> ${report.originalLineCount} 行 ➔ ${report.finalLineCount} 行 ${reductionPercent > 0 ? `<span class="text-green-600 font-bold">(-${reductionPercent}%)</span>` : ''}</span></li>`;
+            
+            // 2. 段落合併
+            listItems += `<li class="flex flex-row items-center m-0 p-0"><span class="flex-shrink-0 w-6 text-center mr-2 text-base">🔗</span><span><strong>段落合併：</strong> 執行 ${report.linesMerged} 次</span></li>`;
+            
+            // 3. 長句拆分 (條件式)
+            if (report.linesSplit > 0) {
+                listItems += `<li class="flex flex-row items-center m-0 p-0"><span class="flex-shrink-0 w-6 text-center mr-2 text-base">✂️</span><span><strong>長句拆分：</strong> 執行 ${report.linesSplit} 次</span></li>`;
+            }
+            
+            // 4. 時間軸修復
+            listItems += `<li class="flex flex-row items-center m-0 p-0"><span class="flex-shrink-0 w-6 text-center mr-2 text-base">⏱️</span><span><strong>時間軸修復：</strong> ${report.fixedOverlaps + report.fixedGaps} 處</span></li>`;
+            
+            // 5. 批次取代
+            listItems += `<li class="flex flex-row items-center m-0 p-0"><span class="flex-shrink-0 w-6 text-center mr-2 text-base">🔄</span><span><strong>批次取代：</strong> 共執行 ${report.replacementsMade} 次</span></li>`;
+            
+            // 6. 時間平移 (條件式)
+            if (report.timelineShifted !== 0) {
+                listItems += `<li class="flex flex-row items-center m-0 p-0"><span class="flex-shrink-0 w-6 text-center mr-2 text-base">↔️</span><span><strong>時間平移：</strong> ${report.timelineShifted} ms</span></li>`;
+            }
+
+            const reportHtml = `<div class="py-1"><ul class="m-0 p-0 list-none space-y-1 text-sm text-gray-700 leading-normal">${listItems}</ul><p class="text-center text-gray-500 text-xs mt-3 pt-2 border-t border-gray-200">您的字幕已準備好進行下一步！</p></div>`;
+
+            showModal({
+                title: '✅ 字幕整理報告',
+                message: reportHtml, // 這裡直接傳入 HTML 字串，showModal 需支援 HTML (通常 innerHTML 即可)
+                isHtml: true, // 確保 showModal 知道這是 HTML (如果您的實作需要這個 flag)
+                buttons: [
+                    { text: '留在本頁', class: 'btn-secondary', callback: hideModal },
+                    { text: '前往生成文章 >', class: 'btn-primary', callback: () => {
+                        hideModal();
+                        window.switchTab('tab2');
+                    }}
+                ]
+            });
+
             exportSrtBtn.disabled = false;
             exportSrtBtn.className = 'font-bold py-2 px-4 rounded btn-success';
         } catch (error) {
@@ -315,6 +405,16 @@ function initializeTab1() {
         returnToEditBtn.addEventListener('click', returnToEditMode);
     }
     
+    if (toggleSubtitleHelpBtn && subtitleHelpPanel) {
+        toggleSubtitleHelpBtn.addEventListener('click', () => {
+            subtitleHelpPanel.classList.toggle('hidden');
+            const svg = toggleSubtitleHelpBtn.querySelector('svg');
+            if (svg) {
+                svg.classList.toggle('rotate-180');
+            }
+        });
+    }
+    
     smartArea.addEventListener('input', () => {
         updateCharCount(smartArea.value);
         if (window.updateTabAvailability) window.updateTabAvailability();
@@ -331,6 +431,9 @@ function initializeTab1() {
     closeReplaceModalBtn.addEventListener('click', closeBatchReplaceModal);
     addReplaceRuleBtn.addEventListener('click', addReplaceRule);
     clearAllRulesBtn.addEventListener('click', clearAllRules);
+    if (loadPresetRulesBtn) loadPresetRulesBtn.addEventListener('click', loadPresetRules);
+    if (savePresetRulesBtn) savePresetRulesBtn.addEventListener('click', savePresetRules);
+
     replaceRulesList.addEventListener('click', (e) => {
         const deleteBtn = e.target.closest('.rule-delete-btn');
         if (deleteBtn) {

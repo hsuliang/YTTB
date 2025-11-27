@@ -167,7 +167,7 @@ window.showToast = function(message, options = {}) {
 
 window.showModal = function(options) {
     window.stopPromptRotation();
-    const { title, message, showCopyButton = false, showProgressBar = false, buttons = [], taskType = null } = options;
+    const { title, message, showCopyButton = false, showProgressBar = false, buttons = [], taskType = null, isHtml = false } = options;
     
     const modal = document.getElementById('modal');
     const modalTitle = document.getElementById('modal-title');
@@ -190,7 +190,11 @@ window.showModal = function(options) {
         }
     } else {
         modalMessage.classList.remove('hidden');
-        modalMessage.textContent = message;
+        if (isHtml) {
+            modalMessage.innerHTML = message;
+        } else {
+            modalMessage.textContent = message;
+        }
     }
 
     if (buttons.length > 0) {

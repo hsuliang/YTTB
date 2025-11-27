@@ -55,7 +55,7 @@ function stringifySrt(subtitles) {
 
 window.processSubtitles = function(srtContent, options) {
     const { maxCharsPerLine, keepPunctuation, fixTimestamps, timestampThreshold, batchReplaceRules, mergeShortLinesThreshold, timelineShift } = options;
-    let report = { fixedGaps: 0, fixedOverlaps: 0, linesSplit: 0, linesMerged: 0, replacementsMade: 0, punctuationsRemoved: 0, timelineShifted: 0 };
+    let report = { fixedGaps: 0, fixedOverlaps: 0, linesSplit: 0, linesMerged: 0, replacementsMade: 0, timelineShifted: 0 };
     let isPlainText = false;
 
     if (!srtContent.includes('-->')) {
@@ -68,6 +68,7 @@ window.processSubtitles = function(srtContent, options) {
     }
     
     let subs = parseSrt(srtContent);
+    const originalLineCount = subs.length;
 
     if (timelineShift && !isNaN(timelineShift) && timelineShift !== 0) {
         report.timelineShifted = timelineShift;
@@ -97,10 +98,6 @@ window.processSubtitles = function(srtContent, options) {
     const punctuationRegex = /[.,\/#!$%\^&\*;:{}=\-_`~?，。？！、；：]/g;
     if (!keepPunctuation) {
         subs.forEach(sub => {
-            const matches = sub.text.match(punctuationRegex);
-            if (matches) {
-                report.punctuationsRemoved += matches.length;
-            }
             sub.text = sub.text.replace(punctuationRegex, '');
         });
     }
@@ -186,5 +183,9 @@ window.processSubtitles = function(srtContent, options) {
         }
     }
     const finalSrt = stringifySrt(subs);
+    
+    report.originalLineCount = originalLineCount;
+    report.finalLineCount = subs.length;
+    
     return { processedSrt: finalSrt, report: report };
 }
