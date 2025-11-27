@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>丫亮笑長的 Youtube 工具一條龍</title>
+    <title>ㄚ亮笑長的 AI 內容創作站</title>
     <link rel="icon" href="data:,">
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- ########## NEW: QUILL.JS EDITOR LIBS ########## -->
@@ -19,9 +19,9 @@
         <header class="relative flex flex-col items-center justify-center mb-8">
             <div class="flex items-center justify-center">
                 <img src="images/Aliang.png" alt="丫亮笑長 Logo" class="h-20 w-20 mr-4 flex-shrink-0">
-                <h1 class="text-5xl font-bold heading-color">ㄚ亮笑長的 Youtube 工具一條龍</h1>
+                <h1 class="text-5xl font-bold heading-color">ㄚ亮笑長的 AI 內容創作站</h1>
             </div>
-            <p class="mt-2 text-base">您的全方位 YouTube 內容創作夥伴</p>
+            <p class="mt-2 text-base">您的全方位數位內容創作夥伴</p>
             
             <div class="header-actions">
                 <p id="api-key-status" class="text-sm">狀態：尚未設定</p>
@@ -53,8 +53,45 @@
                         <div class="flex flex-col h-[400px]">
                             <div class="flex items-baseline flex-shrink-0 mb-2">
                                 <h3 class="text-lg font-semibold heading-color">字幕來源</h3>
-                                <a href="https://tinyurl.com/gsyan-faster-whisper" target="_blank" rel="noopener" class="upload-link text-sm ml-2">如何取得字幕？</a>
+                                <button id="toggle-subtitle-help-btn" class="text-sm ml-2 text-[var(--link-color)] hover:underline flex items-center focus:outline-none">
+                                    <span>如何取得字幕？</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
                             </div>
+                            
+                            <!-- 字幕教學折疊面板 -->
+                            <div id="subtitle-help-panel" class="hidden bg-[var(--gray-bg)] p-4 rounded-md border border-[var(--card-border)] mb-3 text-sm shadow-inner transition-all duration-300">
+                                <!-- 方法一：DownSub -->
+                                <div class="mb-3">
+                                    <div class="flex items-center mb-1">
+                                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">推薦</span>
+                                        <strong class="text-[var(--heading-color)]">方法一：使用 DownSub 下載</strong>
+                                    </div>
+                                    <ol class="list-decimal list-inside text-[var(--body-text)] space-y-1 ml-1">
+                                        <li>複製您的 YouTube 影片網址。</li>
+                                        <li>前往 <a href="https://downsub.com/" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800 underline font-bold">DownSub.com</a>。</li>
+                                        <li>貼上網址搜尋，下載時請選擇 <strong>SRT</strong> 格式。</li>
+                                    </ol>
+                                </div>
+
+                                <hr class="border-[var(--card-border)] my-3">
+
+                                <!-- 方法二：Faster Whisper -->
+                                <div>
+                                    <div class="flex items-center mb-1">
+                                        <span class="bg-purple-100 text-purple-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">進階</span>
+                                        <strong class="text-[var(--heading-color)]">方法二：使用 Faster Whisper (無字幕時)</strong>
+                                    </div>
+                                    <p class="text-[var(--gray-text)] mb-2 ml-1">如果影片本身沒有 CC 字幕，可使用此工具進行 AI 語音轉文字。</p>
+                                    <a href="https://tinyurl.com/gsyan-faster-whisper" target="_blank" rel="noopener" class="ml-1 text-purple-600 hover:text-purple-800 underline font-bold flex items-center">
+                                        <span>👉 前往雄哥的 Faster Whisper 工具</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                    </a>
+                                </div>
+                            </div>
+
                             <div id="view-toggle-header" class="flex justify-between items-center mb-2 border-b border-[var(--card-border)] hidden flex-shrink-0">
                                 <div class="flex">
                                     <button class="view-btn" data-view="original">原始內容</button>
@@ -540,9 +577,15 @@
                 <div class="flex-grow mt-2">
                     <p class="text-xs text-[var(--gray-text)] text-center">提示：此處設定的規則，將在您點擊主畫面的「開始整理」按鈕時統一執行。</p>
                 </div>
-                <div class="mt-6 flex justify-between items-center">
-                    <button id="clear-all-rules-btn" class="font-bold py-2 px-4 rounded btn-danger">全部清除</button>
-                    <button id="close-replace-modal-btn" class="font-bold py-2 px-4 rounded btn-secondary">完成設定</button>
+                <div class="mt-6 flex flex-wrap justify-between items-center gap-4">
+                    <div class="flex gap-2">
+                        <button id="load-preset-rules-btn" class="font-bold py-2 px-3 rounded btn-secondary text-sm" title="載入已儲存的常用規則">📥 載入範本</button>
+                        <button id="save-preset-rules-btn" class="font-bold py-2 px-3 rounded btn-secondary text-sm" title="將目前規則儲存為常用範本">💾 存為範本</button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="clear-all-rules-btn" class="font-bold py-2 px-4 rounded btn-danger">全部清除</button>
+                        <button id="close-replace-modal-btn" class="font-bold py-2 px-4 rounded btn-primary">完成設定</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -578,9 +621,32 @@
             <div class="flex-grow space-y-4">
                 <p class="text-sm">為了啟用所有 AI 功能，請在此提供您的 Google Gemini API 金鑰。您的金鑰只會暫存在您的瀏覽器中，並在 2 小時後自動清除，我們絕不會儲存它。</p>
                 <div class="flex items-center space-x-4">
-                    <input type="password" id="gemini-api-key" placeholder="在此貼上您的 Gemini API Key" class="w-full rounded px-4 py-2">
+                    <input type="password" id="gemini-api-key" placeholder="在此貼上您的 Gemini API Key" class="w-full rounded px-4 py-2 border border-[var(--card-border)] bg-[var(--bg-color)] text-[var(--body-text)] focus:ring-2 focus:ring-blue-500 focus:outline-none">
                 </div>
-                 <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="upload-link text-sm">沒有金鑰嗎？點此免費申請</a>
+                
+                <button id="toggle-api-help-btn" class="flex items-center text-[var(--link-color)] hover:underline font-semibold text-sm my-2 focus:outline-none transition-colors">
+                    <span>📖 如何免費申請 API Key？ (點擊看教學)</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+
+                <div id="api-key-help-panel" class="hidden bg-[var(--gray-bg)] p-4 rounded border border-[var(--card-border)] text-sm space-y-2 mb-4 shadow-inner">
+                    <ol class="list-decimal list-inside space-y-2 text-[var(--body-text)]">
+                        <li>登入您的 Google 帳號。</li>
+                        <li>前往 <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800 underline font-bold">Google AI Studio</a>。</li>
+                        <li>點擊頁面<strong class="text-red-500 mx-1">左下方</strong>的 <span class="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-300">Get API key</span> 按鈕。</li>
+                        <li>點擊頁面<strong class="text-red-500 mx-1">右上角</strong>藍色的 <span class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-bold text-xs border border-blue-200">Create API key</span> 按鈕。</li>
+                        <li>
+                            選擇專案：若無專案，請點擊
+                            <br><span class="ml-5 text-xs bg-gray-100 px-1 rounded border">Select a Cloud Project</span> ➔ <span class="text-xs bg-gray-100 px-1 rounded border">Create project</span>。
+                        </li>
+                        <li>為您的 API Key 命名 (選用)。</li>
+                        <li>複製生成的金鑰 (以 <code class="text-red-500 font-bold bg-red-50 px-1 rounded">AIza</code> 開頭)，貼入上方欄位。</li>
+                    </ol>
+                    <p class="text-xs text-[var(--gray-text)] mt-2 pt-2 border-t border-[var(--card-border)]">* 這是 Google 提供的免費額度，對個人使用通常非常足夠。</p>
+                </div>
+
                  <p id="api-key-countdown" class="font-mono text-sm text-[var(--link-color)]"></p>
             </div>
             <div class="mt-6 flex justify-end gap-2">

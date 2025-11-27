@@ -3,32 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ㄚ亮笑長的 Youtube 工具一條龍 - 使用說明</title>
-    <!-- 載入 Tailwind CSS -->
+    <title>ㄚ亮笑長的 AI 內容創作站 - 使用說明</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* 引入 Google Font 的 Inter 字體，提供更現代的西文顯示 */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        
-        /* 使用 Inter 作為主要字體，並 fallback 到系統預設的中文黑體 */
         body {
-            font-family: 'Inter', 'Noto Sans TC', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            font-family: 'Inter', 'Noto Sans TC', system-ui, -apple-system, sans-serif;
         }
-
-        /* 美化滾動條 (可選) */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #f1f5f9; /* slate-100 */
+            background: #f1f5f9;
         }
         ::-webkit-scrollbar-thumb {
-            background: #64748b; /* slate-500 */
+            background: #64748b;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #475569; /* slate-600 */
+            background: #475569;
         }
     </style>
 </head>
@@ -38,18 +32,12 @@
     <header class="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-10">
         <div class="max-w-4xl mx-auto px-6 py-5 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <!-- Logo Icon (使用 SVG 確保單一檔案) -->
-                <svg class="h-10 w-10 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18c-2.305 0-4.408.867-6 2.292m0-14.25v14.25" />
-                </svg>
+                <img src="images/Aliang.png" alt="Logo" class="h-10 w-10 object-contain">
                 <div>
-                    <!-- 網站主標題 -->
-                    <h1 class="text-xl sm:text-2xl font-bold text-slate-900">ㄚ亮笑長的 Youtube 工具一條龍</h1>
-                    <!-- 網站副標題 -->
-                    <p class="text-sm text-slate-600">網站介紹與使用說明</p>
+                    <h1 class="text-xl sm:text-2xl font-bold text-slate-900">ㄚ亮笑長的 AI 內容創作站</h1>
+                    <p class="text-sm text-slate-600">使用說明與功能介紹</p>
                 </div>
             </div>
-            <!-- 返回主程式的按鈕 -->
             <a href="index.html" class="hidden sm:inline-block bg-blue-600 text-white font-bold py-2 px-5 rounded-lg transition duration-200 hover:bg-blue-700 shadow-md hover:shadow-lg">
                 返回應用程式
             </a>
@@ -59,180 +47,122 @@
     <!-- 主要內容區 -->
     <main class="max-w-4xl mx-auto p-6 md:p-10">
 
-        <!-- 區塊 1: 網站簡介 -->
+        <!-- 簡介 -->
         <section class="mb-12">
             <h2 class="text-3xl font-semibold text-slate-800 mb-6 border-b-2 border-blue-500 pb-3">
-                什麼是「工具一條龍」?
+                關於本工具
             </h2>
             <div class="space-y-5 text-lg leading-relaxed text-slate-700">
                 <p>
-                    這是一個專為 YouTube 內容創作者、Podcaster 和教育工作者設計的全方位內容再利用 (Repurpose) 工具。
+                    這是一個專為內容創作者打造的 AI 生產力中心。透過 Google Gemini 的強大能力，將您的影片或語音逐字稿（SRT）一鍵轉化為部落格文章、社群貼文與電子報。
                 </p>
                 <p>
-                    您的影片或音訊逐字稿 (SRT 檔案) 只需要上傳一次，就能透過 Google Gemini AI 的強大功能，自動轉換為結構完整的部落格文章、多平台社群貼文、影片摘要與時間戳章節。我們的目標是讓您的內容創作流程「一條龍」搞定，大幅提升效率！
+                    無論您是 YouTuber、Podcaster 還是講師，這個工具都能幫您節省 90% 的內容再製時間，讓創作效率最大化！
                 </p>
             </div>
         </section>
 
-        <!-- 區塊 2: 核心功能 -->
+        <!-- 核心功能 -->
         <section class="mb-12">
             <h2 class="text-3xl font-semibold text-slate-800 mt-12 mb-8 border-b-2 border-blue-500 pb-3">
-                三大核心功能
+                四大核心功能
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- 功能卡片 1 -->
-                <div class="bg-white rounded-xl shadow-lg p-6 transition duration-300 hover:shadow-xl hover:-translate-y-1">
-                    <h3 class="text-xl font-bold text-blue-700 mb-4 flex items-center">
-                        <span class="bg-blue-100 text-blue-700 rounded-full h-8 w-8 text-sm font-bold flex items-center justify-center mr-3 flex-shrink-0">1</span>
-                        字幕整理與優化
-                    </h3>
-                    <ul class="list-disc pl-5 space-y-2 text-slate-600 text-sm">
-                        <li>智慧匯入 (拖曳/貼上)</li>
-                        <li>清理字幕 (字數/合併)</li>
-                        <li>時間軸校正與平移</li>
-                        <li>批次取代關鍵字</li>
-                        <li>AI 生成章節與摘要</li>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 功能 1 -->
+                <div class="bg-white rounded-xl shadow-md p-6 border border-slate-100">
+                    <div class="flex items-center mb-4">
+                        <span class="bg-blue-100 text-blue-700 rounded-full h-8 w-8 flex items-center justify-center font-bold mr-3">1</span>
+                        <h3 class="text-xl font-bold text-slate-800">智慧字幕整理 (Tab 1)</h3>
+                    </div>
+                    <ul class="list-disc pl-11 space-y-1 text-slate-600 text-sm">
+                        <li>內建 DownSub 字幕下載教學</li>
+                        <li>自動合併短行、拆分長句</li>
+                        <li>時間軸錯誤修復</li>
+                        <li>批次取代錯別字</li>
+                        <li>生成後提供詳細整理報告</li>
                     </ul>
                 </div>
-                <!-- 功能卡片 2 -->
-                <div class="bg-white rounded-xl shadow-lg p-6 transition duration-300 hover:shadow-xl hover:-translate-y-1">
-                    <h3 class="text-xl font-bold text-blue-700 mb-4 flex items-center">
-                        <span class="bg-blue-100 text-blue-700 rounded-full h-8 w-8 text-sm font-bold flex items-center justify-center mr-3 flex-shrink-0">2</span>
-                        部落格文章生成
-                    </h3>
-                    <ul class="list-disc pl-5 space-y-2 text-slate-600 text-sm">
-                        <li>AI 文本優化 (逐字稿->文章)</li>
-                        <li>AI 寫作風格精靈</li>
-                        <li>自動生成 SEO 建議</li>
-                        <li>多版本風格生成</li>
-                        <li>匯出 HTML/Markdown</li>
+                <!-- 功能 2 -->
+                <div class="bg-white rounded-xl shadow-md p-6 border border-slate-100">
+                    <div class="flex items-center mb-4">
+                        <span class="bg-blue-100 text-blue-700 rounded-full h-8 w-8 flex items-center justify-center font-bold mr-3">2</span>
+                        <h3 class="text-xl font-bold text-slate-800">部落格文章生成 (Tab 2)</h3>
+                    </div>
+                    <ul class="list-disc pl-11 space-y-1 text-slate-600 text-sm">
+                        <li>AI 文本優化 (防呆機制保護)</li>
+                        <li>自訂寫作人稱與語氣</li>
+                        <li>SEO 標題與關鍵字建議</li>
+                        <li>Quill 編輯器即時預覽</li>
                     </ul>
                 </div>
-                <!-- 功能卡片 3 -->
-                <div class="bg-white rounded-xl shadow-lg p-6 transition duration-300 hover:shadow-xl hover:-translate-y-1">
-                    <h3 class="text-xl font-bold text-blue-700 mb-4 flex items-center">
-                        <span class="bg-blue-100 text-blue-700 rounded-full h-8 w-8 text-sm font-bold flex items-center justify-center mr-3 flex-shrink-0">3</span>
-                        社群貼文生成
-                    </h3>
-                    <ul class="list-disc pl-5 space-y-2 text-slate-600 text-sm">
-                        <li>一鍵生成三平台文案</li>
-                        <li>(Facebook, Instagram, Line)</li>
-                        <li>AI 社群風格精靈</li>
-                        <li>多版本風格生成</li>
-                        <li>一鍵複製貼文</li>
+                <!-- 功能 3 -->
+                <div class="bg-white rounded-xl shadow-md p-6 border border-slate-100">
+                    <div class="flex items-center mb-4">
+                        <span class="bg-blue-100 text-blue-700 rounded-full h-8 w-8 flex items-center justify-center font-bold mr-3">3</span>
+                        <h3 class="text-xl font-bold text-slate-800">社群貼文生成 (Tab 3)</h3>
+                    </div>
+                    <ul class="list-disc pl-11 space-y-1 text-slate-600 text-sm">
+                        <li>Facebook / IG / Line 多版本</li>
+                        <li>自動生成 Hashtags</li>
+                        <li>客製化 CTA (行動呼籲)</li>
+                    </ul>
+                </div>
+                <!-- 功能 4 -->
+                <div class="bg-white rounded-xl shadow-md p-6 border border-slate-100">
+                    <div class="flex items-center mb-4">
+                        <span class="bg-blue-100 text-blue-700 rounded-full h-8 w-8 flex items-center justify-center font-bold mr-3">4</span>
+                        <h3 class="text-xl font-bold text-slate-800">電子報與其他 (Tab 4+)</h3>
+                    </div>
+                    <ul class="list-disc pl-11 space-y-1 text-slate-600 text-sm">
+                        <li>電子報內容生成</li>
+                        <li>深色模式 (Dark Mode)</li>
+                        <li>API Key 申請詳細教學</li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <!-- 區塊 3: 如何使用 -->
+        <!-- 使用流程 -->
         <section>
             <h2 class="text-3xl font-semibold text-slate-800 mt-12 mb-10 border-b-2 border-blue-500 pb-3">
-                如何開始使用 (簡易教學)
+                快速上手指南
             </h2>
-            <ol class="space-y-10">
-                <!-- 步驟 1 -->
-                <li class="flex items-start space-x-5">
-                    <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-600 text-white shadow-md">
-                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H3.75v-2.25H1.5v-2.25H.75C.336 17.25 0 16.914 0 16.5v-3c0-.414.336-.75.75-.75h1.5v-2.25H3.75v-2.25H6v-2.25h2.25v-2.25l3.318-3.318c.404-.404 1.001-.527 1.563-.43A6 6 0 0 1 22.5 12Z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">步驟一：設定 API Key (僅需一次)</h3>
-                        <p class="text-slate-600 leading-relaxed">
-                            這是啟用所有 AI 功能的鑰匙。點擊程式右上角的「🔑」圖示，前往 <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="text-blue-600 font-semibold hover:underline">Google AI Studio</a> 複製您的 Gemini API Key 並貼上，然後點擊「儲存金鑰」。金鑰僅會安全地暫存在您的瀏覽器中 (2 小時後自動清除)。
-                        </p>
-                    </div>
+            <ol class="relative border-l border-slate-200 ml-3 space-y-10">
+                <!-- Step 1 -->
+                <li class="mb-10 ml-6">
+                    <span class="absolute flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full -left-4 ring-8 ring-white">
+                        <svg class="w-4 h-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H5v-2H3v-2H1v-4a6 6 0 0110.257-4.257" /></svg>
+                    </span>
+                    <h3 class="flex items-center mb-1 text-lg font-semibold text-slate-900">步驟一：設定 API Key</h3>
+                    <p class="mb-4 text-base font-normal text-slate-500">
+                        點擊右上角鑰匙圖示，展開「<strong>📖 如何免費申請 API Key？</strong>」教學，跟著步驟免費取得金鑰並儲存。
+                    </p>
                 </li>
-
-                <!-- 步驟 2 -->
-                <li class="flex items-start space-x-5">
-                    <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-slate-700 text-white shadow-md">
-                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.75h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5-13.5h16.5" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">步驟二：上傳並整理字幕 (Tab 1)</h3>
-                        <p class="text-slate-600 leading-relaxed">
-                            在第一個分頁，將您的 SRT 逐字稿內容**貼上**或**拖曳**到「字幕來源」區域。您可以調整下方的「單行字數」、「合併字數」等選項，或設定「批次取代」規則。完成後，點擊「🚀 **開始整理**」。
-                        </p>
-                    </div>
+                <!-- Step 2 -->
+                <li class="mb-10 ml-6">
+                    <span class="absolute flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full -left-4 ring-8 ring-white">
+                        <svg class="w-4 h-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    </span>
+                    <h3 class="flex items-center mb-1 text-lg font-semibold text-slate-900">步驟二：匯入與整理字幕</h3>
+                    <p class="mb-4 text-base font-normal text-slate-500">
+                        在 Tab 1 點擊「<strong>如何取得字幕？</strong>」依照教學下載 SRT 檔。貼上後設定參數，點擊「<strong>開始整理</strong>」，系統會彈出整理報告並引導您下一步。
+                    </p>
                 </li>
-
-                <!-- 步驟 3 -->
-                <li class="flex items-start space-x-5">
-                    <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-slate-700 text-white shadow-md">
-                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">步驟三：生成部落格文章 (Tab 2)</h3>
-                        <p class="text-slate-600 leading-relaxed">
-                            切換到第二個分頁。**強烈建議**先點擊「**優化文本 (建議)**」，讓 AI 將口語化的字幕轉換為流暢的文章基礎。接著，填寫「文章標題」和「影片 ID」，並可使用「AI 風格設定」或右上角的「⚙️」精靈來客製化風格。最後，點擊「**生成部落格文章**」。
-                        </p>
-                    </div>
-                </li>
-                
-                <!-- 步驟 4 -->
-                <li class="flex items-start space-x-5">
-                    <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-slate-700 text-white shadow-md">
-                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-slate-900 mb-2">步驟四：生成社群貼文 (Tab 3)</h3>
-                        <p class="text-slate-600 leading-relaxed">
-                            切換到第三個分頁。工具會自動使用您在 Tab 1 或 Tab 2 的內容作為來源。設定「貼文目標」、「長度」和「語氣」，然後點擊「**生成社群貼文**」。AI 將一次產出 Facebook, Instagram, Line 三種平台的文案，您可隨時切換並複製。
-                        </p>
-                    </div>
+                <!-- Step 3 -->
+                <li class="mb-10 ml-6">
+                    <span class="absolute flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full -left-4 ring-8 ring-white">
+                        <svg class="w-4 h-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                    </span>
+                    <h3 class="flex items-center mb-1 text-lg font-semibold text-slate-900">步驟三：生成內容</h3>
+                    <p class="mb-4 text-base font-normal text-slate-500">
+                        前往 Tab 2, 3, 4。建議先在 Tab 2 使用「<strong>優化文本</strong>」提升品質。設定好您想要的風格後，點擊生成按鈕，AI 就會為您產出專業內容。
+                    </p>
                 </li>
             </ol>
         </section>
 
-        <!-- 區塊 4: 關鍵特色 -->
-        <section>
-            <h2 class="text-3xl font-semibold text-slate-800 mt-16 mb-8 border-b-2 border-blue-500 pb-3">
-                關鍵特色
-            </h2>
-            <ul class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
-                <!-- 特色 1 -->
-                <li class="flex items-center space-x-3">
-                    <svg class="h-6 w-6 text-green-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
-                    </svg>
-                    <span class="text-slate-700">**AI 寫作精靈**：透過引導式問答，精準客製化 AI 產出風格。</span>
-                </li>
-                <!-- 特色 2 -->
-                <li class="flex items-center space-x-3">
-                    <svg class="h-6 w-6 text-green-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
-                    </svg>
-                    <span class="text-slate-700">**多版本生成**：不滿意？點擊「另一版本」，AI 立刻提供新風格。</span>
-                </li>
-                <!-- 特色 3 -->
-                <li class="flex items-center space-x-3">
-                    <svg class="h-6 w-6 text-green-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
-                    </svg>
-                    <span class="text-slate-700">**草稿自動暫存**：所有設定與產出內容都會暫存，刷新也不怕遺失。</span>
-                </li>
-                <!-- 特色 4 -->
-                <li class="flex items-center space-x-3">
-                    <svg class="h-6 w-6 text-green-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
-                    </svg>
-                    <span class="text-slate-700">**多樣化佈景**：內建多種亮色與暗色主題，保護您的眼睛。</span>
-                </li>
-            </ul>
-        </section>
-
         <!-- 頁尾 -->
         <footer class="mt-16 text-center border-t border-slate-300 pt-10">
-            <!-- 再次放置返回按鈕，方便手機用戶 -->
             <a href="index.html" class="inline-block sm:hidden bg-blue-600 text-white font-bold py-3 px-8 rounded-lg transition duration-200 hover:bg-blue-700 shadow-lg text-lg">
                 返回應用程式
             </a>
