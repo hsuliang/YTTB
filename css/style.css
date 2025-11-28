@@ -830,7 +830,151 @@ body[data-theme="dark-knight"] .btn-primary.btn-loading::after {
 }
 
 .internal-link-suggestion .suggestion-target a {
+
     color: var(--link-color);
+
     font-weight: 600;
+
     word-break: break-all;
+
+}
+
+
+
+/* Universal Variation Hub Modal Specifics */
+
+#variation-hub-modal textarea#variation-custom-input {
+
+    min-height: 120px; /* 確保輸入框有足夠的預設高度 */
+
+}
+
+
+
+/* 確保 Modal 內容區域的滾動條樣式與其他 Modal 一致 */
+
+#variation-hub-modal .space-y-4.flex-grow.overflow-y-auto::-webkit-scrollbar {
+
+    width: 8px;
+
+}
+
+#variation-hub-modal .space-y-4.flex-grow.overflow-y-auto::-webkit-scrollbar-track {
+
+    background: var(--gray-bg);
+
+    border-radius: 4px;
+
+}
+
+#variation-hub-modal .space-y-4.flex-grow.overflow-y-auto::-webkit-scrollbar-thumb {
+
+    background: var(--gray-text);
+
+    border-radius: 4px;
+
+}
+
+#variation-hub-modal .space-y-4.flex-grow.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+
+    background: var(--link-color);
+
+}
+
+
+
+/* Tab 1 Empty State Overlay */
+
+#tab1-empty-state {
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    z-index: 10; /* 確保在 textarea 之上 */
+
+    background-color: transparent; /* 保持透明 */
+
+    pointer-events: auto; /* 允許點擊 */
+
+    cursor: text; /* 讓滑鼠游標看起來像可以輸入 */
+
+}
+
+
+
+#tab1-empty-state.hidden {
+
+    display: none;
+
+}
+
+
+
+/* 讓上傳按鈕和連結保持可點擊 */
+
+
+
+#tab1-empty-state label, #tab1-empty-state a {
+
+
+
+    pointer-events: auto;
+
+
+
+    cursor: pointer;
+
+
+
+}
+
+
+
+
+
+
+
+@keyframes blink {
+
+
+
+    0%, 100% { opacity: 1; }
+
+
+
+    50% { opacity: 0.5; }
+
+
+
+}
+
+
+
+
+
+
+
+.blink-effect {
+
+
+
+    animation: blink 2s infinite;
+
+
+
 }
