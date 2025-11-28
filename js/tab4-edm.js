@@ -70,12 +70,16 @@ function initializeTab4() {
     }
 
     // --- 核心邏輯 ---
-    function assembleEdmPrompt(isVariation = false) {
+    function assembleEdmPrompt(variationModifier = '', shouldOverride = false) { // Changed signature
         const audience = edmAudienceSelect.options[edmAudienceSelect.selectedIndex].text;
-        const style = edmStyleSelect.options[edmStyleSelect.selectedIndex].text;
+        let style = edmStyleSelect.options[edmStyleSelect.selectedIndex].text;
+        
+        if (variationModifier && shouldOverride) {
+            style = '自訂風格 (請依據下方風格指令執行)';
+        }
         
         let sourceContent = '';
-        let variationModifier = '';
+        // Removed `let variationModifier = '';` as it's now an argument.
         const hasGeneratedBlog = state.blogArticleVersions && state.blogArticleVersions.length > 0;
         const hasOptimizedText = state.optimizedTextForBlog && state.optimizedTextForBlog.trim().length > 0;
 
@@ -92,14 +96,11 @@ function initializeTab4() {
             return null;
         }
 
-        if (isVariation) {
-            const modifiers = ["請用更熱情、更有感染力的語氣重寫。", "請用更專業、更具說服力的風格改寫。", "請嘗試用一個引人入勝的問題或故事作為開頭。", "請讓結構更簡潔，多用條列式說明重點。"];
-            variationModifier = modifiers[Math.floor(Math.random() * modifiers.length)];
-            showToast(`AI 正在嘗試新風格：${variationModifier.replace('請','').replace('。','')}`);
-        }
-
+        // Removed the if (isVariation) random modifier block.
+        // The variationModifier is now directly passed as an argument.
+        
         const prompt = `你是一位專業的 Email 行銷專家與文案寫手。請根據下方提供的 [原始文章]，為 [${audience}] 這個目標群體，撰寫一封風格為 [${style}] 的電子報。
-        ${isVariation ? `\n重要風格指令：${variationModifier}\n` : ''}
+        ${variationModifier ? `\n重要風格指令：${variationModifier}\n` : ''} // Updated conditional based on modifier presence
         請嚴格遵循以下規則：
         1.  **輸出格式**: 必須是乾淨、結構良好的 HTML 格式。
         2.  **主旨 (Subject)**: 在內容的最開始，必須包含一行用 \`<h3>\` 標籤包圍的電子報主旨。例如：<h3>🚀 本週必學的 AI 新技巧！</h3>
@@ -116,18 +117,20 @@ function initializeTab4() {
         return prompt;
     }
 
-    async function handleGenerateEdm(isVariation = false) {
+    async function handleGenerateEdm(variationModifier = '', shouldOverride = false) { // Changed signature
         const apiKey = sessionStorage.getItem('geminiApiKey');
         if (!apiKey) {
             if (window.showApiKeyModal) window.showApiKeyModal();
             return;
         }
+        
+        const isVariation = variationModifier !== ''; // Derived from variationModifier
 
-        const prompt = assembleEdmPrompt(isVariation);
+        const prompt = assembleEdmPrompt(variationModifier, shouldOverride); // Passed modifier directly
         if (!prompt) return;
 
         showModal({ title: 'AI 電子報生成中...', showProgressBar: true, taskType: 'edm' });
-        const btn = isVariation ? generateEdmVariationBtn : generateEdmBtn;
+        const btn = isVariation ? generateEdmVariationBtn : generateEdmBtn; // isVariation is now correct
         btn.disabled = true;
         btn.classList.add('btn-loading');
 
@@ -184,7 +187,11 @@ function initializeTab4() {
 
     // --- 事件監聽 ---
     generateEdmBtn.addEventListener('click', () => handleGenerateEdm(false));
-    generateEdmVariationBtn.addEventListener('click', () => handleGenerateEdm(true));
+    generateEdmVariationBtn.addEventListener('click', () => {
+        VariationHub.open('edm', (modifier, shouldOverride) => {
+            handleGenerateEdm(modifier, shouldOverride);
+        });
+    });
     copyEdmHtmlBtn.addEventListener('click', copyEdmHtml);
 
     // --- 初始化 ---

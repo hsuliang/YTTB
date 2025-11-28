@@ -38,11 +38,23 @@ const returnToEditBtn = document.getElementById('return-to-edit-btn');
 // [第三階段優化] - 新增字幕教學面板選擇器
 const toggleSubtitleHelpBtn = document.getElementById('toggle-subtitle-help-btn');
 const subtitleHelpPanel = document.getElementById('subtitle-help-panel');
+// [Tab 1 Empty State]
+const tab1EmptyState = document.getElementById('tab1-empty-state');
 
 const STORAGE_KEY_REPLACE_RULES = 'aliang-yttb-replace-rules-preset';
 
 
 // --- 輔助函式 (模組級) ---
+function toggleEmptyState() {
+    if (!smartArea || !tab1EmptyState) return;
+    const hasContent = smartArea.value.length > 0;
+    if (hasContent) {
+        tab1EmptyState.classList.add('hidden');
+    } else {
+        tab1EmptyState.classList.remove('hidden');
+    }
+}
+
 function updateCharCount(text = '') {
     const count = text.length;
     const display = document.getElementById('char-count-display');
@@ -59,11 +71,12 @@ function setMode(mode) {
         displayOriginal.classList.add('hidden');
         displayProcessed.classList.add('hidden');
         // smartArea.value = ''; // 返回編輯時不清空
-        smartArea.placeholder = "請在此貼上 SRT 內容，或將 .srt 檔案拖曳至此處";
         updateCharCount(smartArea.value);
+        toggleEmptyState();
     } else if (mode === 'preview') {
         viewToggleHeader.classList.remove('hidden');
         smartArea.classList.add('hidden');
+        if (tab1EmptyState) tab1EmptyState.classList.add('hidden');
     }
 }
 
@@ -100,6 +113,7 @@ function resetTab1() {
     state.batchReplaceRules = [];
     updateBatchReplaceButtonStatus();
     updateCharCount();
+    toggleEmptyState();
 }
 
 // --- 初始化函式 ---
@@ -264,6 +278,7 @@ function initializeTab1() {
         smartArea.value = content;
         state.originalFileName = fileName;
         smartArea.dispatchEvent(new Event('input'));
+        toggleEmptyState();
     }
 
     function handleFile(file) {
@@ -417,9 +432,17 @@ function initializeTab1() {
     
     smartArea.addEventListener('input', () => {
         updateCharCount(smartArea.value);
+        toggleEmptyState();
         if (window.updateTabAvailability) window.updateTabAvailability();
         if (window.updateAiButtonStatus) window.updateAiButtonStatus();
     });
+
+    if (tab1EmptyState) {
+        tab1EmptyState.addEventListener('click', (e) => {
+            if (e.target.closest('label') || e.target.closest('a') || e.target.tagName === 'INPUT') return;
+            smartArea.focus();
+        });
+    }
 
     smartAreaContainer.addEventListener('dragover', (e) => { e.preventDefault(); smartAreaContainer.classList.add('dragover'); });
     smartAreaContainer.addEventListener('dragleave', (e) => { e.preventDefault(); smartAreaContainer.classList.remove('dragover'); });
@@ -444,4 +467,5 @@ function initializeTab1() {
     // --- 初始化 ---
     timestampThresholdInput.disabled = !fixTimestampsCheckbox.checked;
     timestampThresholdInput.classList.toggle('opacity-50', !fixTimestampsCheckbox.checked);
+    toggleEmptyState();
 }

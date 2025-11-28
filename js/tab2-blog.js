@@ -134,7 +134,7 @@ window.updateStepperUI = function() {
 
 // ########## REFACTORED: ADDED isRetry PARAMETER ##########
 function assembleBlogPrompt(options) {
-    const { persona, tone, wordCount, tagsString, sourceText, variationModifier, isRetry = false } = options;
+    const { persona, tone, wordCount, tagsString, sourceText, variationModifier, isRetry = false, shouldOverride = false } = options;
     const wizardSettings = JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEYS.PROMPT_WIZARD)) || {};
     let rules = [];
 
@@ -146,8 +146,12 @@ function assembleBlogPrompt(options) {
     if (wizardSettings.structSummary) { rules.push('- 文章開頭：請自動產生一段「前言摘要」，用 <p> 標籤包圍。'); } 
     else if (wizardSettings.structPoints) { rules.push('- 文章開頭：請自動條列出 2-5 點「本集重點」，並用 <ul><li>...</li></ul> 結構。'); }
     rules.push(`- 寫作人稱：${persona}`);
-    const toneFinetune = wizardSettings.toneFinetune ? ` (${wizardSettings.toneFinetune})` : '';
-    rules.push(`- 寫作語氣：${tone}${toneFinetune}`);
+    
+    if (!variationModifier || !shouldOverride) {
+        const toneFinetune = wizardSettings.toneFinetune ? ` (${wizardSettings.toneFinetune})` : '';
+        rules.push(`- 寫作語氣：${tone}${toneFinetune}`);
+    }
+
     rules.push(`- 文章字數：${wordCount}`);
     if (tagsString) rules.push(`- 指定標籤：${tagsString}`);
     let h2_style_rule = "每個段落都需要一個簡潔有力的小標題";
@@ -638,30 +642,25 @@ function initializeTab2() {
     }
 
     // ########## FINAL ROBUST VERSION WITH SMART RETRY ##########
-    async function proceedGenerateBlogPost(isVariation = false) { 
+    async function proceedGenerateBlogPost(variationModifier = '', shouldOverride = false) { 
         const apiKey = sessionStorage.getItem('geminiApiKey'); 
         if (!apiKey) { if(window.showApiKeyModal) window.showApiKeyModal(); return; } 
         
         const sourceText = (state.blogSourceType === 'optimized') ? state.optimizedTextForBlog : document.getElementById('smart-area').value.trim(); 
         if (!sourceText) { showModal({ title: '錯誤', message: '缺少文章生成的來源內容。' }); return; } 
         
-        // === FIX: If creating a new version, save the current editor content FIRST. ===
+        // === Determine if this is a variation based on modifier presence ===
+        const isVariation = variationModifier !== '';
         if (isVariation && state.blogArticleVersions[state.currentBlogVersionIndex]) {
             console.log(`Saving content of Version ${state.currentBlogVersionIndex + 1} before generating new one.`);
             state.blogArticleVersions[state.currentBlogVersionIndex].htmlContent = getLatestHtmlContent();
         }
         // === END FIX ===
 
-        let variationModifier = null;
         let tone = blogToneSelect.value;
-
-        if(isVariation) {
-            const modifiers = ["請用更活潑、更口語化的語氣重寫。", "請用更專業、更具權威性的風格改寫。", "請在文章開頭加入一個引人入勝的故事作為開場。", "請讓文章結構更簡潔，多用條列式說明。"];
-            variationModifier = modifiers[Math.floor(Math.random() * modifiers.length)];
-            showToast(`AI 正在嘗試新風格...`);
-        }
+        // The variationModifier is now directly passed as an argument.
         
-        const promptOptions = { persona: blogPersonaSelect.value, tone: tone, wordCount: blogWordCountSelect.value, tagsString: state.currentBlogTags.join(', '), sourceText: sourceText, variationModifier: variationModifier };
+        const promptOptions = { persona: blogPersonaSelect.value, tone: tone, wordCount: blogWordCountSelect.value, tagsString: state.currentBlogTags.join(', '), sourceText: sourceText, variationModifier: variationModifier, shouldOverride: shouldOverride };
         
         showModal({ title: 'AI 生成中...', showProgressBar: true, taskType: 'blog' }); 
         const btn = isVariation ? generateBlogVariationBtn : generateBlogBtn;
@@ -673,21 +672,53 @@ function initializeTab2() {
             let fullResponse = await callGeminiAPI(apiKey, prompt);
 
             // Smart Retry Logic
-            if (!fullResponse.includes('[ARTICLE_START]') || !fullResponse.includes('[SEO_START]')) {
-                console.warn("第一次嘗試格式不符，正在自動重試...");
-                showModal({ title: 'AI 回應校驗失敗', message: '初步回應格式不符，正在自動為您重試一次...', showProgressBar: true, taskType: 'blog' });
+            const requiredTags = ['[ARTICLE_START]', '[ARTICLE_END]', '[SEO_START]', '[SEO_END]'];
+            const isResponseValid = (response) => requiredTags.every(tag => response.includes(tag));
+
+            if (!isResponseValid(fullResponse)) {
+                console.warn("第一次嘗試格式不完整 (缺少部分標籤)，正在自動重試...");
+                showModal({ title: 'AI 回應校驗失敗', message: '初步回應格式不完整，正在自動為您重試一次...', showProgressBar: true, taskType: 'blog' });
                 
                 const retryPromptOptions = { ...promptOptions, isRetry: true };
                 prompt = assembleBlogPrompt(retryPromptOptions);
                 fullResponse = await callGeminiAPI(apiKey, prompt);
 
-                if (!fullResponse.includes('[ARTICLE_START]') || !fullResponse.includes('[SEO_START]')) {
-                    throw new Error("AI 回應格式不完整，請稍後再試或生成另一版本。");
+                if (!isResponseValid(fullResponse)) {
+                    // 如果重試後還是缺少標籤，嘗試用更寬鬆的方式解析，或者拋出錯誤
+                    console.error("重試後格式依然不完整:", fullResponse);
+                    // 不要直接拋出錯誤，試試看能不能救回部分內容
+                    if (!fullResponse.includes('[ARTICLE_START]')) {
+                         throw new Error("AI 回應嚴重錯誤：找不到文章開始標籤。");
+                    }
                 }
             }
             
+            // Regex now allows for missing end tag in worst case (fallback) by using logical OR with end of string if needed, 
+            // but since we validated above, strict matching is preferred. 
+            // However, to be safe against regex failure:
+            let articleHtml = "";
             const articleMatch = fullResponse.match(/\[ARTICLE_START\]([\s\S]*?)\[ARTICLE_END\]/);
-            let articleHtml = articleMatch ? articleMatch[1].trim() : "";
+            
+            if (articleMatch) {
+                articleHtml = articleMatch[1].trim();
+            } else {
+                // Fallback: If regex fails but START tag exists, take everything after START
+                const startIdx = fullResponse.indexOf('[ARTICLE_START]');
+                if (startIdx !== -1) {
+                    console.warn("Regex extraction failed, using fallback extraction.");
+                    let contentAfterStart = fullResponse.substring(startIdx + '[ARTICLE_START]'.length);
+                    // If SEO_START exists, cut off there
+                    const seoStartIdx = contentAfterStart.indexOf('[SEO_START]');
+                    if (seoStartIdx !== -1) {
+                        contentAfterStart = contentAfterStart.substring(0, seoStartIdx);
+                    }
+                    articleHtml = contentAfterStart.trim();
+                }
+            }
+
+            if (!articleHtml) {
+                 throw new Error("無法從 AI 回應中提取文章內容。");
+            }
             
             // --- Step 1: Clean and load main article content ---
             quillEditor.root.innerHTML = cleanHtml(articleHtml);
@@ -778,7 +809,11 @@ function initializeTab2() {
     }
 
     function generateBlogVariation() {
-        proceedGenerateBlogPost(true);
+        // Open the VariationHub modal for blog posts, passing the proceed function as callback
+        // The callback will receive the chosen variationModifier from the modal.
+        VariationHub.open('blog', (modifier, shouldOverride) => {
+            proceedGenerateBlogPost(modifier, shouldOverride);
+        });
     }
     
     function getFileName() {

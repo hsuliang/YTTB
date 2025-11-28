@@ -58,14 +58,18 @@ window.clearSocialDraft = function() {
 }
 
 function assembleSocialPrompt(options) {
-    const { objective, length, tone, hashtags, cta, sourceText, variationModifier } = options;
+    const { objective, length, tone, hashtags, cta, sourceText, variationModifier, shouldOverride = false } = options;
     const wizardSettings = JSON.parse(localStorage.getItem(SOCIAL_SETTINGS_STORAGE_KEYS.PROMPT_WIZARD)) || {};
 
     let globalRules = [];
     if (variationModifier) { globalRules.push(`- 風格變化指令: ${variationModifier}`); }
     globalRules.push(`- 貼文目標: ${objective}`);
     globalRules.push(`- 貼文長度: ${length}`);
-    globalRules.push(`- 寫作語氣: ${tone}`);
+    
+    if (!variationModifier || !shouldOverride) {
+        globalRules.push(`- 寫作語氣: ${tone}`);
+    }
+    
     if (hashtags) globalRules.push(`- 指定Hashtags: ${hashtags}`);
     if (cta) globalRules.push(`- 行動呼籲: ${cta}`);
     if (wizardSettings.coreViewpoint) { globalRules.push(`- 核心觀點: 請務必在所有貼文中，特別強調並放大這個核心觀點：「${wizardSettings.coreViewpoint}」`); }
@@ -246,36 +250,32 @@ function initializeTab3() {
         }
     }
 
-    async function proceedGenerateSocialPosts(isVariation = false) {
-        const apiKey = sessionStorage.getItem('geminiApiKey');
-        if (!apiKey) { if(window.showApiKeyModal) window.showApiKeyModal(); return; } 
-
-        let sourceText = '';
-        const hasGeneratedBlog = state.blogArticleVersions && state.blogArticleVersions.length > 0;
-        const hasOptimizedText = state.optimizedTextForBlog && state.optimizedTextForBlog.trim().length > 0;
-
-        if (hasGeneratedBlog) sourceText = state.blogArticleVersions[state.currentBlogVersionIndex].htmlContent.replace(/<[^>]+>/g, ' ');
-        else if (hasOptimizedText) sourceText = state.optimizedTextForBlog;
-        else sourceText = document.getElementById('smart-area').value.trim();
-
-        if (!sourceText) { showModal({ title: '錯誤', message: '缺少用於生成貼文的來源內容。' }); return; }
-        
-        let variationModifier = null;
-        if(isVariation) {
-            const modifiers = ["請使用更多 Emoji。", "請讓語氣更專業、精簡。", "請用一個引人好奇的問題作為開頭。", "請多用條列式說明。"];
-            variationModifier = modifiers[Math.floor(Math.random() * modifiers.length)];
-            showToast(`AI 正在嘗試新風格：${variationModifier.replace('請','').replace('。','')}`);
-        }
-
-        const promptOptions = {
-            objective: socialObjectiveSelect.value, length: socialLengthSelect.value, tone: socialToneSelect.value,
-            hashtags: socialHashtagsInput.value, cta: socialCtaTextarea.value, sourceText: sourceText, variationModifier: variationModifier,
-        };
-        const prompt = assembleSocialPrompt(promptOptions);
-        
-        showModal({ title: 'AI 生成中...', message: '正在為您撰寫三平台社群貼文...', showProgressBar: true, taskType: 'social' });
-        
-        const btn = isVariation ? generateSocialVariationBtn : generateSocialBtn;
+        async function proceedGenerateSocialPosts(variationModifier = '', shouldOverride = false) {
+            const apiKey = sessionStorage.getItem('geminiApiKey');
+            if (!apiKey) { if(window.showApiKeyModal) window.showApiKeyModal(); return; }
+    
+            let sourceText = '';
+            const hasGeneratedBlog = state.blogArticleVersions && state.blogArticleVersions.length > 0;
+            const hasOptimizedText = state.optimizedTextForBlog && state.optimizedTextForBlog.trim().length > 0;
+    
+            if (hasGeneratedBlog) sourceText = state.blogArticleVersions[state.currentBlogVersionIndex].htmlContent.replace(/<[^>]+>/g, ' ');
+            else if (hasOptimizedText) sourceText = state.optimizedTextForBlog;
+            else sourceText = document.getElementById('smart-area').value.trim();
+    
+            if (!sourceText) { showModal({ title: '錯誤', message: '缺少用於生成貼文的來源內容。' }); return; }
+    
+            // Determine if this is a variation based on modifier presence
+            const isVariation = variationModifier !== '';
+            // Removed the if(isVariation) random modifier block
+    
+            const promptOptions = {
+                objective: socialObjectiveSelect.value, length: socialLengthSelect.value, tone: socialToneSelect.value,
+                hashtags: socialHashtagsInput.value, cta: socialCtaTextarea.value, sourceText: sourceText, variationModifier: variationModifier, shouldOverride: shouldOverride
+            };
+            const prompt = assembleSocialPrompt(promptOptions);
+    
+            showModal({ title: 'AI 生成中...', message: '正在為您撰寫三平台社群貼文...', showProgressBar: true, taskType: 'social' });
+            const btn = isVariation ? generateSocialVariationBtn : generateSocialBtn;
         btn.disabled = true;
         btn.classList.add('btn-loading');
 
@@ -344,7 +344,11 @@ function initializeTab3() {
     }
 
     function generateSocialVariation() {
-        proceedGenerateSocialPosts(true);
+        // Open the VariationHub modal for social posts, passing the proceed function as callback
+        // The callback will receive the chosen variationModifier from the modal.
+        VariationHub.open('social', (modifier, shouldOverride) => {
+            proceedGenerateSocialPosts(modifier, shouldOverride);
+        });
     }
 
     function copySocialPost() {
