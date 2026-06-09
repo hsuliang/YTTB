@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
     <!-- ########## END NEW ########## -->
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body class="font-sans flex flex-col min-h-screen">
 
     <div class="container mx-auto p-4 md:p-8 flex-grow">
@@ -19,20 +21,25 @@
         <header class="relative flex flex-col items-center justify-center mb-8">
             <div class="flex items-center justify-center">
                 <img src="images/Aliang.png" alt="丫亮笑長 Logo" class="h-20 w-20 mr-4 flex-shrink-0">
-                <h1 class="text-5xl font-bold heading-color">ㄚ亮笑長的內容創作助手<sup class="text-2xl align-super text-[var(--link-color)] blink-effect">AI</sup></h1>
+                <h1 class="text-5xl font-bold heading-color">ㄚ亮笑長的內容創作助手<sup
+                        class="text-2xl align-super text-[var(--link-color)] blink-effect">AI</sup></h1>
             </div>
             <p class="mt-2 text-base">您的全方位數位內容創作夥伴</p>
-            
+
             <div class="header-actions">
                 <p id="api-key-status" class="text-sm">狀態：尚未設定</p>
-                 <button id="appearance-btn" class="header-icon-btn" title="外觀設定">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                <button id="appearance-btn" class="header-icon-btn" title="外觀設定">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
                     </svg>
                 </button>
                 <button id="api-key-btn" class="header-icon-btn" title="API Key 設定">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H5v-2H3v-2H1v-4a6 6 0 0110.257-4.257" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H5v-2H3v-2H1v-4a6 6 0 0110.257-4.257" />
                     </svg>
                 </button>
             </div>
@@ -42,9 +49,12 @@
 
             <div class="flex border-b border-[var(--card-border)]">
                 <button id="tab1-btn" class="tab-btn active" data-tab="tab1">1. 內容整理與優化</button>
-                <button id="tab2-btn" class="tab-btn" data-tab="tab2" disabled title="請先在分頁 1 輸入內容並設定 API Key">2. 部落格文章生成<span id="tab2-dot" class="notification-dot hidden"></span></button>
-                <button id="tab3-btn" class="tab-btn" data-tab="tab3" disabled title="請先在分頁 1 輸入內容並設定 API Key">3. 社群貼文生成<span id="tab3-dot" class="notification-dot hidden"></span></button>
-                <button id="tab4-btn" class="tab-btn" data-tab="tab4" disabled title="請先在分頁 1 輸入內容並設定 API Key">4. 電子報內容生成<span id="tab4-dot" class="notification-dot hidden"></span></button>
+                <button id="tab2-btn" class="tab-btn" data-tab="tab2" disabled title="請先在分頁 1 輸入內容並設定 API Key">2.
+                    部落格文章生成<span id="tab2-dot" class="notification-dot hidden"></span></button>
+                <button id="tab3-btn" class="tab-btn" data-tab="tab3" disabled title="請先在分頁 1 輸入內容並設定 API Key">3.
+                    社群貼文生成<span id="tab3-dot" class="notification-dot hidden"></span></button>
+                <button id="tab4-btn" class="tab-btn" data-tab="tab4" disabled title="請先在分頁 1 輸入內容並設定 API Key">4.
+                    電子報內容生成<span id="tab4-dot" class="notification-dot hidden"></span></button>
             </div>
 
             <div class="p-6">
@@ -53,25 +63,33 @@
                         <div class="flex flex-col h-[400px]">
                             <div class="flex items-baseline flex-shrink-0 mb-2">
                                 <h3 class="text-lg font-semibold heading-color">原始內容</h3>
-                                <button id="toggle-subtitle-help-btn" class="text-sm ml-2 text-[var(--link-color)] hover:underline flex items-center focus:outline-none">
+                                <button id="toggle-subtitle-help-btn"
+                                    class="text-sm ml-2 text-[var(--link-color)] hover:underline flex items-center focus:outline-none">
                                     <span>如何取得字幕？</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="h-4 w-4 ml-1 transition-transform duration-200" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </button>
                             </div>
-                            
+
                             <!-- 字幕教學折疊面板 -->
-                            <div id="subtitle-help-panel" class="hidden bg-[var(--gray-bg)] p-4 rounded-md border border-[var(--card-border)] mb-3 text-sm shadow-inner transition-all duration-300">
+                            <div id="subtitle-help-panel"
+                                class="hidden bg-[var(--gray-bg)] p-4 rounded-md border border-[var(--card-border)] mb-3 text-sm shadow-inner transition-all duration-300">
                                 <!-- 方法一：DownSub -->
                                 <div class="mb-3">
                                     <div class="flex items-center mb-1">
-                                        <span class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">推薦</span>
+                                        <span
+                                            class="bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">推薦</span>
                                         <strong class="text-[var(--heading-color)]">方法一：使用 DownSub 下載</strong>
                                     </div>
                                     <ol class="list-decimal list-inside text-[var(--body-text)] space-y-1 ml-1">
                                         <li>複製您的 YouTube 影片網址。</li>
-                                        <li>前往 <a href="https://downsub.com/" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800 underline font-bold">DownSub.com</a>。</li>
+                                        <li>前往 <a href="https://downsub.com/" target="_blank" rel="noopener"
+                                                class="text-blue-600 hover:text-blue-800 underline font-bold">DownSub.com</a>。
+                                        </li>
                                         <li>貼上網址搜尋，下載時請選擇 <strong>SRT</strong> 格式。</li>
                                     </ol>
                                 </div>
@@ -81,37 +99,57 @@
                                 <!-- 方法二：Faster Whisper -->
                                 <div>
                                     <div class="flex items-center mb-1">
-                                        <span class="bg-purple-100 text-purple-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">進階</span>
-                                        <strong class="text-[var(--heading-color)]">方法二：使用 Faster Whisper (無字幕時)</strong>
+                                        <span
+                                            class="bg-purple-100 text-purple-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">進階</span>
+                                        <strong class="text-[var(--heading-color)]">方法二：使用 Faster Whisper
+                                            (無字幕時)</strong>
                                     </div>
                                     <p class="text-[var(--gray-text)] mb-2 ml-1">如果影片本身沒有 CC 字幕，可使用此工具進行 AI 語音轉文字。</p>
-                                    <a href="https://tinyurl.com/gsyan-faster-whisper" target="_blank" rel="noopener" class="ml-1 text-purple-600 hover:text-purple-800 underline font-bold flex items-center">
+                                    <a href="https://tinyurl.com/gsyan-faster-whisper" target="_blank" rel="noopener"
+                                        class="ml-1 text-purple-600 hover:text-purple-800 underline font-bold flex items-center">
                                         <span>👉 前往雄哥的 Faster Whisper 工具</span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                        </svg>
                                     </a>
                                 </div>
                             </div>
 
-                            <div id="view-toggle-header" class="flex justify-between items-center mb-2 border-b border-[var(--card-border)] hidden flex-shrink-0">
+                            <div id="view-toggle-header"
+                                class="flex justify-between items-center mb-2 border-b border-[var(--card-border)] hidden flex-shrink-0">
                                 <div class="flex">
                                     <button class="view-btn" data-view="original">原始內容</button>
                                     <button class="view-btn" data-view="processed">處理結果</button>
                                 </div>
-                                <button id="return-to-edit-btn" class="font-bold py-1 px-3 rounded btn-secondary text-sm">返回編輯</button>
+                                <button id="return-to-edit-btn"
+                                    class="font-bold py-1 px-3 rounded btn-secondary text-sm">返回編輯</button>
                             </div>
-                            <div id="smart-area-container" class="relative flex-grow border border-[var(--card-border)] rounded bg-[var(--gray-bg)]">
-                                <textarea id="smart-area" class="w-full h-full rounded p-3 bg-transparent focus:outline-none resize-none leading-relaxed"></textarea>
-                                <div id="display-original" class="view-content p-3 overflow-y-auto font-mono whitespace-pre-wrap hidden leading-relaxed"></div>
-                                <div id="display-processed" class="view-content p-3 overflow-y-auto whitespace-pre-wrap hidden leading-relaxed"></div>
-                                
+                            <div id="smart-area-container"
+                                class="relative flex-grow border border-[var(--card-border)] rounded bg-[var(--gray-bg)]">
+                                <textarea id="smart-area"
+                                    class="w-full h-full rounded p-3 bg-transparent focus:outline-none resize-none leading-relaxed"></textarea>
+                                <div id="display-original"
+                                    class="view-content p-3 overflow-y-auto font-mono whitespace-pre-wrap hidden leading-relaxed">
+                                </div>
+                                <div id="display-processed"
+                                    class="view-content p-3 overflow-y-auto whitespace-pre-wrap hidden leading-relaxed">
+                                </div>
+
                                 <div id="tab1-empty-state" class="hidden">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="h-16 w-16 mb-4 opacity-50 text-gray-500" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor" stroke-width="1">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
                                     <p class="font-semibold text-lg text-gray-500">原始內容</p>
                                     <div class="text-center mt-2 text-sm text-gray-500">
                                         <span>✍️ 貼上內容或拖曳檔案，也可以</span>
-                                        <label for="file-input" class="text-[var(--link-color)] hover:underline cursor-pointer font-bold ml-1">點擊此處上傳 .srt 檔案</label>
+                                        <label for="file-input"
+                                            class="text-[var(--link-color)] hover:underline cursor-pointer font-bold ml-1">點擊此處上傳
+                                            .srt 檔案</label>
                                         <input type="file" id="file-input" accept=".srt,.txt" class="hidden">
                                     </div>
                                 </div>
@@ -121,60 +159,77 @@
                             </div>
                         </div>
 
-                        <div id="settings-toolbar" class="p-3 rounded-md bg-[var(--gray-bg)] flex flex-wrap items-center gap-x-6 gap-y-3">
+                        <div id="settings-toolbar"
+                            class="p-3 rounded-md bg-[var(--gray-bg)] flex flex-wrap items-center gap-x-6 gap-y-3">
                             <div class="flex items-center gap-2">
-                                <label for="max-chars-per-line" class="font-semibold whitespace-nowrap" title="設定字幕每行的最大字元數">單行字數:</label>
+                                <label for="max-chars-per-line" class="font-semibold whitespace-nowrap"
+                                    title="設定字幕每行的最大字元數">單行字數:</label>
                                 <span id="max-chars-value" class="font-bold w-6 text-center">27</span>
                                 <input type="range" id="max-chars-per-line" min="10" max="50" value="27" class="w-24">
                             </div>
                             <div class="flex items-center gap-2">
-                                <label for="merge-short-lines-threshold" class="font-semibold whitespace-nowrap" title="當一行字幕的字數小於或等於此數值時，將會自動與下一行合併">合併字數:</label>
+                                <label for="merge-short-lines-threshold" class="font-semibold whitespace-nowrap"
+                                    title="當一行字幕的字數小於或等於此數值時，將會自動與下一行合併">合併字數:</label>
                                 <span id="merge-short-lines-value" class="font-bold w-6 text-center">3</span>
-                                <input type="range" id="merge-short-lines-threshold" min="0" max="10" value="3" class="w-24">
+                                <input type="range" id="merge-short-lines-threshold" min="0" max="10" value="3"
+                                    class="w-24">
                             </div>
                             <div class="flex items-center">
-                                <input type="checkbox" id="keep-punctuation" checked class="form-checkbox h-5 w-5 rounded">
+                                <input type="checkbox" id="keep-punctuation" checked
+                                    class="form-checkbox h-5 w-5 rounded">
                                 <label for="keep-punctuation" class="ml-2" title="勾選此項以保留字幕中的所有標點符號">保留標點</label>
                             </div>
                             <div class="border-l border-gray-400 h-6 mx-2"></div>
-                             <div class="flex items-center gap-2">
-                                <label for="timeline-shift" class="font-semibold whitespace-nowrap" title="對所有字幕的時間戳進行整體平移，可輸入正數（延後）或負數（提前）">時間平移(ms):</label>
-                                <input type="number" id="timeline-shift" value="0" placeholder="例如: -500" class="w-24 rounded p-1 text-center">
+                            <div class="flex items-center gap-2">
+                                <label for="timeline-shift" class="font-semibold whitespace-nowrap"
+                                    title="對所有字幕的時間戳進行整體平移，可輸入正數（延後）或負數（提前）">時間平移(ms):</label>
+                                <input type="number" id="timeline-shift" value="0" placeholder="例如: -500"
+                                    class="w-24 rounded p-1 text-center">
                             </div>
                             <div class="border-l border-gray-400 h-6 mx-2"></div>
                             <div class="flex items-center gap-2">
-                                <input type="checkbox" id="fix-timestamps" checked class="form-checkbox h-5 w-5 rounded">
+                                <input type="checkbox" id="fix-timestamps" checked
+                                    class="form-checkbox h-5 w-5 rounded">
                                 <label for="fix-timestamps" class="whitespace-nowrap">修復小於</label>
-                                <input type="number" id="timestamp-threshold" value="100" class="w-20 rounded p-1 text-center">
+                                <input type="number" id="timestamp-threshold" value="100"
+                                    class="w-20 rounded p-1 text-center">
                                 <label for="timestamp-threshold" class="whitespace-nowrap">ms 的間隔</label>
                             </div>
                         </div>
                     </div>
-                    
+
                     <hr class="my-8">
 
                     <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
-                        <button id="process-srt-btn" class="font-bold py-3 px-6 rounded-lg text-lg btn-primary">🚀 開始整理</button>
-                        <button id="export-srt-btn" class="font-bold py-2 px-4 rounded btn-disabled" disabled>匯出 SRT 檔案</button>
+                        <button id="process-srt-btn" class="font-bold py-3 px-6 rounded-lg text-lg btn-primary">🚀
+                            開始整理</button>
+                        <button id="export-srt-btn" class="font-bold py-2 px-4 rounded btn-disabled" disabled>匯出 SRT
+                            檔案</button>
                         <div class="border-l border-gray-300 h-8 mx-2"></div>
                         <button id="batch-replace-btn" class="font-bold py-2 px-4 rounded btn-secondary">批次取代</button>
-                        <button id="generate-summary-btn" class="font-bold py-2 px-4 rounded btn-disabled" disabled title="請先輸入內容並設定 API Key">生成摘要</button>
-                        <button id="generate-chapters-btn" class="font-bold py-2 px-4 rounded btn-disabled" disabled title="請先輸入內容並設定 API Key">生成章節</button>
+                        <button id="generate-summary-btn" class="font-bold py-2 px-4 rounded btn-disabled" disabled
+                            title="請先輸入內容並設定 API Key">生成摘要</button>
+                        <button id="generate-chapters-btn" class="font-bold py-2 px-4 rounded btn-disabled" disabled
+                            title="請先輸入內容並設定 API Key">生成章節</button>
                         <div class="border-l border-gray-300 h-8 mx-2"></div>
                         <button id="reset-app-btn" class="font-bold py-2 px-4 rounded btn-danger">重置頁面</button>
-                        </div>
+                    </div>
                 </div>
 
                 <div id="tab2" class="tab-content hidden">
                     <div class="grid grid-cols-1 md:grid-cols-10 gap-8">
                         <div class="md:col-span-3 flex flex-col">
                             <div class="flex-grow">
-                                <div class="flex justify-between items-center border-b-2 border-[var(--heading-color)] pb-2">
+                                <div
+                                    class="flex justify-between items-center border-b-2 border-[var(--heading-color)] pb-2">
                                     <h3 class="text-xl font-bold heading-color">文章生成設定</h3>
                                     <button id="open-prompt-wizard-btn" class="header-icon-btn" title="AI 寫作風格客製化精靈">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                          <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                         </svg>
                                     </button>
                                 </div>
@@ -184,7 +239,11 @@
                                     <div id="stepper-step-1" class="stepper-item">
                                         <div class="stepper-circle">
                                             <span class="stepper-number">1</span>
-                                            <svg class="stepper-check" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                                            <svg class="stepper-check" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7" />
+                                            </svg>
                                         </div>
                                         <p class="stepper-label">準備素材</p>
                                     </div>
@@ -192,7 +251,11 @@
                                     <div id="stepper-step-2" class="stepper-item">
                                         <div class="stepper-circle">
                                             <span class="stepper-number">2</span>
-                                            <svg class="stepper-check" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                                            <svg class="stepper-check" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7" />
+                                            </svg>
                                         </div>
                                         <p class="stepper-label">AI 優化</p>
                                     </div>
@@ -200,7 +263,11 @@
                                     <div id="stepper-step-3" class="stepper-item">
                                         <div class="stepper-circle">
                                             <span class="stepper-number">3</span>
-                                            <svg class="stepper-check" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
+                                            <svg class="stepper-check" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7" />
+                                            </svg>
                                         </div>
                                         <p class="stepper-label">生成文章</p>
                                     </div>
@@ -208,42 +275,57 @@
 
                                 <div class="space-y-6">
                                     <div class="p-3 rounded-md border border-[var(--card-border)] bg-[var(--gray-bg)]">
-                                        <p id="blog-source-status" class="text-sm font-semibold text-[var(--heading-color)] mb-2"><span id="blog-status-icon" class="hidden">✔️ </span>內容來源：字幕原始檔</p>
-                                        <button id="optimize-text-for-blog-btn" class="w-full font-bold py-2 px-4 rounded btn-disabled" disabled>優化文本 (建議)</button>
+                                        <p id="blog-source-status"
+                                            class="text-sm font-semibold text-[var(--heading-color)] mb-2"><span
+                                                id="blog-status-icon" class="hidden">✔️ </span>內容來源：字幕原始檔</p>
+                                        <button id="optimize-text-for-blog-btn"
+                                            class="w-full font-bold py-2 px-4 rounded btn-disabled" disabled>優化文本
+                                            (建議)</button>
                                     </div>
-                                    
+
                                     <div class="space-y-4">
                                         <div>
                                             <label for="blog-title" class="font-semibold">文章標題</label>
-                                            <input type="text" id="blog-title" placeholder="請輸入您的文章主標題" class="w-full mt-1 p-2 rounded">
+                                            <input type="text" id="blog-title" placeholder="請輸入您的文章主標題"
+                                                class="w-full mt-1 p-2 rounded">
                                         </div>
                                         <div>
                                             <label for="blog-yt-id" class="font-semibold">YouTube 影片 ID 或網址</label>
-                                            <input type="text" id="blog-yt-id" placeholder="可在此貼上完整 YouTube 網址或影片 ID" class="w-full mt-1 p-2 rounded">
+                                            <input type="text" id="blog-yt-id" placeholder="可在此貼上完整 YouTube 網址或影片 ID"
+                                                class="w-full mt-1 p-2 rounded">
                                         </div>
                                     </div>
-                                    
+
                                     <div>
                                         <button id="ai-style-toggle-btn" class="accordion-toggle">
                                             <span>AI 風格設定</span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                                fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                    clip-rule="evenodd" />
                                             </svg>
                                         </button>
                                         <div id="ai-style-panel" class="accordion-panel">
                                             <div class="accordion-content">
                                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                     <div>
-                                                        <label for="blog-persona" class="font-semibold text-sm">寫作人稱</label>
-                                                        <select id="blog-persona" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                                                        <label for="blog-persona"
+                                                            class="font-semibold text-sm">寫作人稱</label>
+                                                        <select id="blog-persona"
+                                                            class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
                                                     </div>
                                                     <div>
-                                                        <label for="blog-word-count" class="font-semibold text-sm">寫作字數</label>
-                                                        <select id="blog-word-count" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                                                        <label for="blog-word-count"
+                                                            class="font-semibold text-sm">寫作字數</label>
+                                                        <select id="blog-word-count"
+                                                            class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
                                                     </div>
                                                     <div class="col-span-1 sm:col-span-2">
-                                                        <label for="blog-tone" class="font-semibold text-sm">寫作語氣</label>
-                                                        <select id="blog-tone" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                                                        <label for="blog-tone"
+                                                            class="font-semibold text-sm">寫作語氣</label>
+                                                        <select id="blog-tone"
+                                                            class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -253,49 +335,67 @@
                                     <div>
                                         <button id="seo-toggle-btn" class="accordion-toggle">
                                             <span>SEO 與宣傳</span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                                fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                    clip-rule="evenodd" />
                                             </svg>
                                         </button>
                                         <div id="seo-panel" class="accordion-panel">
-                                             <div class="accordion-content space-y-4">
+                                            <div class="accordion-content space-y-4">
                                                 <div>
                                                     <label class="font-semibold text-sm">文章標籤 (Tags)</label>
                                                     <div id="tag-container" class="tag-container mt-1">
-                                                        <input type="text" id="tag-input" class="tag-input" placeholder="輸入標籤後按 Enter...">
+                                                        <input type="text" id="tag-input" class="tag-input"
+                                                            placeholder="輸入標籤後按 Enter...">
                                                     </div>
                                                     <div id="tag-suggestions" class="tag-suggestions mt-2"></div>
                                                     <div class="text-right mt-2">
-                                                         <button id="save-tags-btn" class="font-bold py-1 px-3 rounded btn-secondary text-sm">儲存自訂標籤</button>
+                                                        <button id="save-tags-btn"
+                                                            class="font-bold py-1 px-3 rounded btn-secondary text-sm">儲存自訂標籤</button>
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label for="cta-preset-select" class="font-semibold text-sm">宣傳語句 (CTA)</label>
-                                                    <select id="cta-preset-select" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)] mb-2"></select>
-                                                    <textarea id="blog-cta" placeholder="可在此自訂 CTA，或選擇上方預設" class="w-full p-2 rounded" rows="5"></textarea>
+                                                    <label for="cta-preset-select" class="font-semibold text-sm">宣傳語句
+                                                        (CTA)</label>
+                                                    <select id="cta-preset-select"
+                                                        class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)] mb-2"></select>
+                                                    <textarea id="blog-cta" placeholder="可在此自訂 CTA，或選擇上方預設"
+                                                        class="w-full p-2 rounded" rows="5"></textarea>
                                                     <div class="flex justify-end gap-2 mt-2">
-                                                        <button id="delete-cta-btn" class="font-bold py-1 px-3 rounded btn-danger text-sm hidden">刪除此 CTA</button>
-                                                        <button id="save-cta-btn" class="font-bold py-1 px-3 rounded btn-secondary text-sm hidden">儲存此自訂 CTA</button>
+                                                        <button id="delete-cta-btn"
+                                                            class="font-bold py-1 px-3 rounded btn-danger text-sm hidden">刪除此
+                                                            CTA</button>
+                                                        <button id="save-cta-btn"
+                                                            class="font-bold py-1 px-3 rounded btn-secondary text-sm hidden">儲存此自訂
+                                                            CTA</button>
                                                     </div>
                                                 </div>
-                                             </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="flex items-center gap-2 mt-4">
-                                <button id="generate-blog-btn" class="w-full font-bold py-3 px-6 rounded-lg text-lg btn-primary">生成部落格文章</button>
-                                <button id="generate-blog-variation-btn" class="font-bold py-2 px-4 rounded-lg btn-secondary text-sm whitespace-nowrap" disabled title="生成不同風格的版本">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" viewBox="0 0 20 20" fill="currentColor">
-                                      <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
+                                <button id="generate-blog-btn"
+                                    class="w-full font-bold py-3 px-6 rounded-lg text-lg btn-primary">生成部落格文章</button>
+                                <button id="generate-blog-variation-btn"
+                                    class="font-bold py-2 px-4 rounded-lg btn-secondary text-sm whitespace-nowrap"
+                                    disabled title="生成不同風格的版本">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block"
+                                        viewBox="0 0 20 20" fill="currentColor">
+                                        <path
+                                            d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
                                     </svg>
                                     另一版本
                                 </button>
                             </div>
                         </div>
-                        
+
                         <div class="md:col-span-7">
-                            <div id="blog-versions-tabs-container" class="flex border-b border-[var(--card-border)] mb-2">
+                            <div id="blog-versions-tabs-container"
+                                class="flex border-b border-[var(--card-border)] mb-2">
                             </div>
                             <div class="flex border-b border-[var(--card-border)] mb-4">
                                 <button class="blog-view-btn active" data-blog-view="preview">文章預覽</button>
@@ -303,39 +403,53 @@
                                 <button class="blog-view-btn" data-blog-view="markdown">Markdown 原始碼</button>
                                 <button class="blog-view-btn" data-blog-view="seo">SEO 建議</button>
                             </div>
-                            
+
                             <div id="blog-output-container" class="hidden">
                                 <!-- ########## REFACTORED: BLOG PREVIEW TO EDITOR ########## -->
                                 <div id="blog-view-preview" class="blog-view-content">
                                     <div class="relative">
                                         <div class="absolute top-2 right-2 space-x-2 z-20">
-                                            <button id="download-html-btn" class="font-bold py-1 px-3 rounded btn-secondary text-sm">HTML</button>
-                                            <button id="download-md-btn" class="font-bold py-1 px-3 rounded btn-secondary text-sm">MD</button>
+                                            <button id="download-html-btn"
+                                                class="font-bold py-1 px-3 rounded btn-secondary text-sm">HTML</button>
+                                            <button id="download-md-btn"
+                                                class="font-bold py-1 px-3 rounded btn-secondary text-sm">MD</button>
                                         </div>
                                         <div id="blog-editor-container" class="bg-white rounded-lg">
                                             <!-- Quill Editor will be initialized here -->
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div id="blog-view-html" class="blog-view-content hidden">
-                                     <div class="relative h-[80vh]">
-                                        <button class="source-copy-btn absolute top-2 right-2 z-10" data-copy-target="html-source-preview" title="複製原始碼">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                    <div class="relative h-[80vh]">
+                                        <button class="source-copy-btn absolute top-2 right-2 z-10"
+                                            data-copy-target="html-source-preview" title="複製原始碼">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                            </svg>
                                         </button>
-                                        <textarea id="html-source-preview" readonly class="w-full h-full rounded p-3 bg-[var(--gray-bg)] border border-[var(--card-border)] focus:outline-none resize-none font-mono text-sm"></textarea>
-                                     </div>
+                                        <textarea id="html-source-preview" readonly
+                                            class="w-full h-full rounded p-3 bg-[var(--gray-bg)] border border-[var(--card-border)] focus:outline-none resize-none font-mono text-sm"></textarea>
+                                    </div>
                                 </div>
 
                                 <div id="blog-view-markdown" class="blog-view-content hidden">
                                     <div class="relative h-[80vh]">
-                                        <button class="source-copy-btn absolute top-2 right-2 z-10" data-copy-target="markdown-source-preview" title="複製原始碼">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                        <button class="source-copy-btn absolute top-2 right-2 z-10"
+                                            data-copy-target="markdown-source-preview" title="複製原始碼">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                            </svg>
                                         </button>
-                                        <textarea id="markdown-source-preview" readonly class="w-full h-full rounded p-3 bg-[var(--gray-bg)] border border-[var(--card-border)] focus:outline-none resize-none font-mono text-sm"></textarea>
+                                        <textarea id="markdown-source-preview" readonly
+                                            class="w-full h-full rounded p-3 bg-[var(--gray-bg)] border border-[var(--card-border)] focus:outline-none resize-none font-mono text-sm"></textarea>
                                     </div>
                                 </div>
-                                
+
                                 <div id="blog-view-seo" class="blog-view-content hidden">
                                     <div class="p-4 border rounded-lg border-[var(--card-border)] bg-[var(--gray-bg)]">
                                         <h4 class="text-lg font-semibold mb-2 heading-color">SEO 建議</h4>
@@ -343,78 +457,140 @@
                                             <div class="flex items-start gap-2">
                                                 <strong class="w-20 inline-block flex-shrink-0">SEO 標題:</strong>
                                                 <span id="seo-title-text" class="flex-grow">...</span>
-                                                <button class="seo-copy-btn" data-copy-target="seo-title-text" title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
+                                                <button class="seo-copy-btn" data-copy-target="seo-title-text"
+                                                    title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                    </svg></button>
                                             </div>
                                             <div class="flex items-start gap-2">
                                                 <strong class="w-20 inline-block flex-shrink-0">搜尋描述:</strong>
                                                 <span id="seo-description-text" class="flex-grow">...</span>
-                                                <button class="seo-copy-btn" data-copy-target="seo-description-text" title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
+                                                <button class="seo-copy-btn" data-copy-target="seo-description-text"
+                                                    title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                    </svg></button>
                                             </div>
                                             <div class="flex items-start gap-2">
                                                 <strong class="w-20 inline-block flex-shrink-0">固定網址:</strong>
                                                 <span id="seo-permalink-text" class="flex-grow">...</span>
-                                                <button class="seo-copy-btn" data-copy-target="seo-permalink-text" title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
+                                                <button class="seo-copy-btn" data-copy-target="seo-permalink-text"
+                                                    title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                    </svg></button>
                                             </div>
                                             <div class="flex items-start gap-2">
                                                 <strong class="w-20 inline-block flex-shrink-0">標籤:</strong>
                                                 <span id="seo-tags-text" class="flex-grow">...</span>
-                                                <button class="seo-copy-btn" data-copy-target="seo-tags-text" title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg></button>
+                                                <button class="seo-copy-btn" data-copy-target="seo-tags-text"
+                                                    title="複製"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                    </svg></button>
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="mt-6">
                                         <button id="advanced-seo-toggle-btn" class="accordion-toggle">
                                             <span>🚀 進階 SEO 分析 (AI)</span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                                fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                    clip-rule="evenodd" />
                                             </svg>
                                         </button>
                                         <div id="advanced-seo-panel" class="accordion-panel">
-                                             <div class="accordion-content space-y-6">
+                                            <div class="accordion-content space-y-6">
                                                 <div>
                                                     <h5 class="font-semibold mb-2 heading-color">關鍵字建議</h5>
-                                                    <button id="analyze-keywords-btn" class="font-bold py-2 px-4 rounded btn-secondary w-full" disabled>分析關鍵字</button>
-                                                    <div id="keywords-loader" class="text-center p-4 hidden text-sm text-[var(--gray-text)]">
-                                                        <div class="flex items-center justify-center"><svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>AI 分析中...</span></div>
+                                                    <button id="analyze-keywords-btn"
+                                                        class="font-bold py-2 px-4 rounded btn-secondary w-full"
+                                                        disabled>分析關鍵字</button>
+                                                    <div id="keywords-loader"
+                                                        class="text-center p-4 hidden text-sm text-[var(--gray-text)]">
+                                                        <div class="flex items-center justify-center"><svg
+                                                                class="animate-spin -ml-1 mr-3 h-5 w-5"
+                                                                xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                                viewBox="0 0 24 24">
+                                                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                                    stroke="currentColor" stroke-width="4"></circle>
+                                                                <path class="opacity-75" fill="currentColor"
+                                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                                                </path>
+                                                            </svg><span>AI 分析中...</span></div>
                                                     </div>
-                                                    <div id="keywords-result-container" class="mt-2 p-3 bg-[var(--bg-color)] rounded-md hidden">
+                                                    <div id="keywords-result-container"
+                                                        class="mt-2 p-3 bg-[var(--bg-color)] rounded-md hidden">
                                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                             <div>
                                                                 <strong class="block text-sm">核心關鍵字:</strong>
-                                                                <ul id="seo-keywords-core" class="list-disc list-inside mt-1 text-sm space-y-1"></ul>
+                                                                <ul id="seo-keywords-core"
+                                                                    class="list-disc list-inside mt-1 text-sm space-y-1">
+                                                                </ul>
                                                             </div>
                                                             <div>
                                                                 <strong class="block text-sm">長尾關鍵字:</strong>
-                                                                <ul id="seo-keywords-longtail" class="list-disc list-inside mt-1 text-sm space-y-1"></ul>
+                                                                <ul id="seo-keywords-longtail"
+                                                                    class="list-disc list-inside mt-1 text-sm space-y-1">
+                                                                </ul>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                
+
                                                 <div>
                                                     <h5 class="font-semibold mb-2 heading-color">內部連結建議</h5>
                                                     <div>
-                                                        <label for="internal-links-source" class="text-sm">貼上您網站的文章列表 (一行一個，格式：標題, 網址)</label>
-                                                        <textarea id="internal-links-source" rows="5" class="w-full mt-1 p-2 rounded" placeholder="例如：&#10;AI寫作技巧, https://example.com/ai-writing&#10;影片剪輯教學, https://example.com/video-editing"></textarea>
+                                                        <label for="internal-links-source" class="text-sm">貼上您網站的文章列表
+                                                            (一行一個，格式：標題, 網址)</label>
+                                                        <textarea id="internal-links-source" rows="5"
+                                                            class="w-full mt-1 p-2 rounded"
+                                                            placeholder="例如：&#10;AI寫作技巧, https://example.com/ai-writing&#10;影片剪輯教學, https://example.com/video-editing"></textarea>
                                                     </div>
-                                                    <button id="analyze-internal-links-btn" class="font-bold py-2 px-4 rounded btn-secondary w-full mt-2" disabled>分析內部連結機會</button>
-                                                    <div id="internal-links-loader" class="text-center p-4 hidden text-sm text-[var(--gray-text)]">
-                                                        <div class="flex items-center justify-center"><svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>AI 分析中...</span></div>
+                                                    <button id="analyze-internal-links-btn"
+                                                        class="font-bold py-2 px-4 rounded btn-secondary w-full mt-2"
+                                                        disabled>分析內部連結機會</button>
+                                                    <div id="internal-links-loader"
+                                                        class="text-center p-4 hidden text-sm text-[var(--gray-text)]">
+                                                        <div class="flex items-center justify-center"><svg
+                                                                class="animate-spin -ml-1 mr-3 h-5 w-5"
+                                                                xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                                viewBox="0 0 24 24">
+                                                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                                    stroke="currentColor" stroke-width="4"></circle>
+                                                                <path class="opacity-75" fill="currentColor"
+                                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                                                </path>
+                                                            </svg><span>AI 分析中...</span></div>
                                                     </div>
                                                     <div id="internal-links-result-container" class="mt-2 space-y-3">
                                                     </div>
                                                 </div>
-                                             </div>
+                                            </div>
                                         </div>
                                     </div>
 
                                 </div>
                             </div>
-                            
-                            <div id="blog-placeholder" class="text-center py-20 text-[var(--gray-text)] flex flex-col items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-                                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+
+                            <div id="blog-placeholder"
+                                class="text-center py-20 text-[var(--gray-text)] flex flex-col items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
                                 <p class="font-semibold text-lg">準備好將您的影片轉為文章了嗎？</p>
                                 <p class="mt-2 text-sm">請先在左側完成設定，<br>點擊「生成部落格文章」按鈕，成果將會顯示於此處。</p>
@@ -424,76 +600,99 @@
                 </div>
 
                 <div id="tab3" class="tab-content hidden">
-                     <div class="grid grid-cols-1 md:grid-cols-10 gap-8">
+                    <div class="grid grid-cols-1 md:grid-cols-10 gap-8">
                         <div class="md:col-span-3 space-y-4">
-                            <div class="flex justify-between items-center border-b-2 border-[var(--heading-color)] pb-2">
+                            <div
+                                class="flex justify-between items-center border-b-2 border-[var(--heading-color)] pb-2">
                                 <h3 class="text-xl font-bold heading-color">貼文生成設定</h3>
                                 <button id="open-social-wizard-btn" class="header-icon-btn" title="AI 社群風格客製化精靈">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                      <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                     </svg>
                                 </button>
                             </div>
                             <div class="p-3 rounded-md border border-[var(--card-border)] bg-[var(--gray-bg)] mt-4">
-                                <p id="social-source-status" class="text-sm font-semibold text-[var(--heading-color)] mb-2"><span id="social-status-icon" class="hidden">✔️ </span>內容來源：字幕原始檔</p>
-                                <button id="social-go-to-optimize-btn" class="w-full font-bold py-2 px-4 rounded btn-secondary">🚀 前往優化文本 (建議)</button>
+                                <p id="social-source-status"
+                                    class="text-sm font-semibold text-[var(--heading-color)] mb-2"><span
+                                        id="social-status-icon" class="hidden">✔️ </span>內容來源：字幕原始檔</p>
+                                <button id="social-go-to-optimize-btn"
+                                    class="w-full font-bold py-2 px-4 rounded btn-secondary">🚀 前往優化文本 (建議)</button>
                             </div>
-                             <div>
+                            <div>
                                 <label for="social-objective" class="font-semibold">貼文目標</label>
-                                <select id="social-objective" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                                <select id="social-objective"
+                                    class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
                             </div>
                             <div>
                                 <label for="social-length" class="font-semibold">貼文長度</label>
-                                <select id="social-length" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                                <select id="social-length"
+                                    class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
                             </div>
                             <div>
                                 <label for="social-tone-select" class="font-semibold">寫作語氣</label>
-                                <select id="social-tone-select" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                                <select id="social-tone-select"
+                                    class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
                             </div>
                             <div>
                                 <label for="social-hashtags" class="font-semibold">指定 Hashtags</label>
-                                <input type="text" id="social-hashtags" placeholder="例如：#AI #社群行銷" class="w-full mt-1 p-2 rounded">
+                                <input type="text" id="social-hashtags" placeholder="例如：#AI #社群行銷"
+                                    class="w-full mt-1 p-2 rounded">
                             </div>
                             <div>
                                 <label for="social-cta" class="font-semibold">行動呼籲 (CTA)</label>
-                                <textarea id="social-cta" rows="3" placeholder="例如：留言分享你的看法！" class="w-full mt-1 p-2 rounded"></textarea>
+                                <textarea id="social-cta" rows="3" placeholder="例如：留言分享你的看法！"
+                                    class="w-full mt-1 p-2 rounded"></textarea>
                             </div>
                             <div class="flex items-center gap-2">
-                                <button id="generate-social-btn" class="w-full font-bold py-3 px-6 rounded-lg text-lg btn-disabled" disabled>生成社群貼文</button>
-                                <button id="generate-social-variation-btn" class="font-bold py-2 px-4 rounded-lg btn-secondary text-sm whitespace-nowrap" disabled title="生成不同風格的版本">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" viewBox="0 0 20 20" fill="currentColor">
-                                      <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
+                                <button id="generate-social-btn"
+                                    class="w-full font-bold py-3 px-6 rounded-lg text-lg btn-disabled"
+                                    disabled>生成社群貼文</button>
+                                <button id="generate-social-variation-btn"
+                                    class="font-bold py-2 px-4 rounded-lg btn-secondary text-sm whitespace-nowrap"
+                                    disabled title="生成不同風格的版本">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block"
+                                        viewBox="0 0 20 20" fill="currentColor">
+                                        <path
+                                            d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
                                     </svg>
                                     另一版本
                                 </button>
                             </div>
                         </div>
                         <div class="md:col-span-7 relative">
-                             <div id="social-versions-tabs-container" class="flex border-b border-[var(--card-border)]">
-                             </div>
-                             <div class="flex border-b border-[var(--card-border)]">
+                            <div id="social-versions-tabs-container" class="flex border-b border-[var(--card-border)]">
+                            </div>
+                            <div class="flex border-b border-[var(--card-border)]">
                                 <button class="social-tab-btn active" data-social-tab="facebook">Facebook</button>
                                 <button class="social-tab-btn" data-social-tab="instagram">Instagram</button>
                                 <button class="social-tab-btn" data-social-tab="line">Line</button>
-                                <button id="social-copy-btn" class="ml-auto font-bold py-1 px-3 my-1 rounded btn-secondary text-sm z-10 hidden">複製內容</button>
-                             </div>
-                             <div id="social-output-container" class="relative mt-2 border border-[var(--card-border)] rounded bg-[var(--gray-bg)] h-[600px]">
+                                <button id="social-copy-btn"
+                                    class="ml-auto font-bold py-1 px-3 my-1 rounded btn-secondary text-sm z-10 hidden">複製內容</button>
+                            </div>
+                            <div id="social-output-container"
+                                class="relative mt-2 border border-[var(--card-border)] rounded bg-[var(--gray-bg)] h-[600px]">
                                 <div id="facebook-post-output" class="social-post-content p-4"></div>
                                 <div id="instagram-post-output" class="social-post-content p-4 hidden"></div>
                                 <div id="line-post-output" class="social-post-content p-4 hidden"></div>
-                                <div id="social-placeholder" class="flex items-center justify-center h-full text-center text-gray-500">
+                                <div id="social-placeholder"
+                                    class="flex items-center justify-center h-full text-center text-gray-500">
                                     <div class="flex flex-col items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-                                          <path stroke-linecap="round" stroke-linejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2V7a2 2 0 012-2h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H17z" />
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2V7a2 2 0 012-2h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293H17z" />
                                         </svg>
                                         <p class="font-semibold text-lg">一鍵生成，多平台發布</p>
                                         <p class="mt-2 text-sm">AI 將為您生成多平台社群貼文，<br>設定完成後，點擊按鈕即可預覽成果。</p>
                                     </div>
                                 </div>
-                             </div>
+                            </div>
                         </div>
-                     </div>
+                    </div>
                 </div>
 
                 <div id="tab4" class="tab-content hidden">
@@ -503,23 +702,32 @@
                                 <h3 class="text-xl font-bold heading-color">電子報設定</h3>
                             </div>
                             <div class="p-3 rounded-md border border-[var(--card-border)] bg-[var(--gray-bg)]">
-                                <p id="edm-source-status" class="text-sm font-semibold text-[var(--heading-color)] mb-2">內容來源：字幕原始檔</p>
-                                <button id="edm-go-to-optimize-btn" class="w-full font-bold py-2 px-4 rounded btn-secondary">🚀 前往優化文本 (建議)</button>
+                                <p id="edm-source-status"
+                                    class="text-sm font-semibold text-[var(--heading-color)] mb-2">內容來源：字幕原始檔</p>
+                                <button id="edm-go-to-optimize-btn"
+                                    class="w-full font-bold py-2 px-4 rounded btn-secondary">🚀 前往優化文本 (建議)</button>
                             </div>
-                            
+
                             <div>
                                 <label for="edm-audience" class="font-semibold">目標讀者</label>
-                                <select id="edm-audience" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                                <select id="edm-audience"
+                                    class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
                             </div>
                             <div>
                                 <label for="edm-style" class="font-semibold">寫作風格</label>
-                                <select id="edm-style" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                                <select id="edm-style"
+                                    class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
                             </div>
                             <div class="flex items-center gap-2">
-                                <button id="generate-edm-btn" class="w-full font-bold py-3 px-6 rounded-lg text-lg btn-primary">生成電子報內容</button>
-                                <button id="generate-edm-variation-btn" class="font-bold py-2 px-4 rounded-lg btn-secondary text-sm whitespace-nowrap" disabled title="生成不同風格的版本">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" viewBox="0 0 20 20" fill="currentColor">
-                                      <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
+                                <button id="generate-edm-btn"
+                                    class="w-full font-bold py-3 px-6 rounded-lg text-lg btn-primary">生成電子報內容</button>
+                                <button id="generate-edm-variation-btn"
+                                    class="font-bold py-2 px-4 rounded-lg btn-secondary text-sm whitespace-nowrap"
+                                    disabled title="生成不同風格的版本">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block"
+                                        viewBox="0 0 20 20" fill="currentColor">
+                                        <path
+                                            d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
                                     </svg>
                                     另一版本
                                 </button>
@@ -530,16 +738,22 @@
                             </div>
                             <div class="flex border-b border-[var(--card-border)] items-center mb-2">
                                 <h4 class="text-lg font-semibold heading-color px-4 py-2">電子報內容預覽</h4>
-                                <button id="copy-edm-html-btn" class="ml-auto font-bold py-1 px-3 my-1 mr-2 rounded btn-secondary text-sm z-10 hidden">複製 HTML</button>
+                                <button id="copy-edm-html-btn"
+                                    class="ml-auto font-bold py-1 px-3 my-1 mr-2 rounded btn-secondary text-sm z-10 hidden">複製
+                                    HTML</button>
                             </div>
-                            <div id="edm-output-container" class="relative border border-[var(--card-border)] rounded bg-white h-[70vh] p-4 overflow-y-auto hidden">
+                            <div id="edm-output-container"
+                                class="relative border border-[var(--card-border)] rounded bg-white h-[70vh] p-4 overflow-y-auto hidden">
                                 <div id="edm-preview" class="prose max-w-none">
                                 </div>
                             </div>
-                            <div id="edm-placeholder" class="flex items-center justify-center h-[70vh] text-center text-gray-500 border border-dashed border-[var(--card-border)] rounded">
+                            <div id="edm-placeholder"
+                                class="flex items-center justify-center h-[70vh] text-center text-gray-500 border border-dashed border-[var(--card-border)] rounded">
                                 <div class="flex flex-col items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
                                     <p class="font-semibold text-lg">將您的內容轉化為引人入勝的電子報</p>
                                     <p class="mt-2 text-sm max-w-sm">
@@ -555,7 +769,7 @@
 
             </div>
         </div>
-        
+
         <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
             <div class="p-6 w-11/12 md:w-1/2 max-w-lg rounded-lg shadow-xl main-card flex flex-col">
                 <h3 id="modal-title" class="text-xl font-bold mb-4 heading-color">提示</h3>
@@ -573,52 +787,64 @@
             </div>
         </div>
 
-        <div id="batch-replace-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <div id="batch-replace-modal"
+            class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
             <div class="p-6 w-11/12 md:w-1/2 max-w-xl rounded-lg shadow-xl main-card flex flex-col">
                 <h3 class="text-xl font-bold mb-4 heading-color">批次取代設定</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <input type="text" id="replace-original-input" placeholder="原文 (要被取代的文字)" class="md:col-span-1 rounded p-2">
-                    <input type="text" id="replace-replacement-input" placeholder="取代文字 (新的文字)" class="md:col-span-1 rounded p-2">
+                    <input type="text" id="replace-original-input" placeholder="原文 (要被取代的文字)"
+                        class="md:col-span-1 rounded p-2">
+                    <input type="text" id="replace-replacement-input" placeholder="取代文字 (新的文字)"
+                        class="md:col-span-1 rounded p-2">
                     <button id="add-replace-rule-btn" class="md:col-span-1 font-bold rounded btn-primary">新增規則</button>
                 </div>
-                <div id="replace-rules-list" class="flex-grow border border-[var(--card-border)] rounded bg-[var(--gray-bg)] p-2 min-h-[256px] overflow-y-auto">
+                <div id="replace-rules-list"
+                    class="flex-grow border border-[var(--card-border)] rounded bg-[var(--gray-bg)] p-2 min-h-[256px] overflow-y-auto">
                 </div>
                 <div class="flex-grow mt-2">
                     <p class="text-xs text-[var(--gray-text)] text-center">提示：此處設定的規則，將在您點擊主畫面的「開始整理」按鈕時統一執行。</p>
                 </div>
                 <div class="mt-6 flex flex-wrap justify-between items-center gap-4">
                     <div class="flex gap-2">
-                        <button id="load-preset-rules-btn" class="font-bold py-2 px-3 rounded btn-secondary text-sm" title="載入已儲存的常用規則">📥 載入範本</button>
-                        <button id="save-preset-rules-btn" class="font-bold py-2 px-3 rounded btn-secondary text-sm" title="將目前規則儲存為常用範本">💾 存為範本</button>
+                        <button id="load-preset-rules-btn" class="font-bold py-2 px-3 rounded btn-secondary text-sm"
+                            title="載入已儲存的常用規則">📥 載入範本</button>
+                        <button id="save-preset-rules-btn" class="font-bold py-2 px-3 rounded btn-secondary text-sm"
+                            title="將目前規則儲存為常用範本">💾 存為範本</button>
                     </div>
                     <div class="flex gap-2">
                         <button id="clear-all-rules-btn" class="font-bold py-2 px-4 rounded btn-danger">全部清除</button>
-                        <button id="close-replace-modal-btn" class="font-bold py-2 px-4 rounded btn-primary">完成設定</button>
+                        <button id="close-replace-modal-btn"
+                            class="font-bold py-2 px-4 rounded btn-primary">完成設定</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <footer class="text-center text-xs text-[var(--gray-text)] py-4 mt-8 border-t border-[var(--card-border)]">
-        Design by <a href="https://bit.ly/Aliang" target="_blank" rel="noopener" class="upload-link">ㄚ亮笑長練功坊</a> | <a href="readme.html" target="_blank" rel="noopener" class="upload-link"> 程式簡介與使用說明 </a> | 20251128
+        Design by <a href="https://bit.ly/Aliang" target="_blank" rel="noopener" class="upload-link">ㄚ亮笑長練功坊</a> | <a
+            href="readme.html" target="_blank" rel="noopener" class="upload-link"> 程式簡介與使用說明 </a> | 20260609
     </footer>
 
     <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2"></div>
-    
+
     <div id="appearance-panel" class="appearance-panel hidden">
         <div class="p-4">
-             <h3 class="text-lg font-semibold mb-2 heading-color">佈景主題</h3>
-             <div class="flex flex-wrap gap-4 theme-swatches-container"></div>
+            <h3 class="text-lg font-semibold mb-2 heading-color">佈景主題</h3>
+            <div class="flex flex-wrap gap-4 theme-swatches-container"></div>
         </div>
         <div class="p-4 border-t border-[var(--card-border)]">
-             <h3 class="text-lg font-semibold mb-2 heading-color">模式</h3>
-             <button id="mode-toggle-btn" class="p-2 rounded-lg border border-[var(--card-border)] bg-[var(--gray-bg)]">
-                <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            <h3 class="text-lg font-semibold mb-2 heading-color">模式</h3>
+            <button id="mode-toggle-btn" class="p-2 rounded-lg border border-[var(--card-border)] bg-[var(--gray-bg)]">
+                <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
-                <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                 </svg>
             </button>
         </div>
@@ -628,43 +854,57 @@
         <div class="p-6 w-11/12 md:w-1/2 max-w-xl rounded-lg shadow-xl main-card flex flex-col">
             <h3 class="text-xl font-bold mb-4 heading-color">設定您的 Gemini API Key</h3>
             <div class="flex-grow space-y-4">
-                <p class="text-sm">為了啟用所有 AI 功能，請在此提供您的 Google Gemini API 金鑰。您可以設定多組金鑰，系統會隨機且平衡地分配使用量。金鑰僅會暫存在您的瀏覽器中，並在 2 小時後自動清除，我們絕不會儲存它。</p>
+                <p class="text-sm">為了啟用所有 AI 功能，請在此提供您的 Google Gemini API 金鑰。您可以設定多組金鑰，系統會隨機且平衡地分配使用量。金鑰僅會暫存在您的瀏覽器中，並在 2
+                    小時後自動清除，我們絕不會儲存它。</p>
                 <div class="flex items-start space-x-2">
-                    <textarea id="gemini-api-key" placeholder="在此貼上您的 Gemini API Key（支援同時貼上多行，每行一組金鑰）" rows="3" class="w-full rounded px-4 py-2 border border-[var(--card-border)] bg-[var(--bg-color)] text-[var(--body-text)] focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"></textarea>
-                    <button id="add-api-key-btn" type="button" class="font-bold py-2 px-4 rounded btn-primary whitespace-nowrap h-10">新增</button>
+                    <textarea id="gemini-api-key" placeholder="在此貼上您的 Gemini API Key（支援同時貼上多行，每行一組金鑰）" rows="3"
+                        class="w-full rounded px-4 py-2 border border-[var(--card-border)] bg-[var(--bg-color)] text-[var(--body-text)] focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"></textarea>
+                    <button id="add-api-key-btn" type="button"
+                        class="font-bold py-2 px-4 rounded btn-primary whitespace-nowrap h-10">新增</button>
                 </div>
-                
+
                 <div class="border-t border-[var(--card-border)] pt-3">
                     <h4 class="font-semibold text-sm mb-2 text-[var(--heading-color)]">已設定的金鑰清單：</h4>
                     <div id="api-keys-list-container" class="space-y-2 max-h-60 overflow-y-auto pr-1">
                         <!-- 由 JavaScript 動態渲染 -->
                     </div>
                 </div>
-                
-                <button id="toggle-api-help-btn" class="flex items-center text-[var(--link-color)] hover:underline font-semibold text-sm my-2 focus:outline-none transition-colors">
+
+                <button id="toggle-api-help-btn"
+                    class="flex items-center text-[var(--link-color)] hover:underline font-semibold text-sm my-2 focus:outline-none transition-colors">
                     <span>📖 如何免費申請 API Key？ (點擊看教學)</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform duration-200"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
 
-                <div id="api-key-help-panel" class="hidden bg-[var(--gray-bg)] p-4 rounded border border-[var(--card-border)] text-sm space-y-2 mb-4 shadow-inner">
+                <div id="api-key-help-panel"
+                    class="hidden bg-[var(--gray-bg)] p-4 rounded border border-[var(--card-border)] text-sm space-y-2 mb-4 shadow-inner">
                     <ol class="list-decimal list-inside space-y-2 text-[var(--body-text)]">
                         <li>登入您的 Google 帳號。</li>
-                        <li>前往 <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800 underline font-bold">Google AI Studio</a>。</li>
-                        <li>點擊頁面<strong class="text-red-500 mx-1">左下方</strong>的 <span class="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-300">Get API key</span> 按鈕。</li>
-                        <li>點擊頁面<strong class="text-red-500 mx-1">右上角</strong>藍色的 <span class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-bold text-xs border border-blue-200">Create API key</span> 按鈕。</li>
+                        <li>前往 <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener"
+                                class="text-blue-600 hover:text-blue-800 underline font-bold">Google AI Studio</a>。</li>
+                        <li>點擊頁面<strong class="text-red-500 mx-1">左下方</strong>的 <span
+                                class="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-300">Get
+                                API key</span> 按鈕。</li>
+                        <li>點擊頁面<strong class="text-red-500 mx-1">右上角</strong>藍色的 <span
+                                class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-bold text-xs border border-blue-200">Create
+                                API key</span> 按鈕。</li>
                         <li>
                             選擇專案：若無專案，請點擊
-                            <br><span class="ml-5 text-xs bg-gray-100 px-1 rounded border">Select a Cloud Project</span> ➔ <span class="text-xs bg-gray-100 px-1 rounded border">Create project</span>。
+                            <br><span class="ml-5 text-xs bg-gray-100 px-1 rounded border">Select a Cloud Project</span>
+                            ➔ <span class="text-xs bg-gray-100 px-1 rounded border">Create project</span>。
                         </li>
                         <li>為您的 API Key 命名 (選用)。</li>
-                        <li>複製生成的金鑰 (以 <code class="text-red-500 font-bold bg-red-50 px-1 rounded">AIza</code> 開頭)，貼入上方欄位。</li>
+                        <li>複製生成的金鑰 (以 <code class="text-red-500 font-bold bg-red-50 px-1 rounded">AIza</code>
+                            開頭)，貼入上方欄位。</li>
                     </ol>
-                    <p class="text-xs text-[var(--gray-text)] mt-2 pt-2 border-t border-[var(--card-border)]">* 這是 Google 提供的免費額度，對個人使用通常非常足夠。</p>
+                    <p class="text-xs text-[var(--gray-text)] mt-2 pt-2 border-t border-[var(--card-border)]">* 這是
+                        Google 提供的免費額度，對個人使用通常非常足夠。</p>
                 </div>
 
-                 <p id="api-key-countdown" class="font-mono text-sm text-[var(--link-color)]"></p>
+                <p id="api-key-countdown" class="font-mono text-sm text-[var(--link-color)]"></p>
             </div>
             <div class="mt-6 flex justify-end gap-2">
                 <button id="close-api-key-modal-btn" class="font-bold py-2 px-4 rounded btn-secondary">關閉</button>
@@ -674,7 +914,8 @@
     </div>
 
     <!-- Blog Prompt Wizard Modal -->
-    <div id="prompt-wizard-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+    <div id="prompt-wizard-modal"
+        class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
         <div class="p-6 w-11/12 md:w-2/5 rounded-lg shadow-xl main-card flex flex-col">
             <h3 class="text-xl font-bold mb-4 heading-color">AI 寫作風格客製化精靈</h3>
             <div id="prompt-wizard-content" class="space-y-6 overflow-y-auto max-h-[70vh] pr-2">
@@ -683,9 +924,12 @@
                     <h4 class="wizard-section-title">區塊一：文章結構</h4>
                     <p class="wizard-question">您希望文章的開頭包含什麼內容？</p>
                     <div class="space-y-2 mt-2">
-                        <label class="wizard-label"><input type="checkbox" id="wizard-struct-summary" class="form-checkbox"> 自動產生一段「前言摘要」</label>
-                        <label class="wizard-label"><input type="checkbox" id="wizard-struct-points" class="form-checkbox"> 自動條列出「本集重點」(2-5 點)</label>
-                        <label class="wizard-label"><input type="checkbox" id="wizard-struct-none" class="form-checkbox"> 無特殊要求，直接開始正文</label>
+                        <label class="wizard-label"><input type="checkbox" id="wizard-struct-summary"
+                                class="form-checkbox"> 自動產生一段「前言摘要」</label>
+                        <label class="wizard-label"><input type="checkbox" id="wizard-struct-points"
+                                class="form-checkbox"> 自動條列出「本集重點」(2-5 點)</label>
+                        <label class="wizard-label"><input type="checkbox" id="wizard-struct-none"
+                                class="form-checkbox"> 無特殊要求，直接開始正文</label>
                     </div>
                 </div>
                 <!-- 區塊二：正文風格 -->
@@ -693,9 +937,12 @@
                     <h4 class="wizard-section-title">區塊二：正文風格</h4>
                     <p class="wizard-question">對於文章中的小標題 (H2)，您有什麼特別偏好嗎？</p>
                     <div class="space-y-2 mt-2">
-                        <label class="wizard-label"><input type="radio" name="wizard-h2-style" value="default" class="form-radio" checked> 簡潔有力 (預設)</label>
-                        <label class="wizard-label"><input type="radio" name="wizard-h2-style" value="question" class="form-radio"> 帶有疑問句，引發好奇</label>
-                        <label class="wizard-label"><input type="radio" name="wizard-h2-style" value="emoji" class="form-radio"> 活潑有趣，可加入 Emoji</label>
+                        <label class="wizard-label"><input type="radio" name="wizard-h2-style" value="default"
+                                class="form-radio" checked> 簡潔有力 (預設)</label>
+                        <label class="wizard-label"><input type="radio" name="wizard-h2-style" value="question"
+                                class="form-radio"> 帶有疑問句，引發好奇</label>
+                        <label class="wizard-label"><input type="radio" name="wizard-h2-style" value="emoji"
+                                class="form-radio"> 活潑有趣，可加入 Emoji</label>
                     </div>
                 </div>
                 <!-- 區塊三：特殊元素 -->
@@ -703,16 +950,20 @@
                     <h4 class="wizard-section-title">區塊三：特殊元素</h4>
                     <p class="wizard-question">您希望在文章中自動加入哪些特殊元素？</p>
                     <div class="space-y-2 mt-2">
-                        <label class="wizard-label"><input type="checkbox" id="wizard-elem-bold" class="form-checkbox"> 在關鍵字詞上自動加上粗體，以利 SEO</label>
-                        <label class="wizard-label"><input type="checkbox" id="wizard-elem-table" class="form-checkbox"> 在文章結尾處，自動生成一個「重點回顧」的表格</label>
-                        <label class="wizard-label"><input type="checkbox" id="wizard-elem-quote" class="form-checkbox"> 在適當的地方，自動引用影片中的一句「金句」</label>
+                        <label class="wizard-label"><input type="checkbox" id="wizard-elem-bold" class="form-checkbox">
+                            在關鍵字詞上自動加上粗體，以利 SEO</label>
+                        <label class="wizard-label"><input type="checkbox" id="wizard-elem-table" class="form-checkbox">
+                            在文章結尾處，自動生成一個「重點回顧」的表格</label>
+                        <label class="wizard-label"><input type="checkbox" id="wizard-elem-quote" class="form-checkbox">
+                            在適當的地方，自動引用影片中的一句「金句」</label>
                     </div>
                 </div>
                 <!-- 區塊四：語氣微調 -->
                 <div class="wizard-section">
                     <h4 class="wizard-section-title">區塊四：語氣微調 (進階)</h4>
                     <p class="wizard-question">除了主選單的語氣外，您還有什麼想補充的嗎？(選填)</p>
-                    <input type="text" id="wizard-tone-finetune" class="w-full mt-2 p-2 rounded" placeholder="例如：請多使用年輕人的流行語、請避免使用太難的專業術語">
+                    <input type="text" id="wizard-tone-finetune" class="w-full mt-2 p-2 rounded"
+                        placeholder="例如：請多使用年輕人的流行語、請避免使用太難的專業術語">
                 </div>
             </div>
             <div class="mt-6 flex justify-between items-center">
@@ -726,7 +977,8 @@
     </div>
 
     <!-- Social Post Prompt Wizard Modal -->
-    <div id="social-prompt-wizard-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+    <div id="social-prompt-wizard-modal"
+        class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
         <div class="p-6 w-11/12 md:w-2/5 rounded-lg shadow-xl main-card flex flex-col">
             <h3 class="text-xl font-bold mb-4 heading-color">AI 社群風格客製化精靈</h3>
             <div id="social-wizard-content" class="space-y-6 overflow-y-auto max-h-[70vh] pr-2">
@@ -735,15 +987,20 @@
                     <h4 class="wizard-section-title">區塊一：全域風格與核心訊息</h4>
                     <div>
                         <p class="wizard-question">這篇貼文最想強調的核心觀點是什麼？(選填)</p>
-                        <input type="text" id="social-wizard-core-viewpoint" class="w-full mt-2 p-2 rounded" placeholder="例如：AI 工具可以大幅提升工作效率">
+                        <input type="text" id="social-wizard-core-viewpoint" class="w-full mt-2 p-2 rounded"
+                            placeholder="例如：AI 工具可以大幅提升工作效率">
                     </div>
                     <div class="mt-4">
                         <p class="wizard-question">您希望貼文用什麼樣的「鉤子」(Hook) 開頭？</p>
                         <div class="space-y-2 mt-2">
-                            <label class="wizard-label"><input type="radio" name="social-wizard-hook" value="auto" class="form-radio" checked> AI 自動判斷 (預設)</label>
-                            <label class="wizard-label"><input type="radio" name="social-wizard-hook" value="question" class="form-radio"> 提問法開頭 (你是否也曾想過...?)</label>
-                            <label class="wizard-label"><input type="radio" name="social-wizard-hook" value="painpoint" class="form-radio"> 痛點/數據法開頭 (90% 的人都不知道...)</label>
-                            <label class="wizard-label"><input type="radio" name="social-wizard-hook" value="story" class="form-radio"> 故事/情境法開頭 (想像一下...)</label>
+                            <label class="wizard-label"><input type="radio" name="social-wizard-hook" value="auto"
+                                    class="form-radio" checked> AI 自動判斷 (預設)</label>
+                            <label class="wizard-label"><input type="radio" name="social-wizard-hook" value="question"
+                                    class="form-radio"> 提問法開頭 (你是否也曾想過...?)</label>
+                            <label class="wizard-label"><input type="radio" name="social-wizard-hook" value="painpoint"
+                                    class="form-radio"> 痛點/數據法開頭 (90% 的人都不知道...)</label>
+                            <label class="wizard-label"><input type="radio" name="social-wizard-hook" value="story"
+                                    class="form-radio"> 故事/情境法開頭 (想像一下...)</label>
                         </div>
                     </div>
                 </div>
@@ -755,22 +1012,28 @@
                         <div>
                             <strong class="font-bold text-lg text-blue-600">Facebook 偏好</strong>
                             <div class="space-y-2 mt-1 pl-2">
-                                <label class="wizard-label"><input type="checkbox" id="social-wizard-fb-listify" class="form-checkbox"> 將長段落自動條列化，增加易讀性</label>
-                                <label class="wizard-label"><input type="checkbox" id="social-wizard-fb-question" class="form-checkbox"> 在文末額外加入互動問句</label>
+                                <label class="wizard-label"><input type="checkbox" id="social-wizard-fb-listify"
+                                        class="form-checkbox"> 將長段落自動條列化，增加易讀性</label>
+                                <label class="wizard-label"><input type="checkbox" id="social-wizard-fb-question"
+                                        class="form-checkbox"> 在文末額外加入互動問句</label>
                             </div>
                         </div>
                         <div>
                             <strong class="font-bold text-lg text-pink-500">Instagram 偏好</strong>
                             <div class="space-y-2 mt-1 pl-2">
-                                <label class="wizard-label"><input type="checkbox" id="social-wizard-ig-emoji" class="form-checkbox"> 強化 Emoji 視覺，段落前都加上</label>
-                                <label class="wizard-label"><input type="checkbox" id="social-wizard-ig-hashtags" class="form-checkbox"> 自動額外生成 5-10 個相關 Hashtags</label>
+                                <label class="wizard-label"><input type="checkbox" id="social-wizard-ig-emoji"
+                                        class="form-checkbox"> 強化 Emoji 視覺，段落前都加上</label>
+                                <label class="wizard-label"><input type="checkbox" id="social-wizard-ig-hashtags"
+                                        class="form-checkbox"> 自動額外生成 5-10 個相關 Hashtags</label>
                             </div>
                         </div>
                         <div>
                             <strong class="font-bold text-lg text-green-500">Line 偏好</strong>
                             <div class="space-y-2 mt-1 pl-2">
-                                <label class="wizard-label"><input type="checkbox" id="social-wizard-line-colloquial" class="form-checkbox"> 使用更口語化的詞彙 (例如：話說、～啊)</label>
-                                <label class="wizard-label"><input type="checkbox" id="social-wizard-line-sticker" class="form-checkbox"> 建議可愛的 Line 風格貼圖文字 (例如：(熊大灑花))</label>
+                                <label class="wizard-label"><input type="checkbox" id="social-wizard-line-colloquial"
+                                        class="form-checkbox"> 使用更口語化的詞彙 (例如：話說、～啊)</label>
+                                <label class="wizard-label"><input type="checkbox" id="social-wizard-line-sticker"
+                                        class="form-checkbox"> 建議可愛的 Line 風格貼圖文字 (例如：(熊大灑花))</label>
                             </div>
                         </div>
                     </div>
@@ -780,56 +1043,70 @@
                     <h4 class="wizard-section-title">區塊三：行動呼籲 (CTA) 策略</h4>
                     <p class="wizard-question">您希望如何呈現您在主畫面設定的「行動呼籲」(CTA)？</p>
                     <div class="space-y-2 mt-2">
-                        <label class="wizard-label"><input type="radio" name="social-wizard-cta" value="default" class="form-radio" checked> 標準置於文末 (預設)</label>
-                        <label class="wizard-label"><input type="radio" name="social-wizard-cta" value="highlight" class="form-radio"> 獨立區塊凸顯 (用 --- 或 👇 分隔)</label>
-                        <label class="wizard-label"><input type="radio" name="social-wizard-cta" value="natural" class="form-radio"> 自然安插在文中</label>
+                        <label class="wizard-label"><input type="radio" name="social-wizard-cta" value="default"
+                                class="form-radio" checked> 標準置於文末 (預設)</label>
+                        <label class="wizard-label"><input type="radio" name="social-wizard-cta" value="highlight"
+                                class="form-radio"> 獨立區塊凸顯 (用 --- 或 👇 分隔)</label>
+                        <label class="wizard-label"><input type="radio" name="social-wizard-cta" value="natural"
+                                class="form-radio"> 自然安插在文中</label>
                     </div>
                 </div>
             </div>
             <div class="mt-6 flex justify-between items-center">
-                <button id="restore-social-wizard-defaults-btn" class="font-bold py-2 px-4 rounded btn-danger">恢復預設風格</button>
+                <button id="restore-social-wizard-defaults-btn"
+                    class="font-bold py-2 px-4 rounded btn-danger">恢復預設風格</button>
                 <div class="flex gap-2">
                     <button id="close-social-wizard-btn" class="font-bold py-2 px-4 rounded btn-secondary">關閉</button>
                     <button id="save-social-wizard-btn" class="font-bold py-2 px-4 rounded btn-primary">儲存風格設定</button>
                 </div>
             </div>
         </div>
-        </div>
-    
-        <!-- Universal Variation Hub Modal -->
-        <div id="variation-hub-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-            <div class="p-6 w-11/12 md:w-2/5 rounded-lg shadow-xl main-card flex flex-col">
-                <h3 id="variation-hub-title" class="text-xl font-bold mb-4 heading-color">調整 AI 生成風格</h3>
-                <div class="space-y-4 flex-grow overflow-y-auto max-h-[70vh] pr-2">
-                    <div>
-                        <label for="variation-style-select" class="font-semibold text-sm mb-1 block">選擇風格範本</label>
-                        <select id="variation-style-select" class="w-full p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
-                    </div>
-                                    <div>
-                                        <label for="variation-custom-input" class="font-semibold text-sm mb-1 block">自訂風格指令</label>
-                                        <textarea id="variation-custom-input" rows="5" placeholder="例如：請用更幽默、更年輕化的語氣重寫。&#10;請在開頭加入一個引人入勝的小故事。" class="w-full p-2 rounded"></textarea>
-                                    </div>
-                                    <div class="flex items-center mt-2">
-                                        <input type="checkbox" id="variation-override-checkbox" class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
-                                        <label for="variation-override-checkbox" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300" title="勾選此項，AI 將完全依照上方的風格指令寫作，而忽略主畫面原本設定的語氣。">忽略主畫面語氣設定 (完全覆蓋)</label>
-                                    </div>
-                                    <div class="flex justify-end gap-2 mt-2">
-                                        <button id="delete-variation-preset-btn" class="font-bold py-2 px-3 rounded btn-danger text-sm hidden">刪除範本</button>
-                                        <button id="save-variation-preset-btn" class="font-bold py-2 px-3 rounded btn-secondary text-sm">💾 存為新範本</button>
-                                    </div>                </div>
-                <div class="mt-6 flex justify-end gap-2">
-                    <button id="cancel-variation-btn" class="font-bold py-2 px-4 rounded btn-secondary">取消</button>
-                    <button id="generate-variation-confirm-btn" class="font-bold py-2 px-4 rounded btn-primary">🚀 確認生成</button>
+    </div>
+
+    <!-- Universal Variation Hub Modal -->
+    <div id="variation-hub-modal"
+        class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <div class="p-6 w-11/12 md:w-2/5 rounded-lg shadow-xl main-card flex flex-col">
+            <h3 id="variation-hub-title" class="text-xl font-bold mb-4 heading-color">調整 AI 生成風格</h3>
+            <div class="space-y-4 flex-grow overflow-y-auto max-h-[70vh] pr-2">
+                <div>
+                    <label for="variation-style-select" class="font-semibold text-sm mb-1 block">選擇風格範本</label>
+                    <select id="variation-style-select"
+                        class="w-full p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]"></select>
+                </div>
+                <div>
+                    <label for="variation-custom-input" class="font-semibold text-sm mb-1 block">自訂風格指令</label>
+                    <textarea id="variation-custom-input" rows="5"
+                        placeholder="例如：請用更幽默、更年輕化的語氣重寫。&#10;請在開頭加入一個引人入勝的小故事。" class="w-full p-2 rounded"></textarea>
+                </div>
+                <div class="flex items-center mt-2">
+                    <input type="checkbox" id="variation-override-checkbox"
+                        class="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                    <label for="variation-override-checkbox"
+                        class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+                        title="勾選此項，AI 將完全依照上方的風格指令寫作，而忽略主畫面原本設定的語氣。">忽略主畫面語氣設定 (完全覆蓋)</label>
+                </div>
+                <div class="flex justify-end gap-2 mt-2">
+                    <button id="delete-variation-preset-btn"
+                        class="font-bold py-2 px-3 rounded btn-danger text-sm hidden">刪除範本</button>
+                    <button id="save-variation-preset-btn" class="font-bold py-2 px-3 rounded btn-secondary text-sm">💾
+                        存為新範本</button>
                 </div>
             </div>
+            <div class="mt-6 flex justify-end gap-2">
+                <button id="cancel-variation-btn" class="font-bold py-2 px-4 rounded btn-secondary">取消</button>
+                <button id="generate-variation-confirm-btn" class="font-bold py-2 px-4 rounded btn-primary">🚀
+                    確認生成</button>
+            </div>
         </div>
-    
-        <script type="module">
-            import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
-            window.GoogleGenerativeAI = GoogleGenerativeAI;
-        </script>
+    </div>
 
-   <script src="js/state.js"></script>
+    <script type="module">
+        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+        window.GoogleGenerativeAI = GoogleGenerativeAI;
+    </script>
+
+    <script src="js/state.js"></script>
     <script src="js/gemini-api.js"></script>
     <script src="js/srt-processor.js"></script>
     <script src="js/ui-components.js"></script>
@@ -841,4 +1118,5 @@
     <script src="js/tab4-edm.js"></script>
     <script src="js/app.js"></script>
 </body>
+
 </html>
