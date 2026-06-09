@@ -56,6 +56,33 @@ async function callGeminiAPI(apiKey, prompt, forceJson = false) {
 
     } catch (error) {
         console.error("Gemini SDK 呼叫失敗:", error);
-        throw new Error(`API 請求失敗：${error.message}`);
+        throw new Error(translateError(error.message));
     }
+}
+
+function translateError(message) {
+    if (!message) return "【系統錯誤】未知錯誤";
+    
+    // 503 / High Demand / Overloaded
+    if (message.includes("503") || message.includes("high demand") || message.includes("overloaded") || message.includes("Service Unavailable")) {
+        return "【AI 伺服器繁忙 (overloaded)】Gemini API 目前負載過高或正處於全球尖峰時段。這通常是暫時的，請稍候一兩分鐘後重試。";
+    }
+    
+    // 429 / Rate Limit / Quota Exceeded
+    if (message.includes("429") || message.includes("Quota exceeded") || message.includes("exhausted") || message.includes("rate limit")) {
+        return "【用量已達上限】您的 Gemini API 金鑰已超過每分鐘呼叫次數限制（Rate Limit）或免費額度已用盡。請稍候一分鐘再試，或更換其他金鑰。";
+    }
+    
+    // 400 / 403 / Invalid API Key
+    if (message.includes("API key not valid") || message.includes("not valid") || message.includes("invalid") || message.includes("400") || message.includes("403")) {
+        return "【無效的金鑰】您輸入的 Gemini API Key 格式不正確或已被停用，請至 Google AI Studio 重新確認並貼上正確的金鑰。";
+    }
+    
+    // Safety
+    if (message.includes("SAFETY") || message.includes("blockReason")) {
+        return "【內容安全阻擋】由於輸入內容可能包含敏感詞彙，已被 Google AI 的安全過濾機制阻擋。";
+    }
+    
+    // Default
+    return `【系統錯誤】${message}`;
 }

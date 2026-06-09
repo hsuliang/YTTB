@@ -120,9 +120,7 @@ function resetTab1() {
 function initializeTab1() {
     // --- 函式定義 ---
     async function handleAiFeature(type) {
-        // ########## FIX START ##########
-        // 移除內部的 API Key 檢查，因為外部的 app.js 邏輯已確保按鈕在無 Key 時被禁用
-        const apiKey = sessionStorage.getItem('geminiApiKey');
+        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey');
         // ########## FIX END ##########
 
         const content = state.processedSrtResult.trim() || smartArea.value.trim();

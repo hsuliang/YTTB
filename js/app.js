@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const apiKeyModal = document.getElementById('api-key-modal');
     const closeApiKeyModalBtn = document.getElementById('close-api-key-modal-btn');
     const apiKeyInput = document.getElementById('gemini-api-key');
+    const addApiKeyBtn = document.getElementById('add-api-key-btn');
+    const apiKeysListContainer = document.getElementById('api-keys-list-container');
     const saveApiKeyBtn = document.getElementById('save-api-key-btn');
     const apiKeyStatus = document.getElementById('api-key-status');
     const apiKeyCountdown = document.getElementById('api-key-countdown');
@@ -125,14 +127,125 @@ document.addEventListener('DOMContentLoaded', () => {
         ['blog', 'social', 'edm'].forEach(updateElements);
     }
 
+    // --- 金鑰池管理變數與平衡輪替邏輯 ---
+    let modalApiKeys = [];
+
+    function loadModalApiKeys() {
+        const stored = sessionStorage.getItem('geminiApiKeys');
+        if (stored) {
+            try {
+                modalApiKeys = JSON.parse(stored);
+            } catch (e) {
+                modalApiKeys = [];
+            }
+        } else {
+            const singleKey = sessionStorage.getItem('geminiApiKey');
+            modalApiKeys = singleKey ? [{ key: singleKey, count: 0 }] : [];
+        }
+        renderModalApiKeys();
+    }
+
+    function renderModalApiKeys() {
+        apiKeysListContainer.innerHTML = '';
+        if (modalApiKeys.length === 0) {
+            apiKeysListContainer.innerHTML = '<p class="text-xs text-[var(--gray-text)] text-center py-2">尚未設定任何金鑰</p>';
+            return;
+        }
+        modalApiKeys.forEach((entry, index) => {
+            const item = document.createElement('div');
+            item.className = 'flex items-center justify-between bg-[var(--gray-bg)] p-2 rounded text-xs border border-[var(--card-border)]';
+            
+            const masked = entry.key.length > 10 
+                ? `${entry.key.substring(0, 6)}...${entry.key.substring(entry.key.length - 4)}`
+                : entry.key;
+            
+            item.innerHTML = `
+                <span class="font-mono text-[var(--body-text)]">${masked} <span class="text-[var(--gray-text)]">(使用: ${entry.count || 0}次)</span></span>
+                <button type="button" class="text-red-500 hover:text-red-700 font-bold delete-key-item-btn" data-index="${index}">刪除</button>
+            `;
+            apiKeysListContainer.appendChild(item);
+        });
+    }
+
+    function parseAndAddKeys(text) {
+        if (!text) return { added: 0, duplicates: 0 };
+        const rawKeys = text.split(/[\n,\s\t\r]+/).map(k => k.trim()).filter(k => k.length > 0);
+        let added = 0;
+        let duplicates = 0;
+        rawKeys.forEach(key => {
+            if (modalApiKeys.some(entry => entry.key === key)) {
+                duplicates++;
+            } else {
+                modalApiKeys.push({ key, count: 0 });
+                added++;
+            }
+        });
+        return { added, duplicates };
+    }
+
+    function addApiKeyFromInput() {
+        const text = apiKeyInput.value.trim();
+        if (!text) {
+            showToast('請先輸入 API Key 再點擊新增。', { type: 'error' });
+            return;
+        }
+        const result = parseAndAddKeys(text);
+        apiKeyInput.value = '';
+        renderModalApiKeys();
+        
+        if (result.added > 0) {
+            showToast(`成功新增 ${result.added} 組金鑰！` + (result.duplicates > 0 ? `（${result.duplicates} 組重複已忽略）` : ''));
+        } else if (result.duplicates > 0) {
+            showToast('輸入的金鑰均已在清單中。', { type: 'error' });
+        }
+    }
+
+    window.getBalancedApiKey = function() {
+        try {
+            const keysJson = sessionStorage.getItem('geminiApiKeys');
+            if (!keysJson) {
+                return sessionStorage.getItem('geminiApiKey') || '';
+            }
+            const keysList = JSON.parse(keysJson);
+            if (!Array.isArray(keysList) || keysList.length === 0) {
+                return sessionStorage.getItem('geminiApiKey') || '';
+            }
+            
+            const minCount = Math.min(...keysList.map(k => k.count || 0));
+            const candidates = keysList.filter(k => (k.count || 0) === minCount);
+            const selected = candidates[Math.floor(Math.random() * candidates.length)];
+            
+            selected.count = (selected.count || 0) + 1;
+            
+            console.log(`[API Key Rotation] 選擇金鑰: ${selected.key.substring(0, 6)}...${selected.key.substring(selected.key.length - 4)} (目前已累計使用: ${selected.count} 次)`);
+            
+            sessionStorage.setItem('geminiApiKeys', JSON.stringify(keysList));
+            return selected.key;
+        } catch (e) {
+            console.error('Error balancing API key:', e);
+            return sessionStorage.getItem('geminiApiKey') || '';
+        }
+    };
+
     function toggleAppearancePanel() { appearancePanel.classList.toggle('hidden'); }
-    function showApiKeyModal() { apiKeyModal.classList.remove('hidden'); }
+    function showApiKeyModal() { loadModalApiKeys(); apiKeyModal.classList.remove('hidden'); }
     function hideApiKeyModal() { apiKeyModal.classList.add('hidden'); }
 
     function saveApiKey() {
-        const apiKey = apiKeyInput.value.trim();
-        if (!apiKey) { showToast('API Key 不能為空。', {type: 'error'}); return; }
-        sessionStorage.setItem('geminiApiKey', apiKey);
+        const text = apiKeyInput.value.trim();
+        if (text) {
+            parseAndAddKeys(text);
+            apiKeyInput.value = '';
+        }
+
+        if (modalApiKeys.length === 0) {
+            showToast('請至少新增一組 API Key。', { type: 'error' });
+            return;
+        }
+
+        sessionStorage.setItem('geminiApiKeys', JSON.stringify(modalApiKeys));
+        sessionStorage.setItem('geminiApiKey', modalApiKeys[0].key);
+
         const expiryTime = Date.now() + 2 * 60 * 60 * 1000;
         sessionStorage.setItem('apiKeyExpiry', expiryTime);
         updateApiKeyStatus();
@@ -150,6 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (remaining <= 0) {
                 clearInterval(state.apiKeyCountdownInterval);
                 sessionStorage.removeItem('geminiApiKey');
+                sessionStorage.removeItem('geminiApiKeys');
                 sessionStorage.removeItem('apiKeyExpiry');
                 apiKeyCountdown.textContent = '';
                 updateApiKeyStatus();
@@ -167,12 +281,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const expiry = sessionStorage.getItem('apiKeyExpiry');
         if (expiry && Date.now() > parseInt(expiry, 10)) {
             sessionStorage.removeItem('geminiApiKey');
+            sessionStorage.removeItem('geminiApiKeys');
             sessionStorage.removeItem('apiKeyExpiry');
         }
         const apiKey = sessionStorage.getItem('geminiApiKey');
+        const apiKeysJson = sessionStorage.getItem('geminiApiKeys');
+        let keysCount = 0;
+        if (apiKeysJson) {
+            try {
+                keysCount = JSON.parse(apiKeysJson).length;
+            } catch (e) {
+                keysCount = 0;
+            }
+        } else if (apiKey) {
+            keysCount = 1;
+        }
 
-        if (apiKey) {
-            apiKeyStatus.textContent = '狀態：已設定';
+        if (keysCount > 0) {
+            apiKeyStatus.textContent = `狀態：已設定 (共 ${keysCount} 組金鑰)`;
             apiKeyStatus.classList.remove('text-[var(--text-color)]');
             apiKeyStatus.classList.add('text-green-600');
             startApiKeyCountdown();
@@ -238,6 +364,15 @@ document.addEventListener('DOMContentLoaded', () => {
         appearanceBtn.addEventListener('click', toggleAppearancePanel);
         apiKeyBtn.addEventListener('click', showApiKeyModal);
         closeApiKeyModalBtn.addEventListener('click', hideApiKeyModal);
+        addApiKeyBtn.addEventListener('click', addApiKeyFromInput);
+        apiKeysListContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('delete-key-item-btn')) {
+                const index = parseInt(e.target.dataset.index, 10);
+                modalApiKeys.splice(index, 1);
+                renderModalApiKeys();
+                showToast('已從清單中移除金鑰。');
+            }
+        });
         saveApiKeyBtn.addEventListener('click', saveApiKey);
         
         if (toggleApiHelpBtn && apiKeyHelpPanel) {
@@ -269,6 +404,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (confirm('您確定要重置所有內容嗎？這將會清除所有輸入和已生成的草稿。')) {
                 if(window.clearBlogDraft) window.clearBlogDraft();
                 if(window.clearSocialDraft) window.clearSocialDraft();
+                sessionStorage.removeItem('geminiApiKey');
+                sessionStorage.removeItem('geminiApiKeys');
+                sessionStorage.removeItem('apiKeyExpiry');
                 showToast('頁面已重置！');
                 setTimeout(() => { location.reload(); }, 500);
             }

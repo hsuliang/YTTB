@@ -5,6 +5,17 @@
 
 let quillEditor;
 
+function extractYouTubeId(url) {
+    if (!url) return '';
+    const trimmed = url.trim();
+    if (trimmed.length === 11 && !trimmed.includes('/') && !trimmed.includes('.') && !trimmed.includes('?')) {
+        return trimmed;
+    }
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|live\/|shorts\/)([^#\&\?]*).*/;
+    const match = trimmed.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : trimmed;
+}
+
 const SETTINGS_STORAGE_KEYS = {
     BLOG_PERSONA: 'aliang-yttb-setting-blog-persona',
     BLOG_WORD_COUNT: 'aliang-yttb-setting-blog-word-count',
@@ -69,14 +80,43 @@ window.clearBlogDraft = function() {
     localStorage.removeItem(BLOG_DRAFT_KEY);
 }
 
+function formatQuillVideos(html) {
+    if (!html) return '';
+    try {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const iframes = doc.querySelectorAll('iframe.ql-video');
+        
+        iframes.forEach(iframe => {
+            const src = iframe.getAttribute('src');
+            if (src && src.includes('youtube.com/embed')) {
+                const newIframe = doc.createElement('iframe');
+                newIframe.setAttribute('style', 'width: 100%; aspect-ratio: 16/9;');
+                newIframe.setAttribute('title', 'YouTube video player');
+                newIframe.setAttribute('src', src);
+                newIframe.setAttribute('frameborder', '0');
+                newIframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+                newIframe.setAttribute('allowfullscreen', 'allowfullscreen');
+                iframe.parentNode.replaceChild(newIframe, iframe);
+            }
+        });
+        return doc.body.innerHTML;
+    } catch (e) {
+        console.error('Error formatting Quill videos:', e);
+        return html;
+    }
+}
+
 function getLatestHtmlContent() {
-    return quillEditor ? quillEditor.root.innerHTML : '';
+    if (!quillEditor) return '';
+    return formatQuillVideos(quillEditor.root.innerHTML);
 }
 
 function convertHtmlToMarkdown(htmlContent) { 
     if (!htmlContent) return '';
     let content = htmlContent;
     content = content.replace(/<div class="youtube-embed">.*?<\/div>/g, '[YouTube 影片]\n');
+    content = content.replace(/<iframe[^>]*src="[^"]*youtube\.com\/embed\/[^"]*"[^>]*><\/iframe>/g, '[YouTube 影片]\n');
     content = content.replace(/<h3>(.*?)<\/h3>/g, '### $1');
     content = content.replace(/<h2>(.*?)<\/h2>/g, '## $1');
     content = content.replace(/<h1>(.*?)<\/h1>/g, '# $1');
@@ -471,7 +511,7 @@ function initializeTab2() {
     function initializeTags() { renderTagSuggestions(); tagInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(tagInput.value); tagInput.value = ''; } }); saveTagsBtn.addEventListener('click', saveCustomTagsToStorage); }
     
     async function optimizeTextForBlog() { 
-        const apiKey = sessionStorage.getItem('geminiApiKey'); 
+        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey'); 
         if (!apiKey) { if(window.showApiKeyModal) window.showApiKeyModal(); return; } 
 
         // 1. 定義來源：優先檢查是否有「已整理」的文本，若無則取用輸入框的原始文本
@@ -541,7 +581,7 @@ function initializeTab2() {
     }
     
     async function analyzeKeywords() {
-        const apiKey = sessionStorage.getItem('geminiApiKey');
+        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey');
         if (!apiKey) { if (window.showApiKeyModal) window.showApiKeyModal(); return; }
 
         const currentHtml = getLatestHtmlContent();
@@ -589,7 +629,7 @@ function initializeTab2() {
     }
 
     async function analyzeInternalLinks() {
-        const apiKey = sessionStorage.getItem('geminiApiKey');
+        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey');
         if (!apiKey) { if (window.showApiKeyModal) window.showApiKeyModal(); return; }
 
         const currentHtml = getLatestHtmlContent();
@@ -643,7 +683,7 @@ function initializeTab2() {
 
     // ########## FINAL ROBUST VERSION WITH SMART RETRY ##########
     async function proceedGenerateBlogPost(variationModifier = '', shouldOverride = false) { 
-        const apiKey = sessionStorage.getItem('geminiApiKey'); 
+        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey'); 
         if (!apiKey) { if(window.showApiKeyModal) window.showApiKeyModal(); return; } 
         
         const sourceText = (state.blogSourceType === 'optimized') ? state.optimizedTextForBlog : document.getElementById('smart-area').value.trim(); 
@@ -872,7 +912,17 @@ function initializeTab2() {
     document.querySelectorAll('.source-copy-btn').forEach(button => button.addEventListener('click', () => copyButtonLogic(button)));
     
     blogTitleInput.addEventListener('input', saveBlogDraft);
-    blogYtIdInput.addEventListener('input', saveBlogDraft);
+    blogYtIdInput.addEventListener('input', (e) => {
+        const val = e.target.value.trim();
+        if (val.includes('/') || val.includes('.') || val.includes('?')) {
+            const parsedId = extractYouTubeId(val);
+            if (parsedId && parsedId !== val) {
+                e.target.value = parsedId;
+                showToast(`已自動解析出 YouTube 影片 ID: ${parsedId}`);
+            }
+        }
+        saveBlogDraft();
+    });
     blogPersonaSelect.addEventListener('change', (e) => { saveSetting(SETTINGS_STORAGE_KEYS.BLOG_PERSONA, e.target.value); saveBlogDraft(); });
     blogWordCountSelect.addEventListener('change', (e) => { saveSetting(SETTINGS_STORAGE_KEYS.BLOG_WORD_COUNT, e.target.value); saveBlogDraft(); });
     blogToneSelect.addEventListener('change', (e) => { saveSetting(SETTINGS_STORAGE_KEYS.BLOG_TONE, e.target.value); saveBlogDraft(); });
