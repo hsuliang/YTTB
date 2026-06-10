@@ -795,21 +795,32 @@
                                 </div>
                             </div>
                             
+                            <!-- Include Logo Toggle -->
+                            <div class="flex items-center gap-2 pt-1">
+                                <input type="checkbox" id="carousel-include-logo" class="form-checkbox h-4 w-4 rounded text-[var(--link-color)]">
+                                <label for="carousel-include-logo" class="font-semibold text-sm select-none">提示詞中加入Logo 圖示</label>
+                            </div>
+
                             <!-- Image Style Dropdown -->
                             <div>
                                 <label for="carousel-style" class="font-semibold text-sm">圖片風格</label>
                                 <select id="carousel-style" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]">
+                                    <option value="transcript-context-style" selected>以逐字稿內容給定風格</option>
                                     <option value="warm-cute-chibi">溫暖可愛Q版教育風 (推薦)</option>
                                     <option value="modern-minimalist-flat">現代極簡插畫風</option>
                                     <option value="realistic-watercolor">寫實手繪水彩風</option>
                                     <option value="auto">AI 自動決定風格</option>
                                 </select>
                             </div>
-                            
-                            <!-- Include Logo Toggle -->
-                            <div class="flex items-center gap-2 pt-1">
-                                <input type="checkbox" id="carousel-include-logo" class="form-checkbox h-4 w-4 rounded text-[var(--link-color)]" checked>
-                                <label for="carousel-include-logo" class="font-semibold text-sm select-none">提示詞中加入Logo 圖示</label>
+
+                            <!-- Carousel Caption Length Dropdown -->
+                            <div>
+                                <label for="carousel-caption-length" class="font-semibold text-sm">輪播圖說明文字</label>
+                                <select id="carousel-caption-length" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]">
+                                    <option value="short">少 (大約 50 字以內)</option>
+                                    <option value="medium" selected>適中 (大約 100 字以內)</option>
+                                    <option value="long">多 (大約 150 字以內)</option>
+                                </select>
                             </div>
                             
                             <!-- Action buttons -->
