@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        ['blog', 'social', 'edm'].forEach(updateElements);
+        ['blog', 'social', 'edm', 'carousel'].forEach(updateElements);
     }
 
     // --- 金鑰池管理變數與平衡輪替邏輯 ---
@@ -319,7 +319,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const tabs = [
             { btn: document.getElementById('tab2-btn'), dot: document.getElementById('tab2-dot'), defaultTitle: '將字幕稿轉為部落格文章' },
             { btn: document.getElementById('tab3-btn'), dot: document.getElementById('tab3-dot'), defaultTitle: '為多個社群平台生成貼文' },
-            { btn: document.getElementById('tab4-btn'), dot: document.getElementById('tab4-dot'), defaultTitle: '將文章內容生成電子報' }
+            { btn: document.getElementById('tab4-btn'), dot: document.getElementById('tab4-dot'), defaultTitle: '將文章內容生成電子報' },
+            { btn: document.getElementById('tab5-btn'), dot: document.getElementById('tab5-dot'), defaultTitle: '社群輪播圖提示詞' }
         ];
 
         tabs.forEach(tab => {
@@ -358,6 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeTab2();
         initializeTab3();
         initializeTab4();
+        initializeTab5();
 
         updateApiKeyStatus();
 

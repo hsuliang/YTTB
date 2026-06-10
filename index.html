@@ -55,6 +55,8 @@
                     社群貼文生成<span id="tab3-dot" class="notification-dot hidden"></span></button>
                 <button id="tab4-btn" class="tab-btn" data-tab="tab4" disabled title="請先在分頁 1 輸入內容並設定 API Key">4.
                     電子報內容生成<span id="tab4-dot" class="notification-dot hidden"></span></button>
+                <button id="tab5-btn" class="tab-btn" data-tab="tab5" disabled title="請先在分頁 1 輸入內容並設定 API Key">5.
+                    社群輪播圖提示詞<span id="tab5-dot" class="notification-dot hidden"></span></button>
             </div>
 
             <div class="p-6">
@@ -767,6 +769,99 @@
                     </div>
                 </div>
 
+                <!-- Tab 5: 社群輪播圖提示詞 -->
+                <div id="tab5" class="tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-10 gap-8">
+                        <!-- Left panel: Settings (3 cols) -->
+                        <div class="md:col-span-3 space-y-4">
+                            <div class="border-b-2 border-[var(--heading-color)] pb-2">
+                                <h3 class="text-xl font-bold heading-color">輪播圖設定</h3>
+                            </div>
+                            
+                            <!-- Source Status -->
+                            <div class="p-3 rounded-md border border-[var(--card-border)] bg-[var(--gray-bg)]">
+                                <p id="carousel-source-status" class="text-sm font-semibold text-[var(--heading-color)] mb-2">內容來源：字幕原始檔</p>
+                                <button id="carousel-go-to-optimize-btn" class="w-full font-bold py-2 px-4 rounded btn-secondary">🚀 優化文本以提升品質</button>
+                            </div>
+                            
+                            <!-- Roles Configuration -->
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <label class="font-semibold text-sm">角色名稱 (最多 4 個)</label>
+                                    <button id="carousel-add-role-btn" class="text-xs font-semibold py-1 px-2 rounded btn-secondary">+ 新增角色</button>
+                                </div>
+                                <div id="carousel-roles-container" class="space-y-2">
+                                    <!-- Dynamic role input fields will be rendered here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Image Style Dropdown -->
+                            <div>
+                                <label for="carousel-style" class="font-semibold text-sm">圖片風格</label>
+                                <select id="carousel-style" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]">
+                                    <option value="warm-cute-chibi">溫暖可愛Q版教育風 (推薦)</option>
+                                    <option value="modern-minimalist-flat">現代極簡插畫風</option>
+                                    <option value="realistic-watercolor">寫實手繪水彩風</option>
+                                    <option value="auto">AI 自動決定風格</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Include Logo Toggle -->
+                            <div class="flex items-center gap-2 pt-1">
+                                <input type="checkbox" id="carousel-include-logo" class="form-checkbox h-4 w-4 rounded text-[var(--link-color)]" checked>
+                                <label for="carousel-include-logo" class="font-semibold text-sm select-none">提示詞中加入Logo 圖示</label>
+                            </div>
+                            
+                            <!-- Action buttons -->
+                            <div class="flex items-center gap-2">
+                                <button id="generate-carousel-btn" class="w-full font-bold py-3 px-6 rounded-lg text-lg btn-primary">生成提示詞</button>
+                                <button id="generate-carousel-variation-btn" class="font-bold py-2 px-4 rounded-lg btn-secondary text-sm whitespace-nowrap" disabled title="生成不同風格的版本">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
+                                    </svg>
+                                    另一版本
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Right panel: Preview (7 cols) -->
+                        <div class="md:col-span-7 flex flex-col space-y-4">
+                            <!-- Versions switcher tabs -->
+                            <div id="carousel-versions-tabs-container" class="flex border-b border-[var(--card-border)]">
+                                <!-- Version tabs (e.g. Version 1, Version 2) -->
+                            </div>
+                            
+                            <!-- Title and Copy buttons -->
+                            <div class="flex border-b border-[var(--card-border)] items-center">
+                                <h4 class="text-lg font-semibold heading-color px-4 py-2">提示詞預覽</h4>
+                                <button id="copy-all-carousel-prompts-btn" class="ml-auto font-bold py-1 px-3 my-1 mr-2 rounded btn-secondary text-sm hidden">複製全部提示詞</button>
+                            </div>
+                            
+                            <!-- Main Content Display -->
+                            <div id="carousel-output-container" class="flex flex-col flex-grow hidden">
+                                <textarea id="carousel-prompt-textarea" readonly
+                                    class="w-full rounded p-4 bg-[var(--gray-bg)] border border-[var(--card-border)] focus:outline-none resize-none font-mono text-sm leading-relaxed h-[70vh] select-text text-[var(--text-color)]"
+                                    placeholder="生成提示詞後會顯示於此..."></textarea>
+                            </div>
+                            
+                            <!-- Placeholder when no data is generated -->
+                            <div id="carousel-placeholder" class="flex items-center justify-center h-[70vh] text-center text-gray-500 border border-dashed border-[var(--card-border)] rounded">
+                                <div class="flex flex-col items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <p class="font-semibold text-lg">為您的內容生成社群輪播圖提示詞</p>
+                                    <p class="mt-2 text-sm max-w-sm">
+                                        AI 會將您的精華內容轉化為 4 張連貫的故事輪播圖提示詞，並設計好相應的標題文案。
+                                        <br>
+                                        您可以點擊左側按鈕開始生成。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -1116,6 +1211,7 @@
     <script src="js/tab2-blog.js"></script>
     <script src="js/tab3-social.js"></script>
     <script src="js/tab4-edm.js"></script>
+    <script src="js/tab5-carousel.js"></script>
     <script src="js/app.js"></script>
 </body>
 
