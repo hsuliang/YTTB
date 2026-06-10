@@ -201,11 +201,11 @@ ${roleLines.join('\n')}`;
         // 3.5 取得輪播圖說明文字字數設定
         const captionLengthSelect = document.getElementById('carousel-caption-length');
         const captionLengthVal = captionLengthSelect ? captionLengthSelect.value : 'medium';
-        let captionLengthLimit = '適中 (大約 100 字以內)';
+        let captionLengthLimit = '3 個條列項目總字數在大約 100 字以內（適度描述，結構清晰，每項目約 30 字）';
         if (captionLengthVal === 'short') {
-            captionLengthLimit = '少 (大約 50 字以內)';
+            captionLengthLimit = '3 個條列項目總字數在大約 50 字以內（極簡短，適合快速滑讀，每項目約 15 字）';
         } else if (captionLengthVal === 'long') {
-            captionLengthLimit = '多 (大約 150 字以內)';
+            captionLengthLimit = '3 個條列項目總字數在大約 150 字以內（詳盡描述，內容豐富，每項目約 50 字）';
         }
 
         // 4. 建構 System Prompt
@@ -228,23 +228,19 @@ ${roleLines.join('\n')}`;
  2. **角色與 Logo 指代限制**：
     - ${roleLimitInstruction}${logoInstruction}
  
- 3. **版面文案與說明文字設計**：
-    - 輪播圖說明文字：請在所有圖片提示詞之前，撰寫一段針對此輪播圖的社群介紹/引言說明文字（繁體中文），字數限制為：${captionLengthLimit}。這段文字應總結本集精華，引起社群讀者興趣，並吸引他們滑動看圖。
+ 3. **版面文案（圖上文字）設計**：
     - 圖上文字必須是繁體中文 (Traditional Chinese)。
     - 版面結構清楚、留白足夠，適合手機使用者快速滑讀。
     - 包含：
       - 大標題 (大字，最吸睛，最多 12 字)
       - 副標題 (補充，最多 20 字)
-      - 重點短句 (3 個條列項目，每個項目最多 15 字，可用 * 開頭)
+      - 重點短句 (3 個條列項目，以 * 開頭。字數限制規範：${captionLengthLimit})
  
  4. **輸出格式**：
-    - 請**一次性**輸出完整的說明文字與 4 張圖片提示詞，依序排版。
+    - 請**一次性**輸出完整的 4 張圖片提示詞，依序排版。
     - **不要**使用任何 Markdown 程式碼區塊標記 (如 \`\`\`html 或 \`\`\`)。
     - **不要**在提示詞中包含任何角色與變數對應表（例如「角色名稱：image1」這類的對應列表不需輸出），直接輸出標題與提示詞內文。
     - 輸出格式請嚴格符合以下範例：
- 
- 輪播圖說明文字：
- [此處寫下符合字數限制的社群引言/介紹說明文字]
  
  第 1 張圖片提示詞
  請生成 1:1 正方形社群輪播圖，風格為... [繪圖提示詞內容，必須指代對應角色變數，如 image1, image2，以及融入${includeLogo ? `右上角必須直接放上 image${logoIndex} 的logo圖示，保留原始比例、原始樣貌與原始文字，不可重繪、不可變形、不可改色、不可裁切。` : '場景與物件描述'}]
