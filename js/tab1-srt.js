@@ -32,6 +32,9 @@ const clearAllRulesBtn = document.getElementById('clear-all-rules-btn');
 const timelineShiftInput = document.getElementById('timeline-shift');
 const loadPresetRulesBtn = document.getElementById('load-preset-rules-btn');
 const savePresetRulesBtn = document.getElementById('save-preset-rules-btn');
+const exportRulesBtn = document.getElementById('export-rules-btn');
+const importRulesBtn = document.getElementById('import-rules-btn');
+const importRulesFileInput = document.getElementById('import-rules-file-input');
 
 // [第二階段優化] - 新增返回編輯按鈕的選擇器
 const returnToEditBtn = document.getElementById('return-to-edit-btn');
@@ -257,6 +260,63 @@ function initializeTab1() {
         }
     }
 
+    function exportRules() {
+        if (state.batchReplaceRules.length === 0) {
+            showToast('目前沒有任何取代規則可以匯出。', { type: 'error' });
+            return;
+        }
+        try {
+            const jsonStr = JSON.stringify(state.batchReplaceRules, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `yttb_replace_rules_${new Date().toISOString().slice(2, 10).replace(/-/g, "")}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast('📤 規則匯出成功！');
+        } catch (e) {
+            console.error('匯出失敗:', e);
+            showToast('匯出失敗，請重試。', { type: 'error' });
+        }
+    }
+
+    function handleImportRulesFile(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const rules = JSON.parse(e.target.result);
+                if (Array.isArray(rules)) {
+                    // 驗證規則格式是否正確
+                    const isValid = rules.every(r => r && typeof r.original === 'string' && typeof r.replacement === 'string');
+                    if (!isValid) {
+                        showModal({ title: '匯入失敗', message: '匯入的檔案格式不正確，必須是包含 original 與 replacement 欄位的規則陣列。' });
+                        return;
+                    }
+                    
+                    if (state.batchReplaceRules.length > 0) {
+                        if (!confirm('匯入規則將會覆蓋當前暫存的規則，確定要繼續嗎？')) {
+                            return;
+                        }
+                    }
+                    
+                    state.batchReplaceRules = rules;
+                    renderReplaceRules();
+                    showToast(`📥 成功匯入 ${rules.length} 條取代規則！`);
+                } else {
+                    showModal({ title: '匯入失敗', message: '匯入的檔案內容必須是 JSON 陣列。' });
+                }
+            } catch (error) {
+                console.error('解析匯入檔案失敗:', error);
+                showModal({ title: '匯入失敗', message: '解析 JSON 檔案失敗，請確保檔案格式正確。' });
+            }
+        };
+        reader.readAsText(file);
+    }
+
     function switchView(viewToShow) {
         allViewButtons.forEach(btn => btn.classList.remove('active'));
         document.querySelector(`.view-btn[data-view="${viewToShow}"]`).classList.add('active');
@@ -454,6 +514,16 @@ function initializeTab1() {
     clearAllRulesBtn.addEventListener('click', clearAllRules);
     if (loadPresetRulesBtn) loadPresetRulesBtn.addEventListener('click', loadPresetRules);
     if (savePresetRulesBtn) savePresetRulesBtn.addEventListener('click', savePresetRules);
+    if (exportRulesBtn) exportRulesBtn.addEventListener('click', exportRules);
+    if (importRulesBtn) importRulesBtn.addEventListener('click', () => importRulesFileInput.click());
+    if (importRulesFileInput) {
+        importRulesFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleImportRulesFile(e.target.files[0]);
+                e.target.value = '';
+            }
+        });
+    }
 
     replaceRulesList.addEventListener('click', (e) => {
         const deleteBtn = e.target.closest('.rule-delete-btn');

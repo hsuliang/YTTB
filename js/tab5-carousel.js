@@ -16,6 +16,20 @@ function initializeTab5() {
     const carouselRolesContainer = document.getElementById('carousel-roles-container');
     const carouselAddRoleBtn = document.getElementById('carousel-add-role-btn');
     const carouselPromptTextarea = document.getElementById('carousel-prompt-textarea');
+    
+    const carouselCustomStyleContainer = document.getElementById('carousel-custom-style-container');
+    const carouselCustomStyleTextarea = document.getElementById('carousel-custom-style');
+
+    // 控制自訂風格輸入框的顯示與隱藏
+    function toggleCustomStyleVisibility() {
+        if (carouselStyleSelect && carouselCustomStyleContainer) {
+            if (carouselStyleSelect.value === 'custom') {
+                carouselCustomStyleContainer.classList.remove('hidden');
+            } else {
+                carouselCustomStyleContainer.classList.add('hidden');
+            }
+        }
+    }
 
     // --- 狀態變數 ---
     // 預設提供三個空欄位供使用者輸入，均為選填
@@ -94,6 +108,52 @@ function initializeTab5() {
         });
     }
 
+    function getCarouselBlocks(text) {
+        const blocks = [];
+        const markerPattern = /(?:^|\n)\[?\s*第\s*([1234一二三四])\s*張\s*(?:圖片)?(?:提示詞)?\s*\]?/gi;
+        
+        const matches = [];
+        let match;
+        while ((match = markerPattern.exec(text)) !== null) {
+            matches.push({
+                num: match[1],
+                index: match.index,
+                rawMarker: match[0]
+            });
+        }
+        
+        matches.sort((a, b) => a.index - b.index);
+        
+        for (let i = 0; i < matches.length; i++) {
+            const current = matches[i];
+            const next = matches[i + 1];
+            const start = current.index;
+            const end = next ? next.index : text.length;
+            
+            let blockText = text.substring(start, end).trim();
+            
+            // 擷取純繪圖提示詞部分（移除 [第 X 張] 與後續的圖上文字大標題等）
+            let promptOnly = blockText.replace(/(?:^|\n)\[?\s*第\s*[1-4一二三四]\s*張\s*(?:圖片)?(?:提示詞)?\s*\]?\s*/gi, '').trim();
+            const indexText = promptOnly.search(/(?:圖上文字|圖上疊加|大標題|版面文案)/);
+            if (indexText !== -1) {
+                promptOnly = promptOnly.substring(0, indexText).trim();
+            }
+
+            // 強效防分割圖英文語法追加
+            const antiSplitKeywords = "single complete image, no split screen, no collage, no grid, no panels, no comic strip";
+            if (!promptOnly.toLowerCase().includes("no split screen") && !promptOnly.toLowerCase().includes("no collage")) {
+                promptOnly = promptOnly.replace(/[.。，,\s]+$/, '') + ` , ${antiSplitKeywords}.`;
+            }
+            
+            blocks.push({
+                label: `第 ${current.num} 張`,
+                content: blockText,
+                promptOnly: promptOnly
+            });
+        }
+        return blocks;
+    }
+
     function renderCurrentCarouselVersionUI() {
         if (!state.carouselVersions || state.carouselVersions.length === 0) {
             carouselOutputContainer.classList.add('hidden');
@@ -113,6 +173,35 @@ function initializeTab5() {
         
         // 將 AI 產出文字一次性填入右側的大文字框
         carouselPromptTextarea.value = currentVersion.textContent;
+
+        // 渲染單張提示詞複製按鈕
+        const copyContainer = document.getElementById('carousel-individual-copy-container');
+        if (copyContainer) {
+            copyContainer.innerHTML = '';
+            const blocks = getCarouselBlocks(currentVersion.textContent);
+            
+            blocks.forEach((block, index) => {
+                if (block && block.promptOnly) {
+                    const btn = document.createElement('button');
+                    btn.className = 'font-semibold py-1 px-3 rounded btn-secondary text-xs transition-all duration-200 flex items-center gap-1';
+                    btn.innerHTML = `📋 複製第 ${index + 1} 張`;
+                    btn.title = `複製此張的繪圖提示詞（適用於 ChatGPT / Nana Banana）`;
+                    btn.addEventListener('click', () => {
+                        navigator.clipboard.writeText(block.promptOnly).then(() => {
+                            showToast(`第 ${index + 1} 張繪圖提示詞已複製！`);
+                            const originalHTML = btn.innerHTML;
+                            btn.innerHTML = `✅ 已複製第 ${index + 1} 張!`;
+                            btn.classList.add('btn-success-temporary');
+                            setTimeout(() => {
+                                btn.innerHTML = originalHTML;
+                                btn.classList.remove('btn-success-temporary');
+                            }, 2000);
+                        });
+                    });
+                    copyContainer.appendChild(btn);
+                }
+            });
+        }
     }
 
     function switchCarouselVersionView(index) {
@@ -184,14 +273,23 @@ ${roleLines.join('\n')}`;
         if (variationModifier && shouldOverride) {
             styleDescription = `由你決定風格，但必須依據此風格調整指令：${variationModifier}`;
         } else {
-            const styleMap = {
-                'transcript-context-style': '風格由你決定：請依據 [原始文章] (逐字稿) 的主題情境與內涵，為這套輪播圖量身打造一個最合適的繪圖風格（例如：教育趣味主題可用溫慢Q版教育風，專業論述或科技主題可用現代極簡扁平插畫風，情感故事或文學主題可用寫實手繪水彩風等），並在第一張圖片提示詞開頭說明該風格的特點。請確保 4 張圖片提示詞在該風格下保持高度一致的視覺感與配色調性。',
-                'warm-cute-chibi': '風格為溫慢、可愛、教育感、社群輪播風，人物為頭大身體小的 Q 版角色。整體溫暖可愛，色彩和諧',
-                'modern-minimalist-flat': '風格為現代極簡插畫風、向量扁平插畫、乾淨簡約、社群輪播風，人物為簡約幾何線條風格',
-                'realistic-watercolor': '風格為寫實手繪風格、手繪水彩感、細緻溫暖質感、社群輪播風，人物為水彩暈染質感風格',
-                'auto': '風格由你決定，風格要表現在提示詞中，應適應內容的主題（例如：教育趣味可用溫慢Q版教育風，專業科技可用極簡扁平插畫風），請在每張提示詞開頭說明該風格描述'
-            };
-            styleDescription = styleMap[styleValue] || styleMap['warm-cute-chibi'];
+            if (styleValue === 'custom') {
+                const customStyleText = carouselCustomStyleTextarea ? carouselCustomStyleTextarea.value.trim() : '';
+                if (!customStyleText) {
+                    showModal({ title: '請輸入自訂風格提示詞', message: '您選擇了「自訂風格」，請在自訂風格提示詞輸入框中填寫風格描述。' });
+                    return null;
+                }
+                styleDescription = `風格為自訂風格：${customStyleText}`;
+            } else {
+                const styleMap = {
+                    'transcript-context-style': '風格由你決定：請依據 [原始文章] (逐字稿) 的主題情境與內涵，為這套輪播圖量身打造一個最合適的繪圖風格（例如：教育趣味主題可用溫慢Q版教育風，專業論述或科技主題可用現代極簡扁平插畫風，情感故事或文學主題可用寫實手繪水彩風等），並在第一張圖片提示詞開頭說明該風格的特點。請確保 4 張圖片提示詞在該風格下保持高度一致的視覺感與配色調性。',
+                    'warm-cute-chibi': '風格為溫慢、可愛、教育感、社群輪播風，人物為頭大身體小的 Q 版角色。整體溫暖可愛，色彩和諧',
+                    'modern-minimalist-flat': '風格為現代極簡插畫風、向量扁平插畫、乾淨簡約、社群輪播風，人物為簡約幾何線條風格',
+                    'realistic-watercolor': '風格為寫實手繪風格、手繪水彩感、細緻溫暖質感、社群輪播風，人物為水彩暈染質感風格',
+                    'auto': '風格由你決定，風格要表現在提示詞中，應適應內容的主題（例如：教育趣味可用溫慢Q版教育風，專業科技可用極簡扁平插畫風），請在每張提示詞開頭說明該風格描述'
+                };
+                styleDescription = styleMap[styleValue] || styleMap['warm-cute-chibi'];
+            }
             
             if (variationModifier) {
                 styleDescription += `，並在此基礎上追加風格修飾：${variationModifier}`;
@@ -218,45 +316,53 @@ ${roleLines.join('\n')}`;
  - 第 4 張：總結要點與行動呼籲 (CTA) 結尾。
  
  請為這 4 張圖片各生成一組「AI 繪圖提示詞 (Prompt)」與「圖上疊加文字」，嚴格遵守以下要求：
- 
- 1. **圖片規格與風格**：
-    - 比例為 1:1 正方形。
-    - 繪圖風格：${styleDescription}。
-    - 人物畫風與限制：人物畫風需與所選的圖片風格高度融合。人物在畫面中需完整入鏡，不可裁切臉、身體、手或腳。
-    - 避免侵權：不可出現 any 版權動漫或影視角色（例如迪士尼、宮崎駿等）。
- 
- 2. **角色與 Logo 指代限制**：
-    - ${roleLimitInstruction}${logoInstruction}
- 
- 3. **版面文案（圖上文字）設計**：
-    - 圖上文字必須是繁體中文 (Traditional Chinese)。
-    - 版面結構清楚、留白足夠，適合手機使用者快速滑讀。
-    - 包含：
-      - 大標題 (大字，最吸睛，最多 12 字)
-      - 副標題 (補充，最多 20 字)
-      - 重點短句 (3 個條列項目，以 * 開頭。字數限制規範：${captionLengthLimit})
- 
- 4. **輸出格式**：
-    - 請**一次性**輸出完整的 4 張圖片提示詞，依序排版。
-    - **不要**使用任何 Markdown 程式碼區塊標記 (如 \`\`\`html 或 \`\`\`)。
-    - **不要**在提示詞中包含任何角色與變數對應表（例如「角色名稱：image1」這類的對應列表不需輸出），直接輸出標題與提示詞內文。
-    - 輸出格式請嚴格符合以下範例：
- 
- 第 1 張圖片提示詞
- 請生成 1:1 正方形社群輪播圖，風格為... [繪圖提示詞內容，必須指代對應角色變數，如 image1, image2，以及融入${includeLogo ? `右上角必須直接放上 image${logoIndex} 的logo圖示，保留原始比例、原始樣貌與原始文字，不可重繪、不可變形、不可改色、不可裁切。` : '場景與物件描述'}]
- 圖上文字請包含：
- 大標題：
- [大標題內容]
- 副標題：
- [副標題內容]
- 重點短句：
- * [重點短句 1]
- * [重點短句 2]
- * [重點短句 3]
- 不可出現任何版權角色。整體要適合社群快速滑讀。
- 
- 第 2 張圖片提示詞
- ... (以此類推)
+  
+  1. **適用繪圖工具與提示詞優化**：
+     - 本提示詞主要用於 ChatGPT (DALL-E 3) 或是 Nana Banana 繪圖工具，請以流暢、細緻的「繁體中文描述」撰寫繪圖提示詞（不要使用 Midjourney 的參數如 --ar, --no 等）。
+     - 為了確保角色一致性，必須完整保留角色變數與其括號內的原名，例如「image2 (小壁虎)」或「image1 (ㄚ亮笑長)」，絕對不要將其名稱自行翻譯或變更（如將小壁虎翻譯成 gecko）。
+     - 為了防止這些工具生成「四宮格、二格、拼貼、分割畫面或組圖」，每張圖的提示詞中，必須明確加入防分割限制詞：「這是一張單一且完整的圖片，絕對不要使用分割畫面、拼貼格、多圖組合或漫畫方格的形式 (single complete image, no split screen, no collage, no grid, no panels, no comic strip)」。
+  
+  2. **圖片規格與風格**：
+     - 比例為 1:1 正方形。
+     - 繪圖風格：${styleDescription}。
+     - 人物畫風與限制：人物畫風需與所選的圖片風格高度融合。人物在畫面中需完整入鏡，不可裁切臉、身體、手或腳。
+     - 避免侵權：不可出現 any 版權動漫或影視角色（例如迪士尼、宮崎駿等）。
+  
+  3. **角色與 Logo 指代限制**：
+     - ${roleLimitInstruction}${logoInstruction}
+  
+  4. **版面文案（圖上文字）設計**：
+     - 圖上文字必須是繁體中文 (Traditional Chinese)。
+     - 版面結構清楚、留白足夠，適合手機使用者快速滑讀。
+     - 包含：
+       - 大標題 (大字，最吸睛，最多 12 字)
+       - 副標題 (補充，最多 20 字)
+       - 重點短句 (3 個條列項目，以 * 開頭。字數限制規範：${captionLengthLimit})
+  
+  5. **輸出格式**：
+     - 在輸出的最前方，必須先輸出這行固定的開頭文字：「生成以下 4 張圖片，務必分開生成，一次只生一張，共 4 張」，換行後再開始輸出第 1 張圖片提示詞。
+     - 請**一次性**輸出完整的 4 張圖片提示詞，依序排版。
+     - **不要**使用 any Markdown 程式碼區塊標記 (如 \`\`\`html 或 \`\`\`)。
+     - **不要**在提示詞中包含任何角色與變數對應表（例如「角色名稱：image1」這類的對應列表不需輸出），直接輸出標題與提示詞內文。
+     - 輸出格式請嚴格符合以下範例：
+  
+  生成以下 4 張圖片，務必分開生成，一次只生一張，共 4 張
+  
+  [第 1 張]
+  請生成 1:1 正方形社群輪播圖，風格為現代、簡潔的扁平插畫，帶有友好且具教育意義的氛圍。色彩運用柔和且具吸引力，以藍綠、米白和淡黃色為主調。畫面中心，image2 (小壁虎) 呈現出一種略帶焦慮和不知所措的表情... [在此詳細描述場景與人物互動關係，必須以變數指代角色如 image1, image2，以及融入logo指代如右上角必須直接放上 image3 的logo圖示...], 這是一張單一且完整的圖片，絕對不要使用分割畫面、拼貼格、多圖組合或漫畫方格的形式 (single complete image, no split screen, no collage, no grid, no panels, no comic strip)。
+  圖上文字請包含：
+  大標題：
+  [大標題內容]
+  副標題：
+  [副標題內容]
+  重點短句：
+  * [重點短句 1]
+  * [重點短句 2]
+  * [重點短句 3]
+  不可出現任何版權角色。整體要適合社群快速滑讀。
+  
+  [第 2 張]
+  ... (以此類推)
  
  [原始文章]:
  ---
@@ -285,8 +391,16 @@ ${roleLines.join('\n')}`;
 
         try {
             const result = await callGeminiAPI(apiKey, prompt);
+            
+            // 確保生成文字最前方有固定的開頭
+            let finalResult = result.trim();
+            const prefix = "生成以下 4 張圖片，務必分開生成，一次只生一張，共 4 張";
+            if (!finalResult.startsWith(prefix)) {
+                finalResult = prefix + "\n\n" + finalResult;
+            }
+
             const newVersion = {
-                textContent: result
+                textContent: finalResult
             };
 
             if (isVariation) {
@@ -354,4 +468,10 @@ ${roleLines.join('\n')}`;
     // 初始化角色輸入框與顯示狀態
     renderRoles();
     renderCurrentCarouselVersionUI();
+
+    // 監聽風格切換事件與初始化顯示狀態
+    if (carouselStyleSelect) {
+        carouselStyleSelect.addEventListener('change', toggleCustomStyleVisibility);
+    }
+    toggleCustomStyleVisibility();
 }

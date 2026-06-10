@@ -810,9 +810,16 @@
                                     <option value="modern-minimalist-flat">現代極簡插畫風</option>
                                     <option value="realistic-watercolor">寫實手繪水彩風</option>
                                     <option value="auto">AI 自動決定風格</option>
+                                    <option value="custom">自訂風格</option>
                                 </select>
                             </div>
 
+                            <!-- Custom Style Input Container -->
+                            <div id="carousel-custom-style-container" class="hidden space-y-1 mt-2">
+                                <label for="carousel-custom-style" class="font-semibold text-xs text-[var(--gray-text)]">自訂風格提示詞</label>
+                                <textarea id="carousel-custom-style" class="w-full p-2 text-sm rounded bg-[var(--gray-bg)] border border-[var(--card-border)] h-20 resize-y" 
+                                    placeholder="例如：復古美式插畫風格，採用高飽和度色彩、乾淨線條與微粒效果..."></textarea>
+                            </div>
                             <!-- Carousel Caption Length Dropdown -->
                             <div>
                                 <label for="carousel-caption-length" class="font-semibold text-sm">輪播圖說明文字</label>
@@ -850,6 +857,7 @@
                             
                             <!-- Main Content Display -->
                             <div id="carousel-output-container" class="flex flex-col flex-grow hidden">
+                                <div id="carousel-individual-copy-container" class="flex flex-wrap gap-2 mb-2"></div>
                                 <textarea id="carousel-prompt-textarea" readonly
                                     class="w-full rounded p-4 bg-[var(--gray-bg)] border border-[var(--card-border)] focus:outline-none resize-none font-mono text-sm leading-relaxed h-[70vh] select-text text-[var(--text-color)]"
                                     placeholder="生成提示詞後會顯示於此..."></textarea>
@@ -895,7 +903,7 @@
 
         <div id="batch-replace-modal"
             class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-            <div class="p-6 w-11/12 md:w-1/2 max-w-xl rounded-lg shadow-xl main-card flex flex-col">
+            <div class="p-6 w-11/12 md:w-1/2 max-w-xl rounded-lg shadow-xl main-card flex flex-col max-h-[90vh]">
                 <h3 class="text-xl font-bold mb-4 heading-color">批次取代設定</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <input type="text" id="replace-original-input" placeholder="原文 (要被取代的文字)"
@@ -905,17 +913,22 @@
                     <button id="add-replace-rule-btn" class="md:col-span-1 font-bold rounded btn-primary">新增規則</button>
                 </div>
                 <div id="replace-rules-list"
-                    class="flex-grow border border-[var(--card-border)] rounded bg-[var(--gray-bg)] p-2 min-h-[256px] overflow-y-auto">
+                    class="flex-grow border border-[var(--card-border)] rounded bg-[var(--gray-bg)] p-2 min-h-[200px] max-h-[45vh] overflow-y-auto">
                 </div>
                 <div class="flex-grow mt-2">
                     <p class="text-xs text-[var(--gray-text)] text-center">提示：此處設定的規則，將在您點擊主畫面的「開始整理」按鈕時統一執行。</p>
                 </div>
                 <div class="mt-6 flex flex-wrap justify-between items-center gap-4">
-                    <div class="flex gap-2">
+                    <div class="flex flex-wrap gap-2">
                         <button id="load-preset-rules-btn" class="font-bold py-2 px-3 rounded btn-secondary text-sm"
                             title="載入已儲存的常用規則">📥 載入範本</button>
                         <button id="save-preset-rules-btn" class="font-bold py-2 px-3 rounded btn-secondary text-sm"
                             title="將目前規則儲存為常用範本">💾 存為範本</button>
+                        <button id="export-rules-btn" class="font-bold py-2 px-3 rounded btn-secondary text-sm"
+                            title="將目前規則匯出為檔案">📤 匯出規則</button>
+                        <button id="import-rules-btn" class="font-bold py-2 px-3 rounded btn-secondary text-sm"
+                            title="從檔案匯入規則">📥 匯入規則</button>
+                        <input type="file" id="import-rules-file-input" class="hidden" accept=".json">
                     </div>
                     <div class="flex gap-2">
                         <button id="clear-all-rules-btn" class="font-bold py-2 px-4 rounded btn-danger">全部清除</button>
@@ -929,7 +942,7 @@
 
     <footer class="text-center text-xs text-[var(--gray-text)] py-4 mt-8 border-t border-[var(--card-border)]">
         Design by <a href="https://bit.ly/Aliang" target="_blank" rel="noopener" class="upload-link">ㄚ亮笑長練功坊</a> | <a
-            href="readme.html" target="_blank" rel="noopener" class="upload-link"> 程式簡介與使用說明 </a> | 20260609
+            href="readme.html" target="_blank" rel="noopener" class="upload-link"> 程式簡介與使用說明 </a> | 20260610
     </footer>
 
     <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2"></div>
