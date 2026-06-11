@@ -329,10 +329,8 @@ function initializeTab5() {
             logoIndex = validRoles.length + 1;
             roleLimitInstruction = `**角色設定與限制**：
 在繪圖提示詞中只能出現以下您所填寫的角色人物，絕對不可擅自加入其他未設定的角色。在繪圖提示詞中提及這些人物時，必須使用對應的 image 變數進行指代：
-${roleLines.join('
-')}`;
-            roleMappingPromptHint = mappingLines.join('
-');
+${roleLines.join('\n')}`;
+            roleMappingPromptHint = mappingLines.join('\n');
         } else {
             roleLimitInstruction = `**角色設定與限制**：
 本集並未設定任何角色。因此，繪圖提示詞中「絕對不要出現任何主持或來賓」等角色人物，專注於場景、手部物件、教室、環境或抽象概念之視覺描述。`;
@@ -435,6 +433,7 @@ CTA：看完這集，先檢查你的 Canva AI 有沒有真的開起來
 ---`;
 
         return prompt;
+    }
 
     // --- API 呼叫與生成邏輯 ---
     async function handleGenerateCarousel(variationModifier = '', shouldOverride = false) {
