@@ -333,6 +333,17 @@ function initializeTab1() {
     }
 
     function updateContent(content, fileName = '') {
+        // 清除舊影片的所有後續生成狀態，避免跨檔案污染
+        state.optimizedTextForBlog = '';
+        state.blogArticleVersions = [];
+        state.currentBlogVersionIndex = 0;
+        state.socialPostVersions = [];
+        state.currentSocialVersionIndex = 0;
+        state.edmVersions = [];
+        state.currentEdmVersionIndex = 0;
+        state.carouselVersions = [];
+        state.currentCarouselVersionIndex = 0;
+
         smartArea.value = content;
         state.originalFileName = fileName;
         smartArea.dispatchEvent(new Event('input'));
@@ -491,6 +502,18 @@ function initializeTab1() {
     smartArea.addEventListener('input', () => {
         updateCharCount(smartArea.value);
         toggleEmptyState();
+        if (smartArea.value.trim().length === 0) {
+            // 手動清空輸入框時，同時清除後續狀態
+            state.optimizedTextForBlog = '';
+            state.blogArticleVersions = [];
+            state.currentBlogVersionIndex = 0;
+            state.socialPostVersions = [];
+            state.currentSocialVersionIndex = 0;
+            state.edmVersions = [];
+            state.currentEdmVersionIndex = 0;
+            state.carouselVersions = [];
+            state.currentCarouselVersionIndex = 0;
+        }
         if (window.updateTabAvailability) window.updateTabAvailability();
         if (window.updateAiButtonStatus) window.updateAiButtonStatus();
     });
