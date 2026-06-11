@@ -222,7 +222,8 @@ function initializeTab3() {
     }
     
     function saveSocialDraft() {
-        const hasContent = document.getElementById('smart-area').value.trim().length > 0;
+        const rawContent = state.processedSrtResult ? state.processedSrtResult.trim() : document.getElementById('smart-area').value.trim();
+        const hasContent = rawContent.length > 0;
         if (!hasContent && state.socialPostVersions.length === 0) return;
 
         const draft = {
@@ -260,7 +261,7 @@ function initializeTab3() {
     
             if (hasGeneratedBlog) sourceText = state.blogArticleVersions[state.currentBlogVersionIndex].htmlContent.replace(/<[^>]+>/g, ' ');
             else if (hasOptimizedText) sourceText = state.optimizedTextForBlog;
-            else sourceText = document.getElementById('smart-area').value.trim();
+            else sourceText = state.processedSrtResult ? state.processedSrtResult.trim() : document.getElementById('smart-area').value.trim();
     
             if (!sourceText) { showModal({ title: '錯誤', message: '缺少用於生成貼文的來源內容。' }); return; }
     

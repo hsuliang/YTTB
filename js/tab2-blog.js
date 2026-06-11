@@ -24,11 +24,11 @@ const SETTINGS_STORAGE_KEYS = {
 };
 const BLOG_DRAFT_KEY = 'aliang-yttb-draft-blog';
 
-window.hasBlogDraft = function() {
+window.hasBlogDraft = function () {
     return localStorage.getItem(BLOG_DRAFT_KEY) !== null;
 }
 
-window.restoreBlogDraft = function() {
+window.restoreBlogDraft = function () {
     try {
         const draftJSON = localStorage.getItem(BLOG_DRAFT_KEY);
         if (!draftJSON) return;
@@ -37,26 +37,26 @@ window.restoreBlogDraft = function() {
         document.getElementById('smart-area').value = draft.sourceContent || '';
         state.optimizedTextForBlog = draft.optimizedContent || '';
         state.blogSourceType = draft.sourceType || 'raw';
-        
+
         document.getElementById('blog-title').value = draft.title || '';
         document.getElementById('blog-yt-id').value = draft.ytId || '';
         document.getElementById('blog-persona').value = draft.persona || '第一人稱視角';
         document.getElementById('blog-word-count').value = draft.wordCount || '約 1200 字';
         document.getElementById('blog-tone').value = draft.tone || '充滿能量與感染力';
-        
+
         state.currentBlogTags = draft.tags || [];
-        if(window.renderTags) window.renderTags();
-        
+        if (window.renderTags) window.renderTags();
+
         if (draft.ctaPreset) {
-             document.getElementById('cta-preset-select').value = draft.ctaPreset;
+            document.getElementById('cta-preset-select').value = draft.ctaPreset;
         }
         document.getElementById('blog-cta').value = draft.ctaContent || '';
-        if(window.handleCtaChange) window.handleCtaChange();
+        if (window.handleCtaChange) window.handleCtaChange();
 
         if (draft.versions && draft.versions.length > 0) {
             state.blogArticleVersions = draft.versions;
             state.currentVersionIndex = draft.currentVersionIndex || 0;
-            
+
             renderVersionTabs();
             renderCurrentVersionUI(); // This will now load content into Quill
 
@@ -65,10 +65,10 @@ window.restoreBlogDraft = function() {
             document.getElementById('generate-blog-variation-btn').disabled = false;
         }
 
-        if(window.updateStepperUI) window.updateStepperUI();
-        if(window.updateTabAvailability) window.updateTabAvailability();
-        if(window.updateAiButtonStatus) window.updateAiButtonStatus();
-        
+        if (window.updateStepperUI) window.updateStepperUI();
+        if (window.updateTabAvailability) window.updateTabAvailability();
+        if (window.updateAiButtonStatus) window.updateAiButtonStatus();
+
         showToast('部落格草稿已成功恢復！');
     } catch (e) {
         console.error('無法讀取部落格草稿:', e);
@@ -76,7 +76,7 @@ window.restoreBlogDraft = function() {
     }
 }
 
-window.clearBlogDraft = function() {
+window.clearBlogDraft = function () {
     localStorage.removeItem(BLOG_DRAFT_KEY);
 }
 
@@ -86,7 +86,7 @@ function formatQuillVideos(html) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         const iframes = doc.querySelectorAll('iframe.ql-video');
-        
+
         iframes.forEach(iframe => {
             const src = iframe.getAttribute('src');
             if (src && src.includes('youtube.com/embed')) {
@@ -112,7 +112,7 @@ function getLatestHtmlContent() {
     return formatQuillVideos(quillEditor.root.innerHTML);
 }
 
-function convertHtmlToMarkdown(htmlContent) { 
+function convertHtmlToMarkdown(htmlContent) {
     if (!htmlContent) return '';
     let content = htmlContent;
     content = content.replace(/<div class="youtube-embed">.*?<\/div>/g, '[YouTube 影片]\n');
@@ -144,23 +144,23 @@ function cleanHtml(html) {
     return cleaned.trim();
 }
 
-window.updateStepperUI = function() {
+window.updateStepperUI = function () {
     const step1 = document.getElementById('stepper-step-1');
     const step2 = document.getElementById('stepper-step-2');
     const step3 = document.getElementById('stepper-step-3');
-    
+
     [step1, step2, step3].forEach(step => step.classList.remove('active', 'completed'));
 
     const hasSourceContent = document.getElementById('smart-area').value.trim().length > 0;
     const isOptimized = state.blogSourceType === 'optimized' || state.blogSourceType === 'blog';
     const hasGeneratedBlog = state.blogArticleVersions.length > 0;
 
-    if (hasSourceContent || window.hasBlogDraft()) { step1.classList.add('completed'); } 
+    if (hasSourceContent || window.hasBlogDraft()) { step1.classList.add('completed'); }
     else { step1.classList.add('active'); return; }
 
-    if (isOptimized) { step2.classList.add('completed'); } 
+    if (isOptimized) { step2.classList.add('completed'); }
     else { step2.classList.add('active'); }
-    
+
     if (hasGeneratedBlog) {
         step1.classList.add('completed');
         step2.classList.add('completed');
@@ -183,10 +183,10 @@ function assembleBlogPrompt(options) {
     }
 
     if (variationModifier) { rules.push(`- 風格變化指令: ${variationModifier}`); }
-    if (wizardSettings.structSummary) { rules.push('- 文章開頭：請自動產生一段「前言摘要」，用 <p> 標籤包圍。'); } 
+    if (wizardSettings.structSummary) { rules.push('- 文章開頭：請自動產生一段「前言摘要」，用 <p> 標籤包圍。'); }
     else if (wizardSettings.structPoints) { rules.push('- 文章開頭：請自動條列出 2-5 點「本集重點」，並用 <ul><li>...</li></ul> 結構。'); }
     rules.push(`- 寫作人稱：${persona}`);
-    
+
     if (!variationModifier || !shouldOverride) {
         const toneFinetune = wizardSettings.toneFinetune ? ` (${wizardSettings.toneFinetune})` : '';
         rules.push(`- 寫作語氣：${tone}${toneFinetune}`);
@@ -195,13 +195,13 @@ function assembleBlogPrompt(options) {
     rules.push(`- 文章字數：${wordCount}`);
     if (tagsString) rules.push(`- 指定標籤：${tagsString}`);
     let h2_style_rule = "每個段落都需要一個簡潔有力的小標題";
-    if (wizardSettings.h2Style === 'question') { h2_style_rule = "每個段落都需要一個帶有疑問句、引發好奇的小標題"; } 
+    if (wizardSettings.h2Style === 'question') { h2_style_rule = "每個段落都需要一個帶有疑問句、引發好奇的小標題"; }
     else if (wizardSettings.h2Style === 'emoji') { h2_style_rule = "每個段落都需要一個活潑有趣、可加入 Emoji 的小標題"; }
     rules.push(`- 格式要求：每個小標題用 <h2> 標籤包圍，其後的內文用 <p> 標籤包圍。`);
     if (wizardSettings.elemBold) { rules.push('- 特殊元素：請在內文中適度將重要的關鍵字詞加上 <strong> 粗體標籤。'); }
     if (wizardSettings.elemTable) { rules.push('- 特殊元素：請在文章結尾處，自動生成一個「重點回顧」的 HTML 表格(<table>)，總結文章要點。'); }
     if (wizardSettings.elemQuote) { rules.push('- 特殊元素：請在文章內文中，選擇一句最精彩的「金句」，並用 <blockquote> 標籤將其引用出來。'); }
-    
+
     rules.push('- **重要限制**: 你的輸出內容中，絕對不可以包含 YouTube 嵌入代碼或任何 CTA (行動呼籲) 內容。也不要包含 `<h1>` 標題，主標題將由前端處理。');
     rules.push('- **分隔線**: 在每一組「標題+內文」的區塊結束後，必須加上一條 `<hr>` 分隔線。');
 
@@ -292,14 +292,14 @@ function switchVersionView(index) {
 function renderCurrentVersionUI() {
     const currentVersion = state.blogArticleVersions[state.currentBlogVersionIndex];
     if (!currentVersion) return;
-    
+
     if (quillEditor) {
         const contentToLoad = currentVersion.htmlContent;
         if (getLatestHtmlContent() !== contentToLoad) {
             quillEditor.root.innerHTML = contentToLoad;
         }
     }
-    
+
     const latestHtml = getLatestHtmlContent();
     document.getElementById('html-source-preview').value = latestHtml;
     document.getElementById('markdown-source-preview').value = convertHtmlToMarkdown(latestHtml);
@@ -383,7 +383,7 @@ function initializeTab2() {
         showToast('AI 寫作風格已儲存！');
         closePromptWizard();
     }
-    
+
     function restoreDefaultSettings() {
         if (confirm('您確定要清除所有自訂風格，並恢復為預設設定嗎？')) {
             localStorage.removeItem(SETTINGS_STORAGE_KEYS.PROMPT_WIZARD);
@@ -417,7 +417,7 @@ function initializeTab2() {
     }
 
     function saveSetting(key, value) { try { localStorage.setItem(key, value); } catch (e) { console.error(`無法儲存設定 ${key}:`, e); } }
-    
+
     function loadSettings() {
         const persona = localStorage.getItem(SETTINGS_STORAGE_KEYS.BLOG_PERSONA);
         if (persona) blogPersonaSelect.value = persona;
@@ -425,7 +425,7 @@ function initializeTab2() {
         const tone = localStorage.getItem(SETTINGS_STORAGE_KEYS.BLOG_TONE);
         if (tone) blogToneSelect.value = tone;
     }
-    
+
     function saveBlogDraft() {
         const hasContent = document.getElementById('smart-area').value.trim().length > 0;
         if (!hasContent && state.blogArticleVersions.length === 0 && !getLatestHtmlContent()) return;
@@ -445,57 +445,57 @@ function initializeTab2() {
             currentVersionIndex: state.currentBlogVersionIndex,
             timestamp: new Date().getTime(),
         };
-        try { localStorage.setItem(BLOG_DRAFT_KEY, JSON.stringify(draft)); } 
+        try { localStorage.setItem(BLOG_DRAFT_KEY, JSON.stringify(draft)); }
         catch (e) { console.error('無法儲存部落格草稿:', e); }
     }
-    
-    window.handleCtaChange = function() {
+
+    window.handleCtaChange = function () {
         const selected = ctaPresetSelect.value;
         saveCtaBtn.classList.toggle('hidden', selected !== 'custom');
         deleteCtaBtn.classList.toggle('hidden', !selected.startsWith('custom_'));
-        if (selected.startsWith('custom_')) { const customCtas = loadCustomCTAsFromStorage(); const index = parseInt(selected.split('_')[1], 10); blogCtaTextarea.value = customCtas[index]?.content || ''; blogCtaTextarea.readOnly = true; } 
-        else if (PRESET_CTAS[selected]) { blogCtaTextarea.value = PRESET_CTAS[selected].content; blogCtaTextarea.readOnly = true; } 
+        if (selected.startsWith('custom_')) { const customCtas = loadCustomCTAsFromStorage(); const index = parseInt(selected.split('_')[1], 10); blogCtaTextarea.value = customCtas[index]?.content || ''; blogCtaTextarea.readOnly = true; }
+        else if (PRESET_CTAS[selected]) { blogCtaTextarea.value = PRESET_CTAS[selected].content; blogCtaTextarea.readOnly = true; }
         else { blogCtaTextarea.value = ''; blogCtaTextarea.readOnly = false; blogCtaTextarea.placeholder = '可在此自訂 CTA，或選擇上方預設'; }
     }
     function loadCustomCTAsFromStorage() { try { const storedCtas = localStorage.getItem(CUSTOM_CTA_STORAGE_KEY); return storedCtas ? JSON.parse(storedCtas) : []; } catch (error) { console.error("無法讀取自訂 CTA:", error); return []; } }
     function renderCtaSelect(selectedValue = 'custom') { const customCtas = loadCustomCTAsFromStorage(); let allCtaOptions = { 'custom': '自訂 CTA', ...Object.fromEntries(Object.entries(PRESET_CTAS).map(([key, value]) => [key, value.title])) }; customCtas.forEach((cta, index) => { allCtaOptions[`custom_${index}`] = `[自訂] ${cta.title}`; }); const currentVal = ctaPresetSelect.value; populateSelectWithOptions(ctaPresetSelect, allCtaOptions); ctaPresetSelect.value = allCtaOptions[currentVal] ? currentVal : selectedValue; }
     function addTag(tagText) { const trimmedTag = tagText.trim(); if (trimmedTag && !state.currentBlogTags.includes(trimmedTag)) { state.currentBlogTags.push(trimmedTag); renderTags(); saveBlogDraft(); } }
     function removeTag(tagToRemove) { state.currentBlogTags = state.currentBlogTags.filter(tag => tag !== tagToRemove); renderTags(); saveBlogDraft(); }
-    window.renderTags = function() { const tagContainer = document.getElementById('tag-container'); tagContainer.querySelectorAll('.tag-pill').forEach(pill => pill.remove()); [...state.currentBlogTags].reverse().forEach(tag => { const pill = document.createElement('span'); pill.className = 'tag-pill'; pill.textContent = tag; const deleteBtn = document.createElement('span'); deleteBtn.className = 'tag-delete-btn'; deleteBtn.innerHTML = '&times;'; deleteBtn.setAttribute('role', 'button'); deleteBtn.setAttribute('tabindex', '0'); deleteBtn.addEventListener('click', () => removeTag(tag)); pill.appendChild(deleteBtn); tagContainer.prepend(pill); }); }
+    window.renderTags = function () { const tagContainer = document.getElementById('tag-container'); tagContainer.querySelectorAll('.tag-pill').forEach(pill => pill.remove());[...state.currentBlogTags].reverse().forEach(tag => { const pill = document.createElement('span'); pill.className = 'tag-pill'; pill.textContent = tag; const deleteBtn = document.createElement('span'); deleteBtn.className = 'tag-delete-btn'; deleteBtn.innerHTML = '&times;'; deleteBtn.setAttribute('role', 'button'); deleteBtn.setAttribute('tabindex', '0'); deleteBtn.addEventListener('click', () => removeTag(tag)); pill.appendChild(deleteBtn); tagContainer.prepend(pill); }); }
     function loadCustomTagsFromStorage() { try { const storedTags = localStorage.getItem(CUSTOM_TAGS_STORAGE_KEY); return storedTags ? JSON.parse(storedTags) : []; } catch (error) { console.error("無法讀取自訂標籤:", error); return []; } }
     function renderTagSuggestions() { const tagSuggestions = document.getElementById('tag-suggestions'); tagSuggestions.innerHTML = ''; const customTags = loadCustomTagsFromStorage(); const allSuggestions = [...new Set([...PRESET_TAGS, ...customTags])]; allSuggestions.forEach(tag => { const suggestion = document.createElement('span'); suggestion.className = 'tag-suggestion'; suggestion.textContent = tag; suggestion.setAttribute('role', 'button'); suggestion.setAttribute('tabindex', '0'); suggestion.addEventListener('click', () => { addTag(tag); }); tagSuggestions.appendChild(suggestion); }); }
-    
-    function confirmUseOptimizedText(text) { 
-        state.optimizedTextForBlog = text; 
-        state.blogSourceType = 'optimized'; 
+
+    function confirmUseOptimizedText(text) {
+        state.optimizedTextForBlog = text;
+        state.blogSourceType = 'optimized';
 
         if (quillEditor) {
             const html = `<p>${text.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>')}</p>`;
             quillEditor.root.innerHTML = html;
         }
-        
-        if(window.updateSourceStatusUI) window.updateSourceStatusUI();
+
+        if (window.updateSourceStatusUI) window.updateSourceStatusUI();
         saveBlogDraft();
-        hideModal(); 
-        showToast('文本已優化並載入編輯器！'); 
+        hideModal();
+        showToast('文本已優化並載入編輯器！');
         window.updateStepperUI();
         if (window.updateTabAvailability) window.updateTabAvailability();
     }
-    
-    function switchBlogView(viewToShow) { 
-        allBlogViewButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.blogView === viewToShow)); 
-        document.querySelectorAll('.blog-view-content').forEach(content => content.classList.toggle('hidden', content.id !== `blog-view-${viewToShow}`)); 
 
-        if(viewToShow === 'html' || viewToShow === 'markdown') {
+    function switchBlogView(viewToShow) {
+        allBlogViewButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.blogView === viewToShow));
+        document.querySelectorAll('.blog-view-content').forEach(content => content.classList.toggle('hidden', content.id !== `blog-view-${viewToShow}`));
+
+        if (viewToShow === 'html' || viewToShow === 'markdown') {
             const latestHtml = getLatestHtmlContent();
             document.getElementById('html-source-preview').value = latestHtml;
             document.getElementById('markdown-source-preview').value = convertHtmlToMarkdown(latestHtml);
         }
     }
-    
+
     function resetTab2() {
         state.blogSourceType = 'raw'; state.optimizedTextForBlog = ''; state.blogArticleVersions = []; state.currentBlogVersionIndex = 0;
-        if(window.updateSourceStatusUI) window.updateSourceStatusUI();
+        if (window.updateSourceStatusUI) window.updateSourceStatusUI();
         blogOutputContainer.classList.add('hidden'); blogPlaceholder.classList.remove('hidden');
         blogTitleInput.value = ''; blogYtIdInput.value = '';
         ctaPresetSelect.value = 'custom'; handleCtaChange();
@@ -509,10 +509,10 @@ function initializeTab2() {
     function deleteCustomCTA() { const selectedValue = ctaPresetSelect.value; if (!selectedValue.startsWith('custom_')) return; const customCtas = loadCustomCTAsFromStorage(); const index = parseInt(selectedValue.split('_')[1], 10); const ctaToDelete = customCtas[index]; if (!ctaToDelete) return; if (confirm(`您確定要刪除「${ctaToDelete.title}」這個 CTA 嗎？`)) { customCtas.splice(index, 1); localStorage.setItem(CUSTOM_CTA_STORAGE_KEY, JSON.stringify(customCtas)); showToast('自訂 CTA 已刪除。'); renderCtaSelect('custom'); handleCtaChange(); } }
     function saveCustomTagsToStorage() { const customTags = loadCustomTagsFromStorage(); const allTags = new Set([...customTags, ...state.currentBlogTags]); const newCustomTags = [...allTags].filter(tag => !PRESET_TAGS.includes(tag)); try { localStorage.setItem(CUSTOM_TAGS_STORAGE_KEY, JSON.stringify(newCustomTags)); showToast('自訂標籤庫已更新！'); renderTagSuggestions(); } catch (error) { console.error("無法儲存自訂標籤:", error); showModal({ title: '儲存失敗', message: '無法儲存標籤，可能是儲存空間已滿。' }); } }
     function initializeTags() { renderTagSuggestions(); tagInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(tagInput.value); tagInput.value = ''; } }); saveTagsBtn.addEventListener('click', saveCustomTagsToStorage); }
-    
-    async function optimizeTextForBlog() { 
-        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey'); 
-        if (!apiKey) { if(window.showApiKeyModal) window.showApiKeyModal(); return; } 
+
+    async function optimizeTextForBlog() {
+        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey');
+        if (!apiKey) { if (window.showApiKeyModal) window.showApiKeyModal(); return; }
 
         // 1. 定義來源：優先檢查是否有「已整理」的文本，若無則取用輸入框的原始文本
         const processedContent = state.processedSrtResult ? state.processedSrtResult.trim() : '';
@@ -520,40 +520,40 @@ function initializeTab2() {
 
         // 2. 定義執行 AI 優化的內部函式 (避免程式碼重複)
         const executeOptimization = async (contentToUse) => {
-            const prompt = `你是一位專業的文案編輯。請將以下的 SRT 字幕逐字稿，優化成一篇流暢易讀的純文字文章。\n規則：\n1. 加上適當的標點符號與段落，讓文章更通順。\n2. 絕對不可以改寫、改變原文的語意。\n3. 不可新增任何字幕中沒有的資訊或自己的評論。\n4. 修正明顯的錯別字，但保留口語化的風格。\n5. 移除所有時間戳和行號。\n6. 直接輸出優化後的文章，不要有任何前言或結語。\n\n字幕逐字稿如下：\n---\n${contentToUse}\n---`; 
-            
-            showModal({ title: 'AI 優化中...', showProgressBar: true, taskType: 'optimize' }); 
-            const btn = optimizeTextForBlogBtn; 
-            btn.disabled = true; 
-            btn.classList.add('btn-loading'); 
-            
-            try { 
-                const result = await callGeminiAPI(apiKey, prompt); 
-                showModal({ 
-                    title: '文本優化完成', 
-                    message: result, 
-                    showCopyButton: true, 
-                    buttons: [ 
-                        { text: '取消', class: 'btn-secondary', callback: hideModal }, 
-                        { text: '確認使用此版本', class: 'btn-primary', callback: () => confirmUseOptimizedText(result) } 
-                    ] 
-                }); 
-            } catch (error) { 
-                if (error.message && error.message.includes('overloaded')) { 
-                    showModal({ 
-                        title: 'AI 正在尖峰時段，請稍候！', 
-                        message: '別擔心...', 
-                        buttons: [ 
-                            { text: '關閉', class: 'btn-secondary', callback: hideModal }, 
-                            { text: '立即重試', class: 'btn-primary', callback: () => { hideModal(); executeOptimization(contentToUse); } } 
-                        ] 
-                    }); 
-                } else { 
-                    showModal({ title: 'AI 處理失敗', message: `發生錯誤：${error.message}` }); 
-                } 
-            } finally { 
-                btn.disabled = false; 
-                btn.classList.remove('btn-loading'); 
+            const prompt = `你是一位專業的文案編輯。請將以下的 SRT 字幕逐字稿，優化成一篇流暢易讀的純文字文章。\n規則：\n1. 加上適當的標點符號與段落，讓文章更通順。\n2. 絕對不可以改寫、改變原文的語意。\n3. 不可新增任何字幕中沒有的資訊或自己的評論。\n4. 修正明顯的錯別字，但保留口語化的風格。\n5. 移除所有時間戳和行號。\n6. 直接輸出優化後的文章，不要有任何前言或結語。\n\n字幕逐字稿如下：\n---\n${contentToUse}\n---`;
+
+            showModal({ title: 'AI 優化中...', showProgressBar: true, taskType: 'optimize' });
+            const btn = optimizeTextForBlogBtn;
+            btn.disabled = true;
+            btn.classList.add('btn-loading');
+
+            try {
+                const result = await callGeminiAPI(apiKey, prompt);
+                showModal({
+                    title: '文本優化完成',
+                    message: result,
+                    showCopyButton: true,
+                    buttons: [
+                        { text: '取消', class: 'btn-secondary', callback: hideModal },
+                        { text: '確認使用此版本', class: 'btn-primary', callback: () => confirmUseOptimizedText(result) }
+                    ]
+                });
+            } catch (error) {
+                if (error.message && error.message.includes('overloaded')) {
+                    showModal({
+                        title: 'AI 正在尖峰時段，請稍候！',
+                        message: '別擔心...',
+                        buttons: [
+                            { text: '關閉', class: 'btn-secondary', callback: hideModal },
+                            { text: '立即重試', class: 'btn-primary', callback: () => { hideModal(); executeOptimization(contentToUse); } }
+                        ]
+                    });
+                } else {
+                    showModal({ title: 'AI 處理失敗', message: `發生錯誤：${error.message}` });
+                }
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('btn-loading');
             }
         };
 
@@ -568,18 +568,20 @@ function initializeTab2() {
                 message: '系統偵測到您尚未在分頁 1 執行「開始整理」。\n\n直接使用原始字幕（包含時間軸與換行）進行優化，可能會因為雜訊過多影響 AI 的產出品質。\n\n建議您先回到分頁 1 點擊「開始整理」按鈕。',
                 buttons: [
                     { text: '取消，回去整理', class: 'btn-secondary', callback: hideModal },
-                    { text: '沒關係，繼續執行', class: 'btn-primary', callback: () => { 
-                        hideModal(); 
-                        executeOptimization(rawContent); 
-                    }}
+                    {
+                        text: '沒關係，繼續執行', class: 'btn-primary', callback: () => {
+                            hideModal();
+                            executeOptimization(rawContent);
+                        }
+                    }
                 ]
             });
         } else {
             // 情況 C：完全沒有內容
-            showModal({ title: '錯誤', message: '請先在「智慧區域」中輸入內容。' }); 
+            showModal({ title: '錯誤', message: '請先在「智慧區域」中輸入內容。' });
         }
     }
-    
+
     async function analyzeKeywords() {
         const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey');
         if (!apiKey) { if (window.showApiKeyModal) window.showApiKeyModal(); return; }
@@ -614,7 +616,7 @@ function initializeTab2() {
                 });
             } else {
                 let errorMessage = '關鍵字分析失敗，請重試。';
-                 if (error instanceof SyntaxError) {
+                if (error instanceof SyntaxError) {
                     errorMessage = 'AI 回應格式錯誤，無法解析。請重試。';
                 }
                 showToast(errorMessage, { type: 'error' });
@@ -682,13 +684,13 @@ function initializeTab2() {
     }
 
     // ########## FINAL ROBUST VERSION WITH SMART RETRY ##########
-    async function proceedGenerateBlogPost(variationModifier = '', shouldOverride = false) { 
-        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey'); 
-        if (!apiKey) { if(window.showApiKeyModal) window.showApiKeyModal(); return; } 
-        
-        const sourceText = (state.blogSourceType === 'optimized') ? state.optimizedTextForBlog : document.getElementById('smart-area').value.trim(); 
-        if (!sourceText) { showModal({ title: '錯誤', message: '缺少文章生成的來源內容。' }); return; } 
-        
+    async function proceedGenerateBlogPost(variationModifier = '', shouldOverride = false) {
+        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey');
+        if (!apiKey) { if (window.showApiKeyModal) window.showApiKeyModal(); return; }
+
+        const sourceText = (state.blogSourceType === 'optimized') ? state.optimizedTextForBlog : (state.processedSrtResult ? state.processedSrtResult.trim() : document.getElementById('smart-area').value.trim());
+        if (!sourceText) { showModal({ title: '錯誤', message: '缺少文章生成的來源內容。' }); return; }
+
         // === Determine if this is a variation based on modifier presence ===
         const isVariation = variationModifier !== '';
         if (isVariation && state.blogArticleVersions[state.currentBlogVersionIndex]) {
@@ -699,15 +701,15 @@ function initializeTab2() {
 
         let tone = blogToneSelect.value;
         // The variationModifier is now directly passed as an argument.
-        
-        const promptOptions = { persona: blogPersonaSelect.value, tone: tone, wordCount: blogWordCountSelect.value, tagsString: state.currentBlogTags.join(', '), sourceText: sourceText, variationModifier: variationModifier, shouldOverride: shouldOverride };
-        
-        showModal({ title: 'AI 生成中...', showProgressBar: true, taskType: 'blog' }); 
-        const btn = isVariation ? generateBlogVariationBtn : generateBlogBtn;
-        btn.disabled = true; 
-        btn.classList.add('btn-loading'); 
 
-        try { 
+        const promptOptions = { persona: blogPersonaSelect.value, tone: tone, wordCount: blogWordCountSelect.value, tagsString: state.currentBlogTags.join(', '), sourceText: sourceText, variationModifier: variationModifier, shouldOverride: shouldOverride };
+
+        showModal({ title: 'AI 生成中...', showProgressBar: true, taskType: 'blog' });
+        const btn = isVariation ? generateBlogVariationBtn : generateBlogBtn;
+        btn.disabled = true;
+        btn.classList.add('btn-loading');
+
+        try {
             let prompt = assembleBlogPrompt(promptOptions);
             let fullResponse = await callGeminiAPI(apiKey, prompt);
 
@@ -718,7 +720,7 @@ function initializeTab2() {
             if (!isResponseValid(fullResponse)) {
                 console.warn("第一次嘗試格式不完整 (缺少部分標籤)，正在自動重試...");
                 showModal({ title: 'AI 回應校驗失敗', message: '初步回應格式不完整，正在自動為您重試一次...', showProgressBar: true, taskType: 'blog' });
-                
+
                 const retryPromptOptions = { ...promptOptions, isRetry: true };
                 prompt = assembleBlogPrompt(retryPromptOptions);
                 fullResponse = await callGeminiAPI(apiKey, prompt);
@@ -728,17 +730,17 @@ function initializeTab2() {
                     console.error("重試後格式依然不完整:", fullResponse);
                     // 不要直接拋出錯誤，試試看能不能救回部分內容
                     if (!fullResponse.includes('[ARTICLE_START]')) {
-                         throw new Error("AI 回應嚴重錯誤：找不到文章開始標籤。");
+                        throw new Error("AI 回應嚴重錯誤：找不到文章開始標籤。");
                     }
                 }
             }
-            
+
             // Regex now allows for missing end tag in worst case (fallback) by using logical OR with end of string if needed, 
             // but since we validated above, strict matching is preferred. 
             // However, to be safe against regex failure:
             let articleHtml = "";
             const articleMatch = fullResponse.match(/\[ARTICLE_START\]([\s\S]*?)\[ARTICLE_END\]/);
-            
+
             if (articleMatch) {
                 articleHtml = articleMatch[1].trim();
             } else {
@@ -757,9 +759,9 @@ function initializeTab2() {
             }
 
             if (!articleHtml) {
-                 throw new Error("無法從 AI 回應中提取文章內容。");
+                throw new Error("無法從 AI 回應中提取文章內容。");
             }
-            
+
             // --- Step 1: Clean and load main article content ---
             quillEditor.root.innerHTML = cleanHtml(articleHtml);
 
@@ -767,7 +769,7 @@ function initializeTab2() {
             const ytId = blogYtIdInput.value.trim();
             if (ytId) {
                 const youtubeEmbedHtml = `<iframe src="https://www.youtube.com/embed/${ytId}" style="width: 100%; aspect-ratio: 16/9;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="allowfullscreen" frameborder="0" title="YouTube video player"></iframe>`;
-                quillEditor.clipboard.dangerouslyPasteHTML(0, youtubeEmbedHtml + '<p><br></p>'); 
+                quillEditor.clipboard.dangerouslyPasteHTML(0, youtubeEmbedHtml + '<p><br></p>');
             }
 
             // --- Step 3: Safely prepend Title and append CTA ---
@@ -796,7 +798,7 @@ function initializeTab2() {
                 seoData.permalink = extract('固定網址', seoText);
                 seoData.tags = extract('標籤', seoText);
             }
-            
+
             const newVersion = { htmlContent: getLatestHtmlContent(), seoData: seoData, advancedSeoData: { keywords: null, internalLinks: null } };
 
             if (isVariation) {
@@ -807,45 +809,46 @@ function initializeTab2() {
                 state.blogArticleVersions = [newVersion];
                 state.currentBlogVersionIndex = 0;
             }
-            
+
             state.blogSourceType = 'blog';
             renderVersionTabs();
             renderCurrentVersionUI();
-            
+
             analyzeKeywordsBtn.disabled = false;
             analyzeInternalLinksBtn.disabled = false;
             generateBlogVariationBtn.disabled = false;
 
-            saveBlogDraft(); 
-            blogPlaceholder.classList.add('hidden'); 
-            blogOutputContainer.classList.remove('hidden'); 
-            switchBlogView('preview'); 
-            hideModal(); 
+            saveBlogDraft();
+            blogPlaceholder.classList.add('hidden');
+            blogOutputContainer.classList.remove('hidden');
+            switchBlogView('preview');
+            hideModal();
             if (window.updateTabAvailability) window.updateTabAvailability();
-            
-        } catch (error) { 
+
+        } catch (error) {
             console.error("文章生成或解析失敗:", error);
-            if (error.message && error.message.includes('overloaded')) { 
-                showModal({ title: 'AI 正在尖峰時段，請稍候！', message: '別擔心...', buttons: [ { text: '關閉', class: 'btn-secondary', callback: hideModal }, { text: '立即重試', class: 'btn-primary', callback: () => { hideModal(); proceedGenerateBlogPost(isVariation); } } ] }); 
-            } else { 
-                showModal({ title: '文章生成失敗', message: `發生錯誤，可能是 AI 回應格式不符或網路問題。\n\n錯誤詳情: ${error.message}` }); 
-            } 
-        } finally { 
-            btn.disabled = false; 
-            btn.classList.remove('btn-loading'); 
-            window.updateStepperUI(); 
-        } 
+            if (error.message && error.message.includes('overloaded')) {
+                showModal({ title: 'AI 正在尖峰時段，請稍候！', message: '別擔心...', buttons: [{ text: '關閉', class: 'btn-secondary', callback: hideModal }, { text: '立即重試', class: 'btn-primary', callback: () => { hideModal(); proceedGenerateBlogPost(isVariation); } }] });
+            } else {
+                showModal({ title: '文章生成失敗', message: `發生錯誤，可能是 AI 回應格式不符或網路問題。\n\n錯誤詳情: ${error.message}` });
+            }
+        } finally {
+            btn.disabled = false;
+            btn.classList.remove('btn-loading');
+            window.updateStepperUI();
+        }
     }
 
-    function generateBlogPost() { 
+    function generateBlogPost() {
         if (state.blogArticleVersions.length > 0 && !confirm("這將會清除所有已生成的版本並重新開始，您確定嗎？")) {
             return;
         }
-        if (state.blogSourceType === 'raw' && document.getElementById('smart-area').value.trim()) { 
-            showModal({ title: '提醒', message: '您尚未優化文本，直接生成可能會影響文章品質。確定要繼續嗎？', buttons: [ { text: '取消', class: 'btn-secondary', callback: hideModal }, { text: '確定繼續', class: 'btn-primary', callback: () => { hideModal(); proceedGenerateBlogPost(false); } } ] }); 
-        } else { 
-            proceedGenerateBlogPost(false); 
-        } 
+        const rawContent = state.processedSrtResult ? state.processedSrtResult.trim() : document.getElementById('smart-area').value.trim();
+        if (state.blogSourceType === 'raw' && rawContent) {
+            showModal({ title: '提醒', message: '您尚未優化文本，直接生成可能會影響文章品質。確定要繼續嗎？', buttons: [{ text: '取消', class: 'btn-secondary', callback: hideModal }, { text: '確定繼續', class: 'btn-primary', callback: () => { hideModal(); proceedGenerateBlogPost(false); } }] });
+        } else {
+            proceedGenerateBlogPost(false);
+        }
     }
 
     function generateBlogVariation() {
@@ -855,7 +858,7 @@ function initializeTab2() {
             proceedGenerateBlogPost(modifier, shouldOverride);
         });
     }
-    
+
     function getFileName() {
         const title = document.getElementById('blog-title').value.trim();
         if (title) {
@@ -866,43 +869,43 @@ function initializeTab2() {
         }
     }
 
-    function downloadAsHtml() { 
+    function downloadAsHtml() {
         const htmlContent = getLatestHtmlContent();
         const fileName = getFileName();
-        if(!htmlContent) return;
+        if (!htmlContent) return;
 
-        const content = `<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><title>${fileName}</title><style>body{font-family:sans-serif;line-height:1.6;} iframe{width:100%;aspect-ratio:16/9;} .youtube-embed{margin-bottom:1em;}</style></head><body>${htmlContent}</body></html>`; 
-        const blob = new Blob([content], { type: 'text/html;charset=utf-8' }); 
-        const url = URL.createObjectURL(blob); 
-        const a = document.createElement('a'); 
-        a.href = url; 
-        a.download = `${fileName}.html`; 
-        a.click(); 
-        URL.revokeObjectURL(url); 
+        const content = `<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="UTF-8"><title>${fileName}</title><style>body{font-family:sans-serif;line-height:1.6;} iframe{width:100%;aspect-ratio:16/9;} .youtube-embed{margin-bottom:1em;}</style></head><body>${htmlContent}</body></html>`;
+        const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${fileName}.html`;
+        a.click();
+        URL.revokeObjectURL(url);
     }
-    
-    function downloadAsMarkdown() { 
+
+    function downloadAsMarkdown() {
         const htmlContent = getLatestHtmlContent();
         const fileName = getFileName();
-        if(!htmlContent) return;
+        if (!htmlContent) return;
 
-        const content = convertHtmlToMarkdown(htmlContent); 
-        const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' }); 
-        const url = URL.createObjectURL(blob); 
-        const a = document.createElement('a'); 
-        a.href = url; 
-        a.download = `${fileName}.md`; 
-        a.click(); 
-        URL.revokeObjectURL(url); 
+        const content = convertHtmlToMarkdown(htmlContent);
+        const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${fileName}.md`;
+        a.click();
+        URL.revokeObjectURL(url);
     }
-    
+
     optimizeTextForBlogBtn.addEventListener('click', optimizeTextForBlog);
     generateBlogBtn.addEventListener('click', generateBlogPost);
     generateBlogVariationBtn.addEventListener('click', generateBlogVariation);
     downloadHtmlBtn.addEventListener('click', downloadAsHtml);
     downloadMdBtn.addEventListener('click', downloadAsMarkdown);
     ctaPresetSelect.addEventListener('change', () => { handleCtaChange(); saveBlogDraft(); });
-    saveCtaBtn.addEventListener('click', saveCustomCTA); 
+    saveCtaBtn.addEventListener('click', saveCustomCTA);
     deleteCtaBtn.addEventListener('click', deleteCustomCTA);
     aiStyleToggleBtn.addEventListener('click', () => toggleAccordion(aiStyleToggleBtn, aiStylePanel));
     seoToggleBtn.addEventListener('click', () => toggleAccordion(seoToggleBtn, seoPanel));
@@ -910,7 +913,7 @@ function initializeTab2() {
     const copyButtonLogic = (btn) => { const targetId = btn.dataset.copyTarget; const targetElement = document.getElementById(targetId); if (targetElement) { const content = targetElement.tagName === 'TEXTAREA' ? targetElement.value : targetElement.textContent; navigator.clipboard.writeText(content).then(() => { const originalIcon = btn.innerHTML; btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>`; setTimeout(() => { btn.innerHTML = originalIcon; }, 2000); }); } };
     document.querySelectorAll('.seo-copy-btn').forEach(button => button.addEventListener('click', () => copyButtonLogic(button)));
     document.querySelectorAll('.source-copy-btn').forEach(button => button.addEventListener('click', () => copyButtonLogic(button)));
-    
+
     blogTitleInput.addEventListener('input', saveBlogDraft);
     blogYtIdInput.addEventListener('input', (e) => {
         const val = e.target.value.trim();
@@ -927,7 +930,7 @@ function initializeTab2() {
     blogWordCountSelect.addEventListener('change', (e) => { saveSetting(SETTINGS_STORAGE_KEYS.BLOG_WORD_COUNT, e.target.value); saveBlogDraft(); });
     blogToneSelect.addEventListener('change', (e) => { saveSetting(SETTINGS_STORAGE_KEYS.BLOG_TONE, e.target.value); saveBlogDraft(); });
     blogCtaTextarea.addEventListener('input', saveBlogDraft);
-    
+
     advancedSeoToggleBtn.addEventListener('click', () => toggleAccordion(advancedSeoToggleBtn, advancedSeoPanel));
     analyzeKeywordsBtn.addEventListener('click', analyzeKeywords);
     analyzeInternalLinksBtn.addEventListener('click', analyzeInternalLinks);
@@ -941,25 +944,25 @@ function initializeTab2() {
     wizardStructPoints.addEventListener('change', handleStructureCheck);
     wizardStructNone.addEventListener('change', handleStructureCheck);
 
-    const personaOptions = {'第一人稱視角': '第一人稱', '第三人稱視角': '第三人稱'};
-    const wordCountOptions = {'約 800 字': '約 800 字', '約 1200 字': '約 1200 字', '約 1500 字': '約 1500 字'};
-    const toneOptions = {'充滿能量與感染力': '能量感染力', '專業且具權威性': '專業權威', '口語化且親切': '口語親切', '幽默風趣': '幽默風趣'};
+    const personaOptions = { '第一人稱視角': '第一人稱', '第三人稱視角': '第三人稱' };
+    const wordCountOptions = { '約 800 字': '約 800 字', '約 1200 字': '約 1200 字', '約 1500 字': '約 1500 字' };
+    const toneOptions = { '充滿能量與感染力': '能量感染力', '專業且具權威性': '專業權威', '口語化且親切': '口語親切', '幽默風趣': '幽默風趣' };
     populateSelectWithOptions(blogPersonaSelect, personaOptions);
     populateSelectWithOptions(blogWordCountSelect, wordCountOptions);
     populateSelectWithOptions(blogToneSelect, toneOptions);
-    
+
     renderCtaSelect();
     initializeTags();
     handleCtaChange();
     loadSettings();
-    
+
     const editorOptions = {
         theme: 'snow',
         modules: {
             toolbar: [
                 [{ 'header': [1, 2, 3, false] }],
                 ['bold', 'italic', 'underline', 'link'],
-                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
                 ['clean']
             ]
         }
@@ -983,7 +986,7 @@ function initializeTab2() {
                 restoreBlogDraft();
             } else {
                 window.clearBlogDraft();
-                if(window.updateTabAvailability) window.updateTabAvailability();
+                if (window.updateTabAvailability) window.updateTabAvailability();
             }
         }, 100);
     }

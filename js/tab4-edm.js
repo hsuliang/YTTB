@@ -88,7 +88,7 @@ function initializeTab4() {
         } else if (hasOptimizedText) {
             sourceContent = `<p>${state.optimizedTextForBlog.replace(/\n/g, '</p><p>')}</p>`;
         } else {
-             sourceContent = document.getElementById('smart-area').value;
+             sourceContent = state.processedSrtResult || document.getElementById('smart-area').value;
         }
 
         if(!sourceContent) {

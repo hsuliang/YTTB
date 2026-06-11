@@ -16,9 +16,9 @@ window.optimizationService = {
             return;
         }
 
-        const content = document.getElementById('smart-area').value.trim();
+        const content = state.processedSrtResult ? state.processedSrtResult.trim() : document.getElementById('smart-area').value.trim();
         if (!content) {
-            showModal({ title: '錯誤', message: '請先在「智慧區域」中輸入原始字幕內容。' });
+            showModal({ title: '錯誤', message: '請先在「智慧區域」中輸入或整理原始字幕內容。' });
             return;
         }
 

@@ -777,34 +777,67 @@
                             <div class="border-b-2 border-[var(--heading-color)] pb-2">
                                 <h3 class="text-xl font-bold heading-color">輪播圖設定</h3>
                             </div>
-                            
+
                             <!-- Source Status -->
                             <div class="p-3 rounded-md border border-[var(--card-border)] bg-[var(--gray-bg)]">
-                                <p id="carousel-source-status" class="text-sm font-semibold text-[var(--heading-color)] mb-2">內容來源：字幕原始檔</p>
-                                <button id="carousel-go-to-optimize-btn" class="w-full font-bold py-2 px-4 rounded btn-secondary">🚀 優化文本以提升品質</button>
+                                <p id="carousel-source-status"
+                                    class="text-sm font-semibold text-[var(--heading-color)] mb-2">內容來源：字幕原始檔</p>
+                                <button id="carousel-go-to-optimize-btn"
+                                    class="w-full font-bold py-2 px-4 rounded btn-secondary">🚀 優化文本以提升品質</button>
                             </div>
-                            
+
                             <!-- Roles Configuration -->
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between">
                                     <label class="font-semibold text-sm">角色名稱 (最多 4 個)</label>
-                                    <button id="carousel-add-role-btn" class="text-xs font-semibold py-1 px-2 rounded btn-secondary">+ 新增角色</button>
+                                    <button id="carousel-add-role-btn"
+                                        class="text-xs font-semibold py-1 px-2 rounded btn-secondary">+ 新增角色</button>
                                 </div>
                                 <div id="carousel-roles-container" class="space-y-2">
                                     <!-- Dynamic role input fields will be rendered here -->
                                 </div>
                             </div>
-                            
+
                             <!-- Include Logo Toggle -->
                             <div class="flex items-center gap-2 pt-1">
-                                <input type="checkbox" id="carousel-include-logo" class="form-checkbox h-4 w-4 rounded text-[var(--link-color)]">
-                                <label for="carousel-include-logo" class="font-semibold text-sm select-none">提示詞中加入Logo 圖示</label>
+                                <input type="checkbox" id="carousel-include-logo"
+                                    class="form-checkbox h-4 w-4 rounded text-[var(--link-color)]">
+                                <label for="carousel-include-logo" class="font-semibold text-sm select-none">提示詞中加入Logo
+                                    圖示</label>
+                            </div>
+
+                            <!-- Carousel Caption Length Dropdown -->
+                            <div>
+                                <label for="carousel-caption-length" class="font-semibold text-sm">輪播圖說明文字</label>
+                                <select id="carousel-caption-length"
+                                    class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]">
+                                    <option value="short">少 (大約 50 字以內)</option>
+                                    <option value="medium" selected>適中 (大約 100 字以內)</option>
+                                    <option value="long">多 (大約 150 字以內)</option>
+                                </select>
+                            </div>
+
+                            <!-- Carousel Layout Style Dropdown -->
+                            <div>
+                                <label for="carousel-layout-style" class="font-semibold text-sm">內容頁排版樣式</label>
+                                <select id="carousel-layout-style"
+                                    class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]">
+                                    <option value="classic-layout">經典內容排版</option>
+                                    <option value="auto" selected>AI 智慧混搭 (系統推薦)</option>
+                                    <option value="golden-sentence">統一金句型 (版型 A - 大字無條列)</option>
+                                    <option value="progression-steps">統一步驟流程型 (版型 B - 數字 123)</option>
+                                    <option value="transparent-card">統一卡片條列型 (版型 C - 卡片配圓點)</option>
+                                    <option value="dialog-bubble">統一對話氣泡型 (版型 D - 對話想法框)</option>
+                                    <option value="pure-background">純文字融入背景 (無裝飾框與符號)</option>
+                                </select>
+                                <p id="layout-style-preview" class="mt-2 text-sm text-[var(--gray-text)]"></p>
                             </div>
 
                             <!-- Image Style Dropdown -->
                             <div>
                                 <label for="carousel-style" class="font-semibold text-sm">圖片風格</label>
-                                <select id="carousel-style" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]">
+                                <select id="carousel-style"
+                                    class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]">
                                     <option value="transcript-context-style" selected>以逐字稿內容給定風格</option>
                                     <option value="warm-cute-chibi">溫暖可愛Q版教育風 (推薦)</option>
                                     <option value="modern-minimalist-flat">現代極簡插畫風</option>
@@ -816,45 +849,44 @@
 
                             <!-- Custom Style Input Container -->
                             <div id="carousel-custom-style-container" class="hidden space-y-1 mt-2">
-                                <label for="carousel-custom-style" class="font-semibold text-xs text-[var(--gray-text)]">自訂風格提示詞</label>
-                                <textarea id="carousel-custom-style" class="w-full p-2 text-sm rounded bg-[var(--gray-bg)] border border-[var(--card-border)] h-20 resize-y" 
+                                <label for="carousel-custom-style"
+                                    class="font-semibold text-xs text-[var(--gray-text)]">自訂風格提示詞</label>
+                                <textarea id="carousel-custom-style"
+                                    class="w-full p-2 text-sm rounded bg-[var(--gray-bg)] border border-[var(--card-border)] h-20 resize-y"
                                     placeholder="例如：復古美式插畫風格，採用高飽和度色彩、乾淨線條與微粒效果..."></textarea>
                             </div>
-                            <!-- Carousel Caption Length Dropdown -->
-                            <div>
-                                <label for="carousel-caption-length" class="font-semibold text-sm">輪播圖說明文字</label>
-                                <select id="carousel-caption-length" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]">
-                                    <option value="short">少 (大約 50 字以內)</option>
-                                    <option value="medium" selected>適中 (大約 100 字以內)</option>
-                                    <option value="long">多 (大約 150 字以內)</option>
-                                </select>
-                            </div>
-                            
                             <!-- Action buttons -->
                             <div class="flex items-center gap-2">
-                                <button id="generate-carousel-btn" class="w-full font-bold py-3 px-6 rounded-lg text-lg btn-primary">生成提示詞</button>
-                                <button id="generate-carousel-variation-btn" class="font-bold py-2 px-4 rounded-lg btn-secondary text-sm whitespace-nowrap" disabled title="生成不同風格的版本">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
+                                <button id="generate-carousel-btn"
+                                    class="w-full font-bold py-3 px-6 rounded-lg text-lg btn-primary">生成提示詞</button>
+                                <button id="generate-carousel-variation-btn"
+                                    class="font-bold py-2 px-4 rounded-lg btn-secondary text-sm whitespace-nowrap"
+                                    disabled title="生成不同風格的版本">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block"
+                                        viewBox="0 0 20 20" fill="currentColor">
+                                        <path
+                                            d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
                                     </svg>
                                     另一版本
                                 </button>
                             </div>
                         </div>
-                        
+
                         <!-- Right panel: Preview (7 cols) -->
                         <div class="md:col-span-7 flex flex-col space-y-4">
                             <!-- Versions switcher tabs -->
-                            <div id="carousel-versions-tabs-container" class="flex border-b border-[var(--card-border)]">
+                            <div id="carousel-versions-tabs-container"
+                                class="flex border-b border-[var(--card-border)]">
                                 <!-- Version tabs (e.g. Version 1, Version 2) -->
                             </div>
-                            
+
                             <!-- Title and Copy buttons -->
                             <div class="flex border-b border-[var(--card-border)] items-center">
                                 <h4 class="text-lg font-semibold heading-color px-4 py-2">提示詞預覽</h4>
-                                <button id="copy-all-carousel-prompts-btn" class="ml-auto font-bold py-1 px-3 my-1 mr-2 rounded btn-secondary text-sm hidden">複製全部提示詞</button>
+                                <button id="copy-all-carousel-prompts-btn"
+                                    class="ml-auto font-bold py-1 px-3 my-1 mr-2 rounded btn-secondary text-sm hidden">複製全部提示詞</button>
                             </div>
-                            
+
                             <!-- Main Content Display -->
                             <div id="carousel-output-container" class="flex flex-col flex-grow hidden">
                                 <div id="carousel-individual-copy-container" class="flex flex-wrap gap-2 mb-2"></div>
@@ -862,12 +894,15 @@
                                     class="w-full rounded p-4 bg-[var(--gray-bg)] border border-[var(--card-border)] focus:outline-none resize-none font-mono text-sm leading-relaxed h-[70vh] select-text text-[var(--text-color)]"
                                     placeholder="生成提示詞後會顯示於此..."></textarea>
                             </div>
-                            
+
                             <!-- Placeholder when no data is generated -->
-                            <div id="carousel-placeholder" class="flex items-center justify-center h-[70vh] text-center text-gray-500 border border-dashed border-[var(--card-border)] rounded">
+                            <div id="carousel-placeholder"
+                                class="flex items-center justify-center h-[70vh] text-center text-gray-500 border border-dashed border-[var(--card-border)] rounded">
                                 <div class="flex flex-col items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                     <p class="font-semibold text-lg">為您的內容生成社群輪播圖提示詞</p>
                                     <p class="mt-2 text-sm max-w-sm">
