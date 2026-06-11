@@ -240,6 +240,46 @@ function initializeTab5() {
         const includeLogoCheckbox = document.getElementById('carousel-include-logo');
         const includeLogo = includeLogoCheckbox ? includeLogoCheckbox.checked : true;
 
+        // 3. 確定風格與角色風格描述
+        const styleValue = carouselStyleSelect ? carouselStyleSelect.value : 'warm-cute-chibi';
+        let characterStyleDescription = "符合該風格設定的插畫人物";
+        if (styleValue === 'warm-cute-chibi') {
+            characterStyleDescription = "頭大身體小的 Q 版人物";
+        } else if (styleValue === 'modern-minimalist-flat') {
+            characterStyleDescription = "簡約幾何線條的扁平插畫人物";
+        } else if (styleValue === 'realistic-watercolor') {
+            characterStyleDescription = "水彩裝飾質感的插畫人物";
+        } else if (styleValue === 'custom') {
+            characterStyleDescription = "符合自訂風格設定的插畫人物";
+        }
+
+        let styleDescription = "";
+        const customStyleText = carouselCustomStyleTextarea ? carouselCustomStyleTextarea.value.trim() : '';
+        if (variationModifier && shouldOverride) {
+            styleDescription = `由你決定風格，但必須依據此風格調整指令：${variationModifier}`;
+        } else {
+            if (styleValue === 'custom') {
+                if (!customStyleText) {
+                    showModal({ title: '請輸入自訂風格提示詞', message: '您選擇了「自訂風格」，請在自訂風格提示詞輸入框中填寫風格描述。' });
+                    return null;
+                }
+                styleDescription = `風格為自訂風格：${customStyleText}`;
+            } else {
+                const styleMap = {
+                    'transcript-context-style': '風格由你決定：請依據 [原始文章] (逐字稿) 的主題情境與內涵，為這套輪播圖量身打造一個最合適的繪圖風格（例如：教育趣味主題可用溫慢Q版教育風，專業論述或科技主題可用現代極簡扁平插畫風，情感故事或文學主題可用寫實手繪水彩風等），並在第一張圖片提示詞開頭說明該風格的特點。請確保 4 張圖片提示詞在該風格下保持高度一致的視覺感與配色調性。',
+                    'warm-cute-chibi': '風格為溫慢、可愛、教育感、社群輪播風，人物為頭大身體小的 Q 版角色。整體溫暖可愛，色彩和諧',
+                    'modern-minimalist-flat': '風格為現代極簡插畫風、向量扁平插畫、乾淨簡約、社群輪播風，人物為簡約幾何線條風格',
+                    'realistic-watercolor': '風格為寫實手繪風格、手繪水彩感、細緻溫暖質感、社群輪播風，人物為水彩裝飾質感風格',
+                    'auto': '風格由你決定，風格要表現在提示詞中，應適應內容的主題（例如：教育趣味可用溫慢Q版教育風，專業科技可用極簡扁平插畫風），請在每張提示詞開頭說明該風格描述'
+                };
+                styleDescription = styleMap[styleValue] || styleMap['warm-cute-chibi'];
+            }
+            
+            if (variationModifier) {
+                styleDescription += `，並在此基礎上追加風格修飾：${variationModifier}`;
+            }
+        }
+
         // 動態組裝角色對應說明與 System Prompt 限制
         let roleLimitInstruction = '';
         let logoIndex = 1;
@@ -258,15 +298,18 @@ function initializeTab5() {
                 } else if (role.toLowerCase().includes("alice") || role.includes("小編")) {
                     roleLine = `固定小編 ${role}：image${idx + 1}`;
                 } else {
-                    roleLine = `本集來賓：${role}：image${idx + 1}\n請參考 image${idx + 1} 海報中的來賓照片，將來賓設計成頭大身體小的 Q 版人物。`;
+                    roleLine = `本集來賓：${role}：image${idx + 1}
+請參考 image${idx + 1} 海報中的來賓照片，將來賓設計成 ${characterStyleDescription}。`;
                 }
                 mappingLines.push(roleLine);
             });
             logoIndex = validRoles.length + 1;
             roleLimitInstruction = `**角色設定與限制**：
 在繪圖提示詞中只能出現以下您所填寫的角色人物，絕對不可擅自加入其他未設定的角色。在繪圖提示詞中提及這些人物時，必須使用對應的 image 變數進行指代：
-${roleLines.join('\n')}`;
-            roleMappingPromptHint = mappingLines.join('\n');
+${roleLines.join('
+')}`;
+            roleMappingPromptHint = mappingLines.join('
+');
         } else {
             roleLimitInstruction = `**角色設定與限制**：
 本集並未設定任何角色。因此，繪圖提示詞中「絕對不要出現任何主持或來賓」等角色人物，專注於場景、手部物件、教室、環境或抽象概念之視覺描述。`;
@@ -274,34 +317,11 @@ ${roleLines.join('\n')}`;
         }
 
         if (includeLogo) {
-            logoInstruction = `\n- 浮水印/Logo 規則：每張圖的提示詞中，必須在文末加入「右上角必須直接放上 image${logoIndex} 的logo圖示，保留原始比例、原始樣貌與原始文字，不可重繪、不可變形、不可改色、不可裁切。」這段固定規則。`;
+            logoInstruction = `
+- 浮水印/Logo 規則：每張圖的提示詞中，必須在文末加入「右上角必須直接放上 image${logoIndex} 的logo圖示，保留原始比例、原始樣貌與原始文字，不可重繪、不可變形、不可改色、不可裁切。」這段固定規則。`;
         } else {
-            logoInstruction = `\n- 浮水印/Logo 規則：本集設定不加入Logo 圖示，提示詞中絕對不可出現任何關於 logo、浮水印或商標相關的描述。`;
-        }
-
-        // 3. 確定風格
-        let styleDescription = "";
-        const styleValue = carouselStyleSelect.value;
-        
-        if (variationModifier && shouldOverride) {
-            styleDescription = `由你決定風格，但必須依據此風格調整指令：${variationModifier}`;
-        } else {
-            if (styleValue === 'custom') {
-styleDescription = `風格為自訂風格：${customStyleText}`;
-            } else {
-                const styleMap = {
-                    'transcript-context-style': '風格由你決定：請依據 [原始文章] (逐字稿) 的主題情境與內涵，為這套輪播圖量身打造一個最合適的繪圖風格（例如：教育趣味主題可用溫慢Q版教育風，專業論述或科技主題可用現代極簡扁平插畫風，情感故事或文學主題可用寫實手繪水彩風等），並在第一張圖片提示詞開頭說明該風格的特點。請確保 4 張圖片提示詞在該風格下保持高度一致的視覺感與配色調性。',
-                    'warm-cute-chibi': '風格為溫慢、可愛、教育感、社群輪播風，人物為頭大身體小的 Q 版角色。整體溫暖可愛，色彩和諧',
-                    'modern-minimalist-flat': '風格為現代極簡插畫風、向量扁平插畫、乾淨簡約、社群輪播風，人物為簡約幾何線條風格',
-                    'realistic-watercolor': '風格為寫實手繪風格、手繪水彩感、細緻溫暖質感、社群輪播風，人物為水彩裝飾質感風格',
-                    'auto': '風格由你決定，風格要表現在提示詞中，應適應內容的主題（例如：教育趣味可用溫慢Q版教育風，專業科技可用極簡扁平插畫風），請在每張提示詞開頭說明該風格描述'
-                };
-                styleDescription = styleMap[styleValue] || styleMap['warm-cute-chibi'];
-            }
-            
-            if (variationModifier) {
-                styleDescription += `，並在此基礎上追加風格修飾：${variationModifier}`;
-            }
+            logoInstruction = `
+- 浮水印/Logo 規則：本集設定不加入Logo 圖示，提示詞中絕對不可出現任何關於 logo、浮水印或商標相關的描述。`;
         }
 
         // 3.5 取得輪播圖說明文字字數設定
