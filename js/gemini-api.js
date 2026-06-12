@@ -16,7 +16,7 @@
  * @throws {Error} 如果 API 請求最終失敗，則拋出錯誤。
  */
 const modelCache = new Map();
-const FALLBACK_MODEL = 'gemini-1.5-flash';
+const FALLBACK_MODEL = 'gemini-flash-latest';
 
 /**
  * 解析特定 API Key 可用的所有 Flash 模型，並按版本從新到舊排序
@@ -87,7 +87,7 @@ async function resolveFlashModelsList(apiKey, throwOnError = false) {
         modelCache.set(apiKey, list);
         return list;
     } catch (e) {
-        console.warn("Failed to resolve flash models list, using fallback:", e);
+        console.warn("[系統警告] 動態模型解析失敗，已啟用動態常綠降級方案:", FALLBACK_MODEL, e);
         if (throwOnError) throw e;
         return [FALLBACK_MODEL];
     }
