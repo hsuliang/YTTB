@@ -203,7 +203,7 @@ function assembleBlogPrompt(options) {
     if (wizardSettings.elemQuote) { rules.push('- 特殊元素：請在文章內文中，選擇一句最精彩的「金句」，並用 <blockquote> 標籤將其引用出來。'); }
 
     rules.push('- **重要限制**: 你的輸出內容中，絕對不可以包含 YouTube 嵌入代碼或任何 CTA (行動呼籲) 內容。也不要包含 `<h1>` 標題，主標題將由前端處理。');
-    rules.push('- **分隔線**: 在每一組「標題+內文」的區塊結束後，必須加上一條 `<hr>` 分隔線。');
+    rules.push('- **分隔線 (極重要)**: 在每一組「<h2>大標題 + 內文」的完整區塊結束後，必須輸出並加上一條 `<hr>` 水平分隔線標籤，作為段落區塊之間的分隔。');
 
     const finalRules = rules.join('\n');
     return `你是一位專業的部落格小編，你的任務是將[逐字稿]轉換成一篇格式良好、語氣自然的部落格文章。
@@ -955,6 +955,13 @@ function initializeTab2() {
     initializeTags();
     handleCtaChange();
     loadSettings();
+
+    // 註冊 Quill 水平線 (<hr>) 嵌入元件以支援段落區塊分隔線
+    const BlockEmbed = Quill.import('blots/block/embed');
+    class DividerBlot extends BlockEmbed {}
+    DividerBlot.blotName = 'divider';
+    DividerBlot.tagName = 'hr';
+    Quill.register(DividerBlot);
 
     const editorOptions = {
         theme: 'snow',

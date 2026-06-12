@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function showApiKeyModal() { loadModalApiKeys(); apiKeyModal.classList.remove('hidden'); }
     function hideApiKeyModal() { apiKeyModal.classList.add('hidden'); }
 
-    function saveApiKey() {
+    async function saveApiKey() {
         const text = apiKeyInput.value.trim();
         if (text) {
             parseAndAddKeys(text);
@@ -243,14 +243,61 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        sessionStorage.setItem('geminiApiKeys', JSON.stringify(modalApiKeys));
-        sessionStorage.setItem('geminiApiKey', modalApiKeys[0].key);
+        saveApiKeyBtn.disabled = true;
+        const originalText = saveApiKeyBtn.textContent;
+        saveApiKeyBtn.textContent = '驗證中...';
 
-        const expiryTime = Date.now() + 2 * 60 * 60 * 1000;
-        sessionStorage.setItem('apiKeyExpiry', expiryTime);
-        updateApiKeyStatus();
-        showToast('API Key 已儲存，AI 功能已啟用！');
-        hideApiKeyModal();
+        try {
+            const validationPromises = modalApiKeys.map(async (entry) => {
+                await resolveFlashModelsList(entry.key, true);
+                return entry;
+            });
+
+            const results = await Promise.allSettled(validationPromises);
+            
+            const validApiKeys = [];
+            const invalidKeys = [];
+            
+            results.forEach((r, idx) => {
+                if (r.status === 'fulfilled') {
+                    validApiKeys.push(r.value);
+                } else {
+                    invalidKeys.push(modalApiKeys[idx]);
+                }
+            });
+
+            if (validApiKeys.length === 0) {
+                showModal({
+                    title: '金鑰驗證失敗',
+                    message: '您輸入的所有金鑰均無效或已耗盡額度，請檢查並重新輸入。'
+                });
+                return;
+            }
+
+            modalApiKeys = validApiKeys;
+            renderModalApiKeys();
+
+            sessionStorage.setItem('geminiApiKeys', JSON.stringify(validApiKeys));
+            sessionStorage.setItem('geminiApiKey', validApiKeys[0].key);
+
+            const expiryTime = Date.now() + 2 * 60 * 60 * 1000;
+            sessionStorage.setItem('apiKeyExpiry', expiryTime);
+            updateApiKeyStatus();
+            
+            if (invalidKeys.length > 0) {
+                showToast(`已儲存 ${validApiKeys.length} 組有效金鑰，自動排除 ${invalidKeys.length} 組無效金鑰。`);
+            } else {
+                showToast('API Key 已儲存，AI 功能已啟用！');
+            }
+            hideApiKeyModal();
+
+        } catch (err) {
+            console.error("Key validation error:", err);
+            showModal({ title: '驗證出錯', message: `驗證過程中發生錯誤：${err.message}` });
+        } finally {
+            saveApiKeyBtn.disabled = false;
+            saveApiKeyBtn.textContent = originalText;
+        }
     }
 
     function startApiKeyCountdown() {

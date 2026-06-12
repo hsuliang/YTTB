@@ -176,6 +176,15 @@ window.showModal = function(options) {
     const modalProgressBar = document.getElementById('modal-progress-bar');
     const modalDefaultButtons = document.getElementById('modal-default-buttons');
     const modalCustomButtons = document.getElementById('modal-custom-buttons');
+    
+    const modalModelBadge = document.getElementById('modal-model-badge');
+    const modalModelName = document.getElementById('modal-model-name');
+    if (modalModelBadge) {
+        modalModelBadge.classList.add('hidden');
+    }
+    if (modalModelName) {
+        modalModelName.textContent = '';
+    }
 
     modalTitle.textContent = title;
     modalCopyBtn.classList.toggle('hidden', !showCopyButton);
@@ -217,6 +226,10 @@ window.showModal = function(options) {
 
 window.hideModal = function() {
     window.stopPromptRotation();
+    const modalModelBadge = document.getElementById('modal-model-badge');
+    if (modalModelBadge) {
+        modalModelBadge.classList.add('hidden');
+    }
     document.getElementById('modal').classList.add('hidden');
 }
 
