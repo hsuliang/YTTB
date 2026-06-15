@@ -329,11 +329,7 @@ ${roleLines.join('\n')}`;
         };
         const layoutStyleDescription = layoutStyleMap[layoutStyleValue] || layoutStyleMap['auto'];
         
-        // Update preview element with description (except for classic-layout which has no description)
-        const layoutPreviewEl = document.getElementById('layout-style-preview');
-        if (layoutPreviewEl) {
-            layoutPreviewEl.textContent = layoutStyleValue === 'classic-layout' ? '' : layoutStyleDescription;
-        }
+        // UI preview is now updated dynamically via change event listener
 
         let layoutRulesText = '';
         let layoutInstructionsText = '';
@@ -553,4 +549,30 @@ ${layoutInstructionsText}
         carouselStyleSelect.addEventListener('change', toggleCustomStyleVisibility);
     }
     toggleCustomStyleVisibility();
+
+    // 監聽排版樣式切換事件與初始化顯示狀態
+    const LAYOUT_PREVIEW_DESCRIPTIONS = {
+        'classic-layout': '每一張圖（包括第 1、2、3、4 張）均強制採用【經典內容排版】：包含主副標題、圓點條列重點、底部 Hashtags 及右下角 CTA 按鈕。',
+        'auto': '第 2、3 張內容頁的排版風格由 AI 智慧混搭（系統推薦）。請分析文章這一段的語氣與屬性（觀點適合金句型、流程適合步驟型、故事適合氣泡型、清單適合卡片型），靈活選擇最適合的樣式。',
+        'golden-sentence': '第 2、3 張內容頁強制使用【版型 A（單一金句型）】：將內容精煉為一行超大字體的無條列金句，置中或置於合適留白處。不要任何條列符號或分類框。',
+        'progression-steps': '第 2、3 張內容頁強制使用【版型 B（步驟流程型）】：使用垂直或水平排版的數字標號「1、2、3」呈現內容，帶有順序與流程感。',
+        'transparent-card': '第 2、3 張內容頁強制使用【版型 C（卡片條列型）】：在半透明底色卡片中，直接以圓點 (●) 或小圖示條列重點，展現結構化的清單。',
+        'dialog-bubble': '第 2、3 張內容頁強制使用【版型 D（對話氣泡型）】：將重點文字包裝在畫面中人物角色的對話泡泡或想法框內，增加劇場感。',
+        'pure-background': '第 2、3 張內容頁強制使用【純文字融入背景】：將簡短文字以高對比顏色直接融入畫面留白處，不要任何修飾框線、泡泡或分類符號。'
+    };
+
+    function updateLayoutStylePreview() {
+        const layoutStyleSelect = document.getElementById('carousel-layout-style');
+        const layoutPreviewEl = document.getElementById('layout-style-preview');
+        if (layoutStyleSelect && layoutPreviewEl) {
+            const val = layoutStyleSelect.value;
+            layoutPreviewEl.textContent = LAYOUT_PREVIEW_DESCRIPTIONS[val] || '';
+        }
+    }
+
+    const carouselLayoutStyleSelect = document.getElementById('carousel-layout-style');
+    if (carouselLayoutStyleSelect) {
+        carouselLayoutStyleSelect.addEventListener('change', updateLayoutStylePreview);
+    }
+    updateLayoutStylePreview();
 }
