@@ -111,7 +111,7 @@ async function callGeminiAPI(apiKey, prompt, forceJson = false) {
     // 建立金鑰嘗試池
     let keyPool = [];
     try {
-        const stored = sessionStorage.getItem('geminiApiKeys');
+        const stored = localStorage.getItem('geminiApiKeys') || sessionStorage.getItem('geminiApiKeys');
         if (stored) {
             const parsed = JSON.parse(stored);
             if (Array.isArray(parsed)) {
@@ -119,7 +119,7 @@ async function callGeminiAPI(apiKey, prompt, forceJson = false) {
             }
         }
     } catch (e) {
-        console.warn("Failed to parse geminiApiKeys from sessionStorage", e);
+        console.warn("Failed to parse geminiApiKeys from storage", e);
     }
 
     // 確保傳入的偏好金鑰排在第一位，且已被加進池子中
@@ -185,20 +185,29 @@ async function callGeminiAPI(apiKey, prompt, forceJson = false) {
 
                 // 成功後更新金鑰池的計數器
                 try {
-                    const stored = sessionStorage.getItem('geminiApiKeys');
+                    let isSession = false;
+                    let stored = localStorage.getItem('geminiApiKeys');
+                    if (!stored) {
+                        stored = sessionStorage.getItem('geminiApiKeys');
+                        isSession = true;
+                    }
                     if (stored) {
                         const parsed = JSON.parse(stored);
                         if (Array.isArray(parsed)) {
                             const entry = parsed.find(e => e.key === currentKey);
                             if (entry) {
                                 entry.count = (entry.count || 0) + 1;
-                                sessionStorage.setItem('geminiApiKeys', JSON.stringify(parsed));
+                                if (isSession) {
+                                    sessionStorage.setItem('geminiApiKeys', JSON.stringify(parsed));
+                                } else {
+                                    localStorage.setItem('geminiApiKeys', JSON.stringify(parsed));
+                                }
                                 console.log(`[API Key Usage Updated] Key: ...${currentKey.slice(-4)}, Count: ${entry.count}`);
                             }
                         }
                     }
                 } catch (ex) {
-                    console.warn("Failed to update key count in sessionStorage", ex);
+                    console.warn("Failed to update key count in storage", ex);
                 }
 
                 return responseText;

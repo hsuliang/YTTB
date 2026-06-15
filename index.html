@@ -980,7 +980,7 @@
 
     <footer class="text-center text-xs text-[var(--gray-text)] py-4 mt-8 border-t border-[var(--card-border)]">
         Design by <a href="https://bit.ly/Aliang" target="_blank" rel="noopener" class="upload-link">ㄚ亮笑長練功坊</a> | <a
-            href="readme.html" target="_blank" rel="noopener" class="upload-link"> 程式簡介與使用說明 </a> | 丙午．芒種．0612
+            href="readme.html" target="_blank" rel="noopener" class="upload-link"> 程式簡介與使用說明 </a> | 丙午．芒種．0615
     </footer>
 
     <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2"></div>
@@ -1009,15 +1009,63 @@
 
     <div id="api-key-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
         <div class="p-6 w-11/12 md:w-1/2 max-w-xl rounded-lg shadow-xl main-card flex flex-col">
-            <h3 class="text-xl font-bold mb-4 heading-color">設定您的 Gemini API Key</h3>
+            <h3 class="text-xl font-bold mb-4 heading-color flex items-center gap-2">
+                <span>設定您的 Gemini API Key</span>
+                <span class="relative inline-block">
+                    <button id="toggle-api-help-btn" type="button" class="text-red-600 hover:text-red-700 text-xs font-semibold hover:underline focus:outline-none transition-colors ml-1">
+                        📖 如何免費申請？
+                    </button>
+                    <div id="api-key-help-panel" class="hidden absolute left-0 top-full mt-2 w-80 md:w-[28rem] bg-[var(--gray-bg)] p-4 rounded-lg border border-[var(--card-border)] text-sm space-y-2 shadow-2xl z-50">
+                        <ol class="list-decimal list-inside space-y-2 text-[var(--body-text)]">
+                            <li>登入您的 Google 帳號。</li>
+                            <li>前往 <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener"
+                                    class="text-blue-600 hover:text-blue-800 underline font-bold">Google AI Studio</a>。</li>
+                            <li>點擊頁面<strong class="text-red-500 mx-1">左下方</strong>的 <span
+                                    class="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-300">Get
+                                    API key</span> 按鈕。</li>
+                            <li>點擊頁面<strong class="text-red-500 mx-1">右上角</strong>藍色的 <span
+                                    class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-bold text-xs border border-blue-200">Create
+                                    API key</span> 按鈕。</li>
+                            <li>
+                                選擇專案：若無專案，請點擊
+                                <br><span class="ml-5 text-xs bg-gray-100 px-1 rounded border">Select a Cloud Project</span>
+                                ➔ <span class="text-xs bg-gray-100 px-1 rounded border">Create project</span>。
+                            </li>
+                            <li>為您的 API Key 命名 (選用)。</li>
+                            <li>複製生成的金鑰 (以 <code class="text-red-500 font-bold bg-red-50 px-1 rounded">AIza</code>
+                                開頭)，貼入上方欄位。</li>
+                        </ol>
+                        <p class="text-xs text-[var(--gray-text)] mt-2 pt-2 border-t border-[var(--card-border)]">* 這是
+                            Google 提供的免費額度，對個人使用通常非常足夠。</p>
+                    </div>
+                </span>
+            </h3>
             <div class="flex-grow space-y-4">
-                <p class="text-sm">為了啟用所有 AI 功能，請在此提供您的 Google Gemini API 金鑰。您可以設定多組金鑰，系統會隨機且平衡地分配使用量。金鑰僅會暫存在您的瀏覽器中，並在 2
-                    小時後自動清除，我們絕不會儲存它。</p>
-                <div class="flex items-start space-x-2">
+                <p class="text-sm">為了啟用所有 AI 功能，請在此提供您的 Google Gemini API 金鑰。您可以設定多組金鑰，系統會隨機且平衡地分配使用量。金鑰僅會暫存在您的瀏覽器中，並依您設定的期限自動清除，我們絕不會儲存它。</p>
+                <div class="relative">
                     <textarea id="gemini-api-key" placeholder="在此貼上您的 Gemini API Key（支援同時貼上多行，每行一組金鑰）" rows="3"
-                        class="w-full rounded px-4 py-2 border border-[var(--card-border)] bg-[var(--bg-color)] text-[var(--body-text)] focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"></textarea>
-                    <button id="add-api-key-btn" type="button"
-                        class="font-bold py-2 px-4 rounded btn-primary whitespace-nowrap h-10">新增</button>
+                        class="w-full rounded px-4 py-2 pr-10 border border-[var(--card-border)] bg-[var(--bg-color)] text-[var(--body-text)] focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none masked-keys"></textarea>
+                    <button id="toggle-key-visibility-btn" type="button" class="absolute right-3 bottom-3 text-[var(--gray-text)] hover:text-[var(--heading-color)] focus:outline-none" title="切換金鑰可見性">
+                        <svg id="eye-open-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <svg id="eye-closed-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="flex flex-col md:flex-row md:items-center gap-2">
+                    <label for="api-key-expiry-select" class="font-semibold text-sm whitespace-nowrap text-[var(--heading-color)]">金鑰保存期限：</label>
+                    <select id="api-key-expiry-select" class="flex-grow p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)] text-sm">
+                        <option value="2h" selected>2 小時（預設，建議）</option>
+                        <option value="4h">4 小時</option>
+                        <option value="8h">8 小時</option>
+                        <option value="24h">24 小時</option>
+                        <option value="session">分頁關閉即清除（Session 模式）</option>
+                        <option value="never">不自動清除（永久保存，請注意資訊安全）</option>
+                    </select>
                 </div>
 
                 <div class="border-t border-[var(--card-border)] pt-3">
@@ -1027,39 +1075,9 @@
                     </div>
                 </div>
 
-                <button id="toggle-api-help-btn"
-                    class="flex items-center text-[var(--link-color)] hover:underline font-semibold text-sm my-2 focus:outline-none transition-colors">
-                    <span>📖 如何免費申請 API Key？ (點擊看教學)</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform duration-200"
-                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </button>
 
-                <div id="api-key-help-panel"
-                    class="hidden bg-[var(--gray-bg)] p-4 rounded border border-[var(--card-border)] text-sm space-y-2 mb-4 shadow-inner">
-                    <ol class="list-decimal list-inside space-y-2 text-[var(--body-text)]">
-                        <li>登入您的 Google 帳號。</li>
-                        <li>前往 <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener"
-                                class="text-blue-600 hover:text-blue-800 underline font-bold">Google AI Studio</a>。</li>
-                        <li>點擊頁面<strong class="text-red-500 mx-1">左下方</strong>的 <span
-                                class="bg-gray-200 text-gray-700 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-300">Get
-                                API key</span> 按鈕。</li>
-                        <li>點擊頁面<strong class="text-red-500 mx-1">右上角</strong>藍色的 <span
-                                class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-bold text-xs border border-blue-200">Create
-                                API key</span> 按鈕。</li>
-                        <li>
-                            選擇專案：若無專案，請點擊
-                            <br><span class="ml-5 text-xs bg-gray-100 px-1 rounded border">Select a Cloud Project</span>
-                            ➔ <span class="text-xs bg-gray-100 px-1 rounded border">Create project</span>。
-                        </li>
-                        <li>為您的 API Key 命名 (選用)。</li>
-                        <li>複製生成的金鑰 (以 <code class="text-red-500 font-bold bg-red-50 px-1 rounded">AIza</code>
-                            開頭)，貼入上方欄位。</li>
-                    </ol>
-                    <p class="text-xs text-[var(--gray-text)] mt-2 pt-2 border-t border-[var(--card-border)]">* 這是
-                        Google 提供的免費額度，對個人使用通常非常足夠。</p>
-                </div>
+
+
 
                 <p id="api-key-countdown" class="font-mono text-sm text-[var(--link-color)]"></p>
             </div>

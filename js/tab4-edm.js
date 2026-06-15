@@ -118,7 +118,7 @@ function initializeTab4() {
     }
 
     async function handleGenerateEdm(variationModifier = '', shouldOverride = false) { // Changed signature
-        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey');
+        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : (localStorage.getItem('geminiApiKey') || sessionStorage.getItem('geminiApiKey'));
         if (!apiKey) {
             if (window.showApiKeyModal) window.showApiKeyModal();
             return;

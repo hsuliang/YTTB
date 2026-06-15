@@ -511,7 +511,7 @@ function initializeTab2() {
     function initializeTags() { renderTagSuggestions(); tagInput.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addTag(tagInput.value); tagInput.value = ''; } }); saveTagsBtn.addEventListener('click', saveCustomTagsToStorage); }
 
     async function optimizeTextForBlog() {
-        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey');
+        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : (localStorage.getItem('geminiApiKey') || sessionStorage.getItem('geminiApiKey'));
         if (!apiKey) { if (window.showApiKeyModal) window.showApiKeyModal(); return; }
 
         // 1. 定義來源：優先檢查是否有「已整理」的文本，若無則取用輸入框的原始文本
@@ -583,7 +583,7 @@ function initializeTab2() {
     }
 
     async function analyzeKeywords() {
-        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey');
+        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : (localStorage.getItem('geminiApiKey') || sessionStorage.getItem('geminiApiKey'));
         if (!apiKey) { if (window.showApiKeyModal) window.showApiKeyModal(); return; }
 
         const currentHtml = getLatestHtmlContent();
@@ -631,7 +631,7 @@ function initializeTab2() {
     }
 
     async function analyzeInternalLinks() {
-        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey');
+        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : (localStorage.getItem('geminiApiKey') || sessionStorage.getItem('geminiApiKey'));
         if (!apiKey) { if (window.showApiKeyModal) window.showApiKeyModal(); return; }
 
         const currentHtml = getLatestHtmlContent();
@@ -685,7 +685,7 @@ function initializeTab2() {
 
     // ########## FINAL ROBUST VERSION WITH SMART RETRY ##########
     async function proceedGenerateBlogPost(variationModifier = '', shouldOverride = false) {
-        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey');
+        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : (localStorage.getItem('geminiApiKey') || sessionStorage.getItem('geminiApiKey'));
         if (!apiKey) { if (window.showApiKeyModal) window.showApiKeyModal(); return; }
 
         const sourceText = (state.blogSourceType === 'optimized') ? state.optimizedTextForBlog : (state.processedSrtResult ? state.processedSrtResult.trim() : document.getElementById('smart-area').value.trim());

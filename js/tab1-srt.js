@@ -123,7 +123,7 @@ function resetTab1() {
 function initializeTab1() {
     // --- 函式定義 ---
     async function handleAiFeature(type) {
-        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey');
+        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : (localStorage.getItem('geminiApiKey') || sessionStorage.getItem('geminiApiKey'));
         // ########## FIX END ##########
 
         const content = state.processedSrtResult.trim() || smartArea.value.trim();

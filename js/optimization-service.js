@@ -10,7 +10,7 @@ window.optimizationService = {
      * 這是一個異步函式，會在原地顯示模態窗，並在完成後更新全局狀態。
      */
     async optimizeSourceText() {
-        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : sessionStorage.getItem('geminiApiKey');
+        const apiKey = window.getBalancedApiKey ? window.getBalancedApiKey() : (localStorage.getItem('geminiApiKey') || sessionStorage.getItem('geminiApiKey'));
         if (!apiKey) {
             if (window.showApiKeyModal) window.showApiKeyModal();
             return;

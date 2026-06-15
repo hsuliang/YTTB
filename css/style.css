@@ -978,3 +978,8 @@ body[data-theme="dark-knight"] .btn-primary.btn-loading::after {
 
 
 }
+
+/* API 金鑰隱碼樣式 */
+.masked-keys {
+    -webkit-text-security: disc !important;
+}
