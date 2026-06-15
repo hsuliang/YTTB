@@ -476,18 +476,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateApiKeyStatus();
 
-        appearanceBtn.addEventListener('click', toggleAppearancePanel);
-        apiKeyBtn.addEventListener('click', showApiKeyModal);
-        closeApiKeyModalBtn.addEventListener('click', hideApiKeyModal);
-        apiKeysListContainer.addEventListener('click', (e) => {
-            if (e.target.classList.contains('delete-key-item-btn')) {
-                const index = parseInt(e.target.dataset.index, 10);
-                modalApiKeys.splice(index, 1);
-                renderModalApiKeys();
-                showToast('已從清單中移除金鑰。');
-            }
-        });
-        saveApiKeyBtn.addEventListener('click', saveApiKey);
+        if (appearanceBtn) appearanceBtn.addEventListener('click', toggleAppearancePanel);
+        if (apiKeyBtn) apiKeyBtn.addEventListener('click', showApiKeyModal);
+        if (closeApiKeyModalBtn) closeApiKeyModalBtn.addEventListener('click', hideApiKeyModal);
+        if (apiKeysListContainer) {
+            apiKeysListContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('delete-key-item-btn')) {
+                    const index = parseInt(e.target.dataset.index, 10);
+                    modalApiKeys.splice(index, 1);
+                    renderModalApiKeys();
+                    showToast('已從清單中移除金鑰。');
+                }
+            });
+        }
+        if (saveApiKeyBtn) saveApiKeyBtn.addEventListener('click', saveApiKey);
 
         const toggleKeyVisibilityBtn = document.getElementById('toggle-key-visibility-btn');
         if (toggleKeyVisibilityBtn) {
@@ -560,7 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         document.addEventListener('click', (event) => {
-            if (!appearancePanel.classList.contains('hidden') && !appearancePanel.contains(event.target) && !appearanceBtn.contains(event.target)) {
+            if (appearancePanel && appearanceBtn && !appearancePanel.classList.contains('hidden') && !appearancePanel.contains(event.target) && !appearanceBtn.contains(event.target)) {
                 toggleAppearancePanel();
             }
         });
@@ -571,18 +573,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }));
         
-        modalCloseBtn.addEventListener('click', hideModal);
-        modalCopyBtn.addEventListener('click', copyModalContent);
+        if (modalCloseBtn) modalCloseBtn.addEventListener('click', hideModal);
+        if (modalCopyBtn) modalCopyBtn.addEventListener('click', copyModalContent);
         
-        resetAppBtn.addEventListener('click', () => {
-            if (confirm('您確定要重置所有內容嗎？這將會清除所有輸入和已生成的草稿。')) {
-                if(window.clearBlogDraft) window.clearBlogDraft();
-                if(window.clearSocialDraft) window.clearSocialDraft();
-                removeStorageKeys();
-                showToast('頁面已重置！');
-                setTimeout(() => { location.reload(); }, 500);
-            }
-        });
+        if (resetAppBtn) {
+            resetAppBtn.addEventListener('click', () => {
+                if (confirm('您確定要重置所有內容嗎？這將會清除所有輸入和已生成的草稿。')) {
+                    if(window.clearBlogDraft) window.clearBlogDraft();
+                    if(window.clearSocialDraft) window.clearSocialDraft();
+                    removeStorageKeys();
+                    showToast('頁面已重置！');
+                    setTimeout(() => { location.reload(); }, 500);
+                }
+            });
+        }
 
         // 跨分頁金鑰與過期狀態同步監聽器
         window.addEventListener('storage', (e) => {
