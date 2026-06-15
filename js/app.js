@@ -73,6 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
         updateButtonState(document.getElementById('generate-blog-btn'), '生成部落格文章', isAiDisabled);
         updateButtonState(document.getElementById('generate-social-btn'), '生成社群貼文', isAiDisabled);
         updateButtonState(document.getElementById('generate-edm-btn'), '生成電子報內容', isAiDisabled);
+        updateButtonState(document.getElementById('generate-carousel-btn'), '生成輪播圖提示詞', isAiDisabled);
+        updateButtonState(document.getElementById('generate-infographic-btn'), '生成資訊圖表提示詞', isAiDisabled);
 
         // 處理 Variation 按鈕的禁用狀態
         const blogVariationBtn = document.getElementById('generate-blog-variation-btn');
@@ -83,6 +85,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const edmVariationBtn = document.getElementById('generate-edm-variation-btn');
         if(edmVariationBtn) edmVariationBtn.disabled = state.edmVersions.length === 0;
+
+        const carouselVariationBtn = document.getElementById('generate-carousel-variation-btn');
+        if(carouselVariationBtn) carouselVariationBtn.disabled = state.carouselVersions.length === 0;
+
+        const infographicVariationBtn = document.getElementById('generate-infographic-variation-btn');
+        if(infographicVariationBtn) infographicVariationBtn.disabled = state.infographicVersions.length === 0;
     }
     
     window.updateSourceStatusUI = function() {
@@ -123,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        ['blog', 'social', 'edm', 'carousel'].forEach(updateElements);
+        ['blog', 'social', 'edm', 'carousel', 'infographic'].forEach(updateElements);
     }
 
     // --- 儲存媒介存取輔助函式 ---
@@ -433,7 +441,8 @@ document.addEventListener('DOMContentLoaded', () => {
             { btn: document.getElementById('tab2-btn'), dot: document.getElementById('tab2-dot'), defaultTitle: '將字幕稿轉為部落格文章' },
             { btn: document.getElementById('tab3-btn'), dot: document.getElementById('tab3-dot'), defaultTitle: '為多個社群平台生成貼文' },
             { btn: document.getElementById('tab4-btn'), dot: document.getElementById('tab4-dot'), defaultTitle: '將文章內容生成電子報' },
-            { btn: document.getElementById('tab5-btn'), dot: document.getElementById('tab5-dot'), defaultTitle: '社群輪播圖提示詞' }
+            { btn: document.getElementById('tab5-btn'), dot: document.getElementById('tab5-dot'), defaultTitle: '社群輪播圖提示詞' },
+            { btn: document.getElementById('tab6-btn'), dot: document.getElementById('tab6-dot'), defaultTitle: '資訊圖表提示詞' }
         ];
 
         tabs.forEach(tab => {
@@ -447,6 +456,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('tab2-dot').classList.toggle('hidden', !hasTab2Draft);
         const hasTab3Draft = window.hasSocialDraft && window.hasSocialDraft();
         document.getElementById('tab3-dot').classList.toggle('hidden', !hasTab3Draft);
+        const hasTab6Draft = window.hasInfographicDraft && window.hasInfographicDraft();
+        const tab6Dot = document.getElementById('tab6-dot');
+        if (tab6Dot) { tab6Dot.classList.toggle('hidden', !hasTab6Draft); }
         
         window.updateSourceStatusUI();
     }
@@ -464,6 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dot) { dot.classList.add('hidden'); }
 
         if (tabId === 'tab2' && window.updateStepperUI) { window.updateStepperUI(); }
+        if (tabId === 'tab6' && window.analyzeInfographicContent) { window.analyzeInfographicContent(); }
         window.updateSourceStatusUI();
     }
     
@@ -473,6 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeTab3();
         initializeTab4();
         initializeTab5();
+        if (window.initializeTab6) { window.initializeTab6(); }
 
         updateApiKeyStatus();
 
@@ -581,7 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (confirm('您確定要重置所有內容嗎？這將會清除所有輸入和已生成的草稿。')) {
                     if(window.clearBlogDraft) window.clearBlogDraft();
                     if(window.clearSocialDraft) window.clearSocialDraft();
-                    removeStorageKeys();
+                    if(window.clearInfographicDraft) window.clearInfographicDraft();
                     showToast('頁面已重置！');
                     setTimeout(() => { location.reload(); }, 500);
                 }

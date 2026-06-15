@@ -983,3 +983,32 @@ body[data-theme="dark-knight"] .btn-primary.btn-loading::after {
 .masked-keys {
     -webkit-text-security: disc !important;
 }
+
+/* 📊 AI 智慧圖表排版建議區塊樣式 */
+.info-report-box {
+    background-color: #f0f7ff;
+    border: 1px solid #d0e7ff;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+body[data-theme="caramel-pudding"] .info-report-box {
+    background-color: #fffbeb;
+    border-color: #fde68a;
+}
+body[data-theme="muji-style"] .info-report-box {
+    background-color: #f9f9f9;
+    border-color: #e5e7eb;
+}
+body[data-theme="blueberry-pancake"] .info-report-box {
+    background-color: #f0f7ff;
+    border-color: #bfdbfe;
+}
+body[data-theme="mint-soda"] .info-report-box {
+    background-color: #f0fdfa;
+    border-color: #b2f5ea;
+}
+body[data-theme="dark-knight"] .info-report-box {
+    background-color: #0f172a;
+    border-color: #334155;
+}

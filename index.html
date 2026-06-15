@@ -12,6 +12,7 @@
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <!-- ########## END NEW ########## -->
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 </head>
 
 <body class="font-sans flex flex-col min-h-screen">
@@ -57,6 +58,8 @@
                     電子報內容生成<span id="tab4-dot" class="notification-dot hidden"></span></button>
                 <button id="tab5-btn" class="tab-btn" data-tab="tab5" disabled title="請先在分頁 1 輸入內容並設定 API Key">5.
                     社群輪播圖提示詞<span id="tab5-dot" class="notification-dot hidden"></span></button>
+                <button id="tab6-btn" class="tab-btn" data-tab="tab6" disabled title="請先在分頁 1 輸入內容並設定 API Key">6.
+                    資訊圖表提示詞<span id="tab6-dot" class="notification-dot hidden"></span></button>
             </div>
 
             <div class="p-6">
@@ -789,7 +792,7 @@
                             <!-- Roles Configuration -->
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <label class="font-semibold text-sm">角色名稱 (最多 4 個)</label>
+                                    <label class="font-semibold text-sm">自備素材/角色設定 (最多 4 個)</label>
                                     <button id="carousel-add-role-btn"
                                         class="text-xs font-semibold py-1 px-2 rounded btn-secondary">+ 新增角色</button>
                                 </div>
@@ -838,11 +841,15 @@
                                 <label for="carousel-style" class="font-semibold text-sm">圖片風格</label>
                                 <select id="carousel-style"
                                     class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]">
-                                    <option value="transcript-context-style" selected>以逐字稿內容給定風格</option>
-                                    <option value="warm-cute-chibi">溫暖可愛Q版教育風 (推薦)</option>
+                                    <option value="auto" selected>AI 參考內容自動決定風格 (推薦)</option>
+                                    <option value="warm-cute-chibi">溫慢可愛Q版教育風</option>
                                     <option value="modern-minimalist-flat">現代極簡插畫風</option>
                                     <option value="realistic-watercolor">寫實手繪水彩風</option>
-                                    <option value="auto">AI 自動決定風格</option>
+                                    <option value="minimalist">現代極簡幾何風</option>
+                                    <option value="3d-clay">3D 黏土/擬物風</option>
+                                    <option value="neo-brutalism">高對比新醜風</option>
+                                    <option value="flat-business">扁平商業插畫</option>
+                                    <option value="doodle">手繪塗鴉風</option>
                                     <option value="custom">自訂風格</option>
                                 </select>
                             </div>
@@ -907,6 +914,186 @@
                                     <p class="font-semibold text-lg">為您的內容生成社群輪播圖提示詞</p>
                                     <p class="mt-2 text-sm max-w-sm">
                                         AI 會將您的精華內容轉化為 4 張連貫的故事輪播圖提示詞，並設計好相應的標題文案。
+                                        <br>
+                                        您可以點擊左側按鈕開始生成。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 6: 資訊圖表提示詞 -->
+                <div id="tab6" class="tab-content hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-10 gap-8">
+                        <!-- Left panel: Settings (3 cols) -->
+                        <div class="md:col-span-3 space-y-4">
+                            <div class="border-b-2 border-[var(--heading-color)] pb-2">
+                                <h3 class="text-xl font-bold heading-color">資訊圖表設定</h3>
+                            </div>
+
+                            <!-- Source Status -->
+                            <div class="p-3 rounded-md border border-[var(--card-border)] bg-[var(--gray-bg)]">
+                                <p id="infographic-source-status"
+                                    class="text-sm font-semibold text-[var(--heading-color)] mb-2">內容來源：字幕原始檔</p>
+                                <button id="infographic-go-to-optimize-btn"
+                                    class="w-full font-bold py-2 px-4 rounded btn-secondary">🚀 優化文本以提升品質</button>
+                            </div>
+
+                            <!-- AI 智慧推薦狀態列 -->
+                            <div class="p-3 rounded-md border border-[var(--card-border)] bg-[var(--gray-bg)]">
+                                <p id="infographic-ai-recommendation-status" class="text-sm font-semibold text-[var(--link-color)]">
+                                    🔍 正在分析內容以推薦排版型態...
+                                </p>
+                            </div>
+
+                            <!-- 圖表型態選單 -->
+                            <div>
+                                <label for="infographic-type" class="font-semibold text-sm">圖表型態</label>
+                                <select id="infographic-type" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]">
+                                    <option value="auto" selected>AI 智慧推薦 (系統推薦)</option>
+                                    <option value="statistical">數據統計型 (Statistical)</option>
+                                    <option value="informational">資訊與概念型 (Informational)</option>
+                                    <option value="timeline">時間軸型 (Timeline)</option>
+                                    <option value="process">流程步驟型 (Process)</option>
+                                    <option value="comparison">對比比較型 (VS / Comparison)</option>
+                                    <option value="geographic">地理地圖型 (Geographic)</option>
+                                    <option value="hierarchical">階層關係型 (Hierarchical)</option>
+                                    <option value="list">清單條列型 (List)</option>
+                                    <option value="resume">個人履歷型 (Resume)</option>
+                                </select>
+                            </div>
+
+                            <!-- 角色/素材設定 (複用與 TAB5 相同的機制) -->
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <label class="font-semibold text-sm">自備素材/角色設定 (最多 4 個)</label>
+                                    <button id="infographic-add-role-btn" class="text-xs font-semibold py-1 px-2 rounded btn-secondary">+ 新增角色</button>
+                                </div>
+                                <div id="infographic-roles-container" class="space-y-2">
+                                    <!-- 動態渲染輸入框：包含角色名稱與圖片 URL -->
+                                </div>
+                            </div>
+
+                            <!-- Include Logo Toggle -->
+                            <div class="flex items-center gap-2 pt-1">
+                                <input type="checkbox" id="infographic-include-logo" class="form-checkbox h-4 w-4 rounded text-[var(--link-color)]">
+                                <label for="infographic-include-logo" class="font-semibold text-sm select-none">提示詞中加入Logo 圖示</label>
+                            </div>
+
+                            <!-- 視覺風格 -->
+                            <div>
+                                <label for="infographic-style" class="font-semibold text-sm">視覺風格</label>
+                                <select id="infographic-style" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]">
+                                    <option value="auto" selected>AI 參考內容自動決定風格 (推薦)</option>
+                                    <option value="warm-cute-chibi">溫慢可愛Q版教育風</option>
+                                    <option value="modern-minimalist-flat">現代極簡插畫風</option>
+                                    <option value="realistic-watercolor">寫實手繪水彩風</option>
+                                    <option value="minimalist">現代極簡幾何風</option>
+                                    <option value="3d-clay">3D 黏土/擬物風</option>
+                                    <option value="neo-brutalism">高對比新醜風</option>
+                                    <option value="flat-business">扁平商業插畫</option>
+                                    <option value="doodle">手繪塗鴉風</option>
+                                    <option value="custom">自訂風格</option>
+                                </select>
+                            </div>
+
+                            <!-- Custom Style Input Container -->
+                            <div id="infographic-custom-style-container" class="hidden space-y-1 mt-2">
+                                <label for="infographic-custom-style" class="font-semibold text-xs text-[var(--gray-text)]">自訂風格提示詞</label>
+                                <textarea id="infographic-custom-style" class="w-full p-2 text-sm rounded bg-[var(--gray-bg)] border border-[var(--card-border)] h-20 resize-y" placeholder="例如：復古美式插畫風格，採用高飽和度色彩、乾淨線條與微粒效果..."></textarea>
+                            </div>
+
+                            <!-- 配色方案 -->
+                            <div>
+                                <label for="infographic-palette" class="font-semibold text-sm">配色方案</label>
+                                <select id="infographic-palette" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]">
+                                    <option value="auto" selected>AI 自動決定色系</option>
+                                    <option value="tech-cool">科技冷調 (藍/靛/黑)</option>
+                                    <option value="business-warm">商業暖調 (橙/紅/灰)</option>
+                                    <option value="morandi">柔和莫蘭迪 (粉藍/粉綠/米白)</option>
+                                    <option value="high-contrast">高飽和撞色 (黃/紫/綠)</option>
+                                </select>
+                            </div>
+
+                            <!-- 輸出尺寸 -->
+                            <div>
+                                <label for="infographic-size" class="font-semibold text-sm">輸出尺寸</label>
+                                <select id="infographic-size" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]">
+                                    <option value="9:16" selected>社群直式長圖 (9:16)</option>
+                                    <option value="1:3">網頁標準長圖 (1:3)</option>
+                                    <option value="16:9">簡報橫圖 (16:9)</option>
+                                    <option value="1:1">方形圖 (1:1)</option>
+                                </select>
+                            </div>
+
+                            <!-- 說明文字量 -->
+                            <div>
+                                <label for="infographic-caption-length" class="font-semibold text-sm">說明文字量</label>
+                                <select id="infographic-caption-length" class="w-full mt-1 p-2 rounded bg-[var(--gray-bg)] border border-[var(--card-border)]">
+                                    <option value="short">少 (約 150 字以內)</option>
+                                    <option value="medium" selected>適中 (約 200 字以內)</option>
+                                    <option value="long">多 (約 250 字以內)</option>
+                                </select>
+                            </div>
+
+                            <!-- Action buttons -->
+                            <div class="flex items-center gap-2">
+                                <button id="generate-infographic-btn" class="w-full font-bold py-3 px-6 rounded-lg text-lg btn-primary">生成提示詞</button>
+                                <button id="generate-infographic-variation-btn"
+                                    class="font-bold py-2 px-4 rounded-lg btn-secondary text-sm whitespace-nowrap"
+                                    disabled title="生成不同風格的版本">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block"
+                                        viewBox="0 0 20 20" fill="currentColor">
+                                        <path
+                                            d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
+                                    </svg>
+                                    另一版本
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Right panel: Preview & Text Prompt (7 cols) -->
+                        <div class="md:col-span-7 flex flex-col space-y-4">
+                            <!-- Versions switcher tabs -->
+                            <div id="infographic-versions-tabs-container" class="flex border-b border-[var(--card-border)]">
+                                <!-- Version tabs (e.g. Version 1, Version 2) -->
+                            </div>
+
+                            <!-- 檢視標籤列 -->
+                            <div class="flex border-b border-[var(--card-border)] items-center">
+                                <h4 class="text-lg font-semibold heading-color px-4 py-2">提示詞預覽</h4>
+                                <div class="flex gap-2 ml-4">
+                                    <button id="infographic-tab-en" class="px-3 py-1 text-xs font-semibold rounded bg-[var(--link-color)] text-white focus:outline-none">英文提示詞</button>
+                                    <button id="infographic-tab-zh" class="px-3 py-1 text-xs font-semibold rounded bg-[var(--gray-bg)] border border-[var(--card-border)] text-[var(--body-text)] focus:outline-none">中文提示詞</button>
+                                </div>
+                                <button id="copy-infographic-prompt-btn" class="ml-auto font-bold py-1 px-3 my-1 mr-2 rounded btn-secondary text-sm hidden">複製提示詞</button>
+                            </div>
+
+                            <!-- AI 推薦分析報告區 -->
+                            <div id="infographic-analysis-report-container" class="hidden text-sm space-y-2 max-h-60 overflow-y-auto info-report-box">
+                                <h5 class="font-bold heading-color text-base border-b border-[var(--card-border)] pb-1">📊 AI 智慧圖表排版建議</h5>
+                                <div id="infographic-analysis-report-content" class="prose max-w-none text-[var(--body-text)] leading-relaxed">
+                                    <!-- AI 分析報告內容 -->
+                                </div>
+                            </div>
+
+                            <!-- 提示詞文字顯示區 -->
+                            <div id="infographic-text-container" class="flex flex-col flex-grow hidden">
+                                <textarea id="infographic-prompt-textarea" readonly
+                                    class="w-full rounded p-4 bg-[var(--gray-bg)] border border-[var(--card-border)] focus:outline-none resize-none font-mono text-sm leading-relaxed h-[68vh] select-text text-[var(--text-color)]"
+                                    placeholder="生成提示詞後會顯示於此..."></textarea>
+                            </div>
+
+                            <!-- Placeholder -->
+                            <div id="infographic-placeholder" class="flex items-center justify-center h-[68vh] text-center text-gray-500 border border-dashed border-[var(--card-border)] rounded">
+                                <div class="flex flex-col items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                    </svg>
+                                    <p class="font-semibold text-lg">為您的內容生成資訊圖表提示詞</p>
+                                    <p class="mt-2 text-sm max-w-sm">
+                                        AI 會將您的內容提煉成結構化圖表文案與布局規劃，並生成一鍵複製的 GPT/Gemini/Midjourney 資訊圖表設計提示詞。
                                         <br>
                                         您可以點擊左側按鈕開始生成。
                                     </p>
@@ -1292,6 +1479,7 @@
     <script src="js/tab3-social.js"></script>
     <script src="js/tab4-edm.js"></script>
     <script src="js/tab5-carousel.js"></script>
+    <script src="js/tab6-infographic.js"></script>
     <script src="js/app.js?v=061511"></script>
 </body>
 

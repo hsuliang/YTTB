@@ -32,63 +32,52 @@ function initializeTab5() {
     }
 
     // --- 狀態變數 ---
-    // 預設提供三個空欄位供使用者輸入，均為選填
-    let roles = ["", "", ""];
+    // 預設為空，由使用者手動點擊新增，以符合 Tab 6 設計
+    let roles = [];
+
+    // 同步 input 內容回 `roles` 陣列
+    function syncCarouselRolesFromInputs() {
+        const container = document.getElementById('carousel-roles-container');
+        if (!container) return;
+        const nameInputs = container.querySelectorAll('.carousel-role-name');
+        roles = Array.from(nameInputs).map((input) => ({
+            name: input.value.trim()
+        }));
+    }
 
     // --- 角色動態 UI 渲染與處理 ---
     function renderRoles() {
-        carouselRolesContainer.innerHTML = '';
-        roles.forEach((role, index) => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'flex items-center gap-2 w-full';
-            
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.value = role;
-            input.placeholder = `請填寫上傳圖片的角色名稱`;
-            input.className = 'flex-grow rounded p-2 text-sm';
-            input.addEventListener('input', (e) => {
-                roles[index] = e.target.value;
-            });
-            
-            wrapper.appendChild(input);
-            
-            // 在文字框後面加上「選填」字樣
-            const optionalLabel = document.createElement('span');
-            optionalLabel.className = 'text-xs text-[var(--gray-text)] whitespace-nowrap opacity-80';
-            optionalLabel.textContent = '選填';
-            wrapper.appendChild(optionalLabel);
-            
-            if (roles.length > 1) {
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'p-2 rounded text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 flex-shrink-0 transition-colors duration-200';
-                deleteBtn.title = '刪除此角色';
-                deleteBtn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                    </svg>
-                `;
-                deleteBtn.addEventListener('click', () => {
-                    roles.splice(index, 1);
-                    renderRoles();
-                });
-                wrapper.appendChild(deleteBtn);
-            }
-            
-            carouselRolesContainer.appendChild(wrapper);
-        });
+        const container = document.getElementById('carousel-roles-container');
+        const addBtn = document.getElementById('carousel-add-role-btn');
+        if (!container) return;
         
-        // 最多限制 4 個角色
-        if (roles.length >= 4) {
-            carouselAddRoleBtn.classList.add('hidden');
-        } else {
-            carouselAddRoleBtn.classList.remove('hidden');
+        container.innerHTML = '';
+        roles.forEach((role, index) => {
+            const div = document.createElement('div');
+            div.className = 'flex items-center gap-2 bg-[var(--gray-bg)] p-2 rounded border border-[var(--card-border)] relative group w-full';
+            div.innerHTML = `
+                <div class="flex-grow">
+                    <input type="text" class="carousel-role-name w-full p-1 text-xs rounded border border-[var(--card-border)] bg-[var(--bg-color)] text-[var(--body-text)]" placeholder="角色/素材名稱 (如：ㄚ亮笑長)" value="${role.name}">
+                </div>
+                <button type="button" class="carousel-delete-role-btn text-red-500 hover:text-red-700 text-xs font-semibold px-1 focus:outline-none" data-index="${index}" title="刪除此角色">✕</button>
+            `;
+            // 監聽輸入框變更事件以同步
+            const input = div.querySelector('.carousel-role-name');
+            input.addEventListener('input', () => {
+                syncCarouselRolesFromInputs();
+            });
+            container.appendChild(div);
+        });
+
+        if (addBtn) {
+            addBtn.disabled = roles.length >= 4;
         }
     }
 
     function addRole() {
         if (roles.length < 4) {
-            roles.push('');
+            syncCarouselRolesFromInputs();
+            roles.push({ name: '' });
             renderRoles();
         }
     }
@@ -234,7 +223,7 @@ function initializeTab5() {
         sourceContent = sourceContent.replace(/<[^>]+>/g, ' ');
 
         // 2. 收集有效角色
-        const validRoles = roles.map(r => r.trim()).filter(r => r !== '');
+        const validRoles = roles.filter(r => r && r.name && r.name.trim() !== '').map(r => r.name.trim());
 
         // 3. 取得 Logo 圖示開關狀態
         const includeLogoCheckbox = document.getElementById('carousel-include-logo');
@@ -282,13 +271,17 @@ ${roleLines.join('\n')}`;
                 styleDescription = `風格為自訂風格：${customStyleText}`;
             } else {
                 const styleMap = {
-                    'transcript-context-style': '風格由你決定：請依據 [原始文章] (逐字稿) 的主題情境與內涵，為這套輪播圖量身打造一個最合適的繪圖風格（例如：教育趣味主題可用溫慢Q版教育風，專業論述或科技主題可用現代極簡扁平插畫風，情感故事或文學主題可用寫實手繪水彩風等），並在第一張圖片提示詞開頭說明該風格的特點。請確保 4 張圖片提示詞在該風格下保持高度一致的視覺感與配色調性。',
-                    'warm-cute-chibi': '風格為溫慢、可愛、教育感、社群輪播風，人物為頭大身體小的 Q 版角色。整體溫暖可愛，色彩和諧',
-                    'modern-minimalist-flat': '風格為現代極簡插畫風、向量扁平插畫、乾淨簡約、社群輪播風，人物為簡約幾何線條風格',
-                    'realistic-watercolor': '風格為寫實手繪風格、手繪水彩感、細緻溫暖質感、社群輪播風，人物為水彩暈染質感風格',
-                    'auto': '風格由你決定，風格要表現在提示詞中，應適應內容的主題（例如：教育趣味可用溫慢Q版教育風，專業科技可用極簡扁平插畫風），請在每張提示詞開頭說明該風格描述'
+                    'auto': '風格由你決定，請分析 [原始文章] (逐字稿) 的主題情境與感性/理性內涵，為這套輪播圖量身打造一個最合適的插畫繪圖風格（例如：教育趣味主題可用溫慢Q版教育風，專業論述或科技主題可用現代極簡扁平插畫風，情感故事或文學主題可用寫實手繪水彩風等），並在每張圖片提示詞開頭說明該風格描述，確保 4 張圖片在該風格下保持高度一致的視覺感與配色調性。',
+                    'warm-cute-chibi': '風格為溫慢可愛Q版教育風，特徵為頭大身體小 (chibi) 的 Q 版角色、溫慢柔和的色調、厚實的手繪感線條，適合知識型與親和力強的教育內容，整體散發治癒溫馨感。',
+                    'modern-minimalist-flat': '風格為現代極簡插畫風，特徵為向量扁平插畫 (flat vector illustration)、乾淨俐落的幾何線條、高留白比例與高對比色塊，具備現代感與社群媒體的高質感。',
+                    'realistic-watercolor': '風格為寫實手繪水彩風，特徵為細緻的水彩邊緣渲染 (watercolor textures)、溫慢質樸的紙張紋理、細膩的手繪筆觸，適合情感故事、人文關懷或文學主題。',
+                    'minimalist': '風格為現代極簡幾何風，採用俐落線條、大面積留白、大字體高對比，風格具商務專業感，無多餘裝飾。',
+                    '3d-clay': '風格為 3D 黏土捏製風 (3D clay illustration)，帶有手作玩具的立體感、高質感微距光影與平滑的黏土材質表面，色彩亮麗且極具立體吸睛度。',
+                    'neo-brutalism': '風格為高對比新醜風 (Neo-Brutalism)，使用粗黑邊框、明亮對比撞色、不對稱排版與復古電腦介面風格，呈現強烈且前衛的社群風格。',
+                    'flat-business': '風格為扁平商業插畫風 (Flat business illustration)，特徵為身形比例修長的現代商業人物、柔和高雅的職場色調、結構明確的排版，呈現商務專業感。',
+                    'doodle': '風格為手繪塗鴉風 (Doodle / Sketch style)，充滿手繪感箭頭、手寫字體、手繪不規則圖框、黑白草圖線條配上局部色塊，極富活力與靈動感。'
                 };
-                styleDescription = styleMap[styleValue] || styleMap['warm-cute-chibi'];
+                styleDescription = styleMap[styleValue] || styleMap['auto'];
             }
             
             if (variationModifier) {
@@ -539,6 +532,19 @@ ${layoutInstructionsText}
     
     carouselAddRoleBtn.addEventListener('click', addRole);
     copyAllCarouselPromptsBtn.addEventListener('click', copyAllCarouselPrompts);
+
+    // 監聽角色清單點擊事件（處理刪除按鈕）
+    if (carouselRolesContainer) {
+        carouselRolesContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('carousel-delete-role-btn')) {
+                const index = parseInt(e.target.dataset.index, 10);
+                // 在刪除前先同步目前的 input 內容避免輸入資料丟失
+                syncCarouselRolesFromInputs();
+                roles.splice(index, 1);
+                renderRoles();
+            }
+        });
+    }
 
     // 初始化角色輸入框與顯示狀態
     renderRoles();
