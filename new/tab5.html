@@ -1,0 +1,402 @@
+<!DOCTYPE html><html class="dark" lang="zh-TW" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>YTTB 助手 - 輪播圖提示詞</title>
+<!-- Google Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#004395",
+                        "on-secondary-fixed": "#341100",
+                        "on-primary-fixed": "#001a42",
+                        "on-primary": "#002e6a",
+                        "on-secondary": "#552100",
+                        "surface-variant": "#2d3449",
+                        "outline-variant": "#424754",
+                        "surface-tint": "#adc6ff",
+                        "inverse-surface": "#dae2fd",
+                        "surface-container-lowest": "#060e20",
+                        "on-secondary-container": "#4a1c00",
+                        "surface-container-low": "#131b2e",
+                        "on-surface-variant": "#c2c6d6",
+                        "primary-container": "#4d8eff",
+                        "surface-container": "#171f33",
+                        "error-container": "#93000a",
+                        "surface": "#0b1326",
+                        "primary": "#adc6ff",
+                        "background": "#0b1326",
+                        "surface-dim": "#0b1326",
+                        "on-background": "#dae2fd",
+                        "primary-fixed": "#d8e2ff",
+                        "secondary": "#ffb690",
+                        "on-tertiary": "#003824",
+                        "inverse-on-surface": "#283044",
+                        "tertiary-fixed": "#6ffbbe",
+                        "outline": "#8c909f",
+                        "secondary-fixed": "#ffdbca",
+                        "on-primary-container": "#00285d",
+                        "surface-container-high": "#222a3d",
+                        "on-tertiary-container": "#00311f",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-secondary-fixed-variant": "#783200",
+                        "secondary-fixed-dim": "#ffb690",
+                        "on-tertiary-fixed": "#002113",
+                        "inverse-primary": "#005ac2",
+                        "surface-bright": "#31394d",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "surface-container-highest": "#2d3449",
+                        "on-error": "#690005",
+                        "on-surface": "#dae2fd",
+                        "tertiary": "#4edea3",
+                        "tertiary-container": "#00a572",
+                        "secondary-container": "#ec6a06",
+                        "error": "#ffb4ab",
+                        "on-error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "inner-padding": "24px",
+                        "nav-width": "280px",
+                        "margin-page": "32px",
+                        "card-gap": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "label-md": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom Scrollbar for sleek dark mode feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.surface-container-high');
+            border-radius: theme('borderRadius.full');
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.outline-variant');
+        }
+
+        /* Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .glass-input:focus {
+            border-color: theme('colors.primary');
+            box-shadow: 0 0 0 4px rgba(173, 198, 255, 0.15); /* Soft primary glow */
+            outline: none;
+        }
+
+        /* Ambient Glow for primary actions */
+        .ambient-glow {
+            box-shadow: 0 0 40px rgba(77, 142, 255, 0.1);
+        }
+        
+        /* Gradient Button */
+        .btn-gradient {
+            background: linear-gradient(135deg, theme('colors.primary-container'), theme('colors.inverse-primary'));
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-gradient:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 90, 194, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        
+        /* CTA Action Button */
+        .btn-cta {
+            background-color: theme('colors.secondary-container');
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-cta::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .btn-cta:hover::after {
+            animation: ripple 1s ease-out;
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(0, 0); opacity: 0.5; }
+            20% { transform: scale(25, 25); opacity: 0.3; }
+            100% { opacity: 0; transform: scale(40, 40); }
+        }
+
+        /* Checkbox styling */
+        .custom-checkbox {
+            appearance: none;
+            background-color: rgba(255, 255, 255, 0.05);
+            margin: 0;
+            font: inherit;
+            color: currentColor;
+            width: 1.15em;
+            height: 1.15em;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.15em;
+            display: grid;
+            place-content: center;
+        }
+
+        .custom-checkbox::before {
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em theme('colors.primary');
+            background-color: transform-origin: bottom left;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+
+        .custom-checkbox:checked::before {
+            transform: scale(1);
+        }
+        
+        .custom-checkbox:focus {
+            outline: max(2px, 0.15em) solid theme('colors.primary-container');
+            outline-offset: max(2px, 0.15em);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col md:flex-row overflow-hidden selection:bg-primary-container selection:text-white">
+<!-- TopAppBar (Visible on Mobile, Hidden on md+) -->
+<!-- SideNavBar (Hidden on Mobile, Visible on md+) -->
+<nav class="hidden md:flex flex-col fixed left-0 top-0 h-screen w-nav-width bg-surface-container-low dark:bg-surface-container-low border-r border-outline-variant/10 z-40 py-gutter px-4">
+<!-- Brand Header -->
+<div class="flex items-center gap-3 px-4 mb-8">
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-container to-inverse-primary flex items-center justify-center shadow-lg ambient-glow">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: &quot;FILL&quot; 1;">smart_toy</span>
+</div>
+<div>
+<h1 class="font-headline-md text-body-lg font-bold text-primary dark:text-primary truncate">內容助手</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">高級架構師</p>
+</div>
+</div>
+<!-- CTA Action -->
+<!-- Navigation Links -->
+<div class="flex-1 overflow-y-auto space-y-1 px-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-body-md text-body-md">逐字稿</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined">article</span>
+<span class="font-body-md text-body-md">部落格</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined">share</span>
+<span class="font-body-md text-body-md">社群貼文</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined">mail</span>
+<span class="font-body-md text-body-md">電子報</span>
+</a>
+<!-- Active State -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-bold border-l-4 border-primary bg-primary/10 transition-all duration-150 relative" href="#">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-full shadow-[0_0_8px_rgba(173,198,255,0.8)]"></div>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">view_carousel</span>
+<span class="font-body-md text-body-md">輪播圖提示詞</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined">insert_chart</span>
+<span class="font-body-md text-body-md">資訊圖表提示詞</span>
+</a>
+</div>
+<!-- Footer Links -->
+<div class="mt-auto pt-4 border-t border-outline-variant/10 space-y-1 px-2">
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-sm text-body-sm">設定</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-body-sm text-body-sm">支援</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-screen md:pt-0 md:ml-[280px] bg-surface relative overflow-hidden">
+<!-- TopAppBar (Web) -->
+<!-- Viewport Content -->
+<div class="flex-1 overflow-y-auto p-4 md:p-margin-page"><div class="mb-8"><h2 class="text-headline-md font-headline-md text-on-surface">輪播圖提示詞生成</h2></div>
+<!-- Bento / Split Card Layout -->
+<div class="flex flex-col lg:flex-row gap-card-gap h-full min-h-[600px] items-stretch">
+<!-- Left Column (Inputs / Configuration) -->
+<div class="w-full lg:w-[30%] flex-shrink-0 flex flex-col gap-4">
+<div class="glass-panel rounded-xl p-6 flex flex-col gap-6 h-full relative overflow-hidden ambient-glow bg-surface-container-low/50"><div class="flex items-center gap-2 mb-2"><span class="material-symbols-outlined text-primary">settings</span><h3 class="font-headline-md text-body-lg font-semibold text-on-surface">輪播圖設定</h3></div>
+<!-- Decorative top edge -->
+<!-- Form Scrollable Area -->
+<div class="flex-1 overflow-y-auto pr-2 space-y-6">
+<!-- Content Source -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider block">內容來源</label>
+<div class="relative">
+<select class="w-full glass-input rounded-lg px-4 py-3 text-body-md font-body-md text-on-surface appearance-none focus:ring-0 cursor-pointer">
+<option class="bg-surface-container-high text-on-surface" value="transcript">原始字幕逐字稿</option>
+<option class="bg-surface-container-high text-on-surface" value="blog">生成的部落格文章</option>
+<option class="bg-surface-container-high text-on-surface" value="manual">手動輸入文字</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-2 py-2 mt-2 rounded-lg border border-outline-variant/30 text-on-surface-variant hover:bg-surface-variant/30 hover:text-on-surface transition-colors font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+                                    最佳化文字以提升品質
+                                </button>
+</div>
+<hr class="border-outline-variant/20">
+<!-- Material/Character Settings -->
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">自訂素材/角色設定</label>
+<span class="font-body-sm text-[11px] text-on-surface-variant bg-surface-container-high px-2 py-1 rounded-full">最多 4 個</span>
+</div>
+<button class="w-full flex items-center justify-center gap-2 py-3 rounded-lg border border-dashed border-outline-variant hover:border-primary/50 hover:bg-primary/5 text-on-surface-variant hover:text-primary transition-all font-body-md text-body-sm">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+                                    新增角色
+                                </button>
+</div>
+<!-- Logo Toggle -->
+<div class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/10">
+<input class="custom-checkbox" id="includeLogo" type="checkbox">
+<label class="font-body-md text-body-sm text-on-surface cursor-pointer select-none flex-1" for="includeLogo">在提示詞中包含 Logo</label>
+</div>
+<hr class="border-outline-variant/20">
+<!-- Caption Length -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider block">說明文字長度</label>
+<div class="relative">
+<select class="w-full glass-input rounded-lg px-4 py-3 text-body-md font-body-md text-on-surface appearance-none focus:ring-0 cursor-pointer">
+<option class="bg-surface-container-high text-on-surface" value="medium">中等 (約 100 個字元)</option>
+<option class="bg-surface-container-high text-on-surface" value="short">短 (約 50 個字元)</option>
+<option class="bg-surface-container-high text-on-surface" value="long">長 (約 150 個字元)</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Layout Style -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider block">內頁排版風格</label>
+<div class="relative">
+<select class="w-full glass-input rounded-lg px-4 py-3 text-body-md font-body-md text-on-surface appearance-none focus:ring-0 cursor-pointer border-l-2 border-l-tertiary">
+<option class="bg-surface-container-high text-on-surface" value="auto">AI 智慧混搭 (系統推薦)</option>
+<option class="bg-surface-container-high text-on-surface" value="grid">標準網格</option>
+<option class="bg-surface-container-high text-on-surface" value="editorial">編輯 / 雜誌風格</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+<p class="font-body-sm text-[12px] text-on-surface-variant leading-relaxed mt-2 p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/10">
+<span class="material-symbols-outlined text-tertiary text-[14px] align-middle mr-1">lightbulb</span>
+                                    內頁排版由 AI 智慧混搭推薦。請分析文章此段落的語氣和屬性，靈活選擇最合適的風格。
+                                </p>
+</div>
+<!-- Image Style -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider block">圖片風格</label>
+<div class="relative">
+<select class="w-full glass-input rounded-lg px-4 py-3 text-body-md font-body-md text-on-surface appearance-none focus:ring-0 cursor-pointer">
+<option class="bg-surface-container-high text-on-surface" value="auto">AI 自動決定風格 (推薦)</option>
+<option class="bg-surface-container-high text-on-surface" value="photo">寫實照片</option>
+<option class="bg-surface-container-high text-on-surface" value="illustrate">向量插畫</option>
+<option class="bg-surface-container-high text-on-surface" value="3d">3D 算圖</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Actions -->
+<div class="pt-4 border-t border-outline-variant/20 flex gap-3 mt-auto"><button class="px-4 rounded-lg bg-surface-container-high border border-outline-variant/30 text-on-surface hover:bg-surface-variant/50 transition-colors flex items-center justify-center group" title="其他版本">
+<span class="material-symbols-outlined group-hover:rotate-180 transition-transform duration-500">swap_vert</span>
+</button>
+<button class="flex-1 btn-cta rounded-lg py-3 font-headline-md text-body-md font-semibold tracking-wide shadow-lg">
+                                生成提示詞
+                            </button></div>
+</div>
+</div>
+<!-- Right Column (Output / Preview Canvas) -->
+<div class="lg:w-[70%] flex-1 glass-panel rounded-xl flex flex-col overflow-hidden relative bg-surface-container-low/30"><div class="px-6 py-4 border-b border-outline-variant/20 flex justify-between items-center bg-surface/30"><h3 class="font-headline-md text-body-lg font-semibold text-on-surface flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[20px]">visibility</span>內容預覽</h3><div class="flex gap-2"><button class="p-2 rounded-md hover:bg-surface-variant/50 text-on-surface-variant transition-colors" title="匯出"><span class="material-symbols-outlined text-[18px]">download</span></button><button class="p-2 rounded-md hover:bg-surface-variant/50 text-on-surface-variant transition-colors" title="全螢幕"><span class="material-symbols-outlined text-[18px]">fullscreen</span></button></div></div><div class="flex-1 flex flex-col items-center justify-center text-center p-8 relative"><div class="absolute inset-0 overflow-hidden pointer-events-none opacity-20"><div class="absolute -top-24 -right-24 w-96 h-96 bg-primary-container rounded-full blur-[100px]"></div><div class="absolute -bottom-24 -left-24 w-96 h-96 bg-inverse-primary rounded-full blur-[100px]"></div></div><span class="material-symbols-outlined text-[48px] text-on-surface-variant opacity-50 mb-4">photo_library</span><h4 class="font-headline-md text-headline-md text-on-surface mb-3 relative z-10">為您的內容生成輪播圖提示詞</h4><p class="font-body-md text-body-md text-on-surface-variant max-w-md mx-auto leading-relaxed relative z-10">AI 將把您標記的內容轉換成連貫的 4 頁故事性輪播圖提示詞，並包含設計好的標題文案。<br><br>點擊左側的生成按鈕開始。</p></div></div>
+</div>
+</div>
+</main>
+
+
+
+
+</body></html>

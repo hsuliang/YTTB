@@ -1,0 +1,297 @@
+<!DOCTYPE html><html class="dark" lang="zh-TW" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>YTTB 助手 - 逐字稿</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#004395",
+                        "on-secondary-fixed": "#341100",
+                        "on-primary-fixed": "#001a42",
+                        "on-primary": "#002e6a",
+                        "on-secondary": "#552100",
+                        "surface-variant": "#2d3449",
+                        "outline-variant": "#424754",
+                        "surface-tint": "#adc6ff",
+                        "inverse-surface": "#dae2fd",
+                        "surface-container-lowest": "#060e20",
+                        "on-secondary-container": "#4a1c00",
+                        "surface-container-low": "#131b2e",
+                        "on-surface-variant": "#c2c6d6",
+                        "primary-container": "#4d8eff",
+                        "surface-container": "#171f33",
+                        "error-container": "#93000a",
+                        "surface": "#0b1326",
+                        "primary": "#adc6ff",
+                        "background": "#0b1326",
+                        "surface-dim": "#0b1326",
+                        "on-background": "#dae2fd",
+                        "primary-fixed": "#d8e2ff",
+                        "secondary": "#ffb690",
+                        "on-tertiary": "#003824",
+                        "inverse-on-surface": "#283044",
+                        "tertiary-fixed": "#6ffbbe",
+                        "outline": "#8c909f",
+                        "secondary-fixed": "#ffdbca",
+                        "on-primary-container": "#00285d",
+                        "surface-container-high": "#222a3d",
+                        "on-tertiary-container": "#00311f",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-secondary-fixed-variant": "#783200",
+                        "secondary-fixed-dim": "#ffb690",
+                        "on-tertiary-fixed": "#002113",
+                        "inverse-primary": "#005ac2",
+                        "surface-bright": "#31394d",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "surface-container-highest": "#2d3449",
+                        "on-error": "#690005",
+                        "on-surface": "#dae2fd",
+                        "tertiary": "#4edea3",
+                        "tertiary-container": "#00a572",
+                        "secondary-container": "#ec6a06",
+                        "error": "#ffb4ab",
+                        "on-error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "inner-padding": "24px",
+                        "nav-width": "280px",
+                        "margin-page": "32px",
+                        "card-gap": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "label-md": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom styles for Range Sliders */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: theme('colors.primary');
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 0 10px theme('colors.primary-container');
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: theme('colors.surface-variant');
+            border-radius: 2px;
+        }
+        input[type=range]:focus {
+            outline: none;
+        }
+        input[type=range]:focus::-webkit-slider-runnable-track {
+            background: theme('colors.outline-variant');
+        }
+
+        /* Glassmorphism utils */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-input:focus {
+            border-color: theme('colors.primary');
+            box-shadow: 0 0 0 4px rgba(77, 142, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-screen py-gutter px-4 bg-surface-container-low dark:bg-surface-container-low border-r border-outline-variant/10 fixed left-0 top-0 w-nav-width z-50">
+<!-- Header -->
+<div class="flex items-center gap-3 mb-8 px-2">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-primary-container">account_circle</span>
+</div>
+<div><h1 class="font-bold text-primary dark:text-primary leading-tight whitespace-nowrap text-[18px]">ㄚ亮校長的內容助手</h1></div>
+</div>
+<!-- CTA -->
+<!-- Main Nav -->
+<div class="flex-1 flex flex-col overflow-y-auto gap-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-bold border-l-4 border-primary bg-primary/10 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-md text-label-md">逐字稿</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined">article</span>
+<span class="font-label-md text-label-md">部落格文章</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined">share</span>
+<span class="font-label-md text-label-md">社群貼文</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined">mail</span>
+<span class="font-label-md text-label-md">電子報</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined">view_carousel</span>
+<span class="font-label-md text-label-md">輪播圖提示詞</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined">insert_chart</span>
+<span class="font-label-md text-label-md">資訊圖表提示詞</span>
+</a>
+</div>
+<!-- Footer Nav -->
+<div class="mt-auto pt-4 border-t border-outline-variant/10 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">設定</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">支援</span>
+</a>
+</div>
+</nav>
+<!-- TopAppBar -->
+<!-- Main Content Area -->
+<main class="flex-1 ml-[theme(spacing.nav-width)] overflow-y-auto p-6">
+<div class="max-w-[1600px] mx-auto flex flex-col gap-card-gap h-[calc(100vh-8rem)] h-full">
+<!-- Page Header -->
+<div class="flex justify-between items-end shrink-0">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">內容整理與優化</h2>
+</div>
+</div>
+<!-- Split Card Layout -->
+<div class="flex flex-col lg:flex-row flex-1 min-h-[600px] gap-4">
+<!-- Left Column: Settings Panel -->
+<div class="w-full lg:w-[30%] bg-surface-container/50 backdrop-blur-md rounded-2xl border border-outline-variant/20 flex flex-col overflow-y-auto p-4 gap-4">
+<!-- Upload Area -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<label class="font-headline-md text-headline-md text-on-surface">逐字稿設定</label>
+<button class="text-primary hover:text-primary-fixed text-label-md font-label-md flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px]">help</span>
+          如何取得字幕？
+        </button>
+</div>
+<div class="w-full glass-input rounded-lg border-dashed border-2 flex flex-col items-center justify-center p-8 text-center group hover:border-primary transition-colors cursor-pointer relative overflow-hidden min-h-[320px]">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-surface-variant/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+<span class="material-symbols-outlined text-4xl text-on-surface-variant mb-4 group-hover:text-primary transition-colors">upload_file</span>
+<p class="font-body-lg text-body-lg text-on-surface mb-2">將逐字稿拖放至此</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">或 <span class="text-primary font-medium">點擊上傳</span> .srt 檔案</p>
+<input accept=".srt,.txt" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" type="file">
+</div>
+</div>
+<!-- Settings -->
+<div class="flex flex-col gap-6">
+<div class="flex flex-col gap-4"><div class="flex-1"><div class="flex justify-between items-center mb-2"><label class="font-label-md text-label-md text-on-surface-variant">每行最多字數</label><span class="font-body-md text-body-md font-medium text-primary">27</span></div><input type="range" min="10" max="100" value="27" class="w-full h-1.5 bg-surface-variant rounded-lg appearance-none cursor-pointer accent-secondary-container"></div><div class="flex-1"><div class="flex justify-between items-center mb-2"><label class="font-label-md text-label-md text-on-surface-variant">最小合併字數</label><span class="font-body-md text-body-md font-medium text-primary">3</span></div><input type="range" min="1" max="10" value="3" class="w-full h-1.5 bg-surface-variant rounded-lg appearance-none cursor-pointer accent-secondary-container"></div></div>
+<div class="flex flex-col items-start gap-4">
+<label class="flex items-center gap-2 cursor-pointer group">
+<div class="relative flex items-center justify-center w-5 h-5">
+<input checked="" class="peer appearance-none w-5 h-5 border-2 border-outline-variant rounded bg-transparent checked:bg-primary checked:border-primary transition-colors cursor-pointer" type="checkbox">
+<span class="material-symbols-outlined absolute text-[16px] text-on-primary-fixed opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity">check</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface group-hover:text-primary transition-colors">保留標點符號</span>
+</label>
+
+</div>
+<div class="flex items-center gap-3">
+
+
+</div>
+<div class="flex gap-3 mt-2 flex-row">
+<button class="px-4 py-3 rounded-lg border border-outline-variant/30 text-on-surface hover:bg-surface-variant/20 transition-all flex items-center justify-center gap-2 flex-1">
+<span class="material-symbols-outlined">refresh</span>重置
+        </button>
+<button class="flex-1 py-3 rounded-lg bg-secondary-container text-on-secondary-container font-bold hover:bg-secondary-container/90 transition-all flex items-center justify-center gap-2 group">
+<span class="material-symbols-outlined group-hover:animate-bounce">rocket_launch</span>開始處理
+        </button>
+</div>
+</div>
+</div>
+<!-- Right Column: Preview Panel -->
+<div class="w-full lg:w-[70%] bg-surface-container/50 backdrop-blur-md rounded-2xl border border-outline-variant/20 relative flex flex-col overflow-hidden">
+<div class="p-6 border-b border-outline-variant/20 flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md text-on-surface">內容預覽</h3>
+<span class="glass-panel px-3 py-1 rounded-full text-label-md font-label-md text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">analytics</span>
+        字數：0
+      </span>
+</div>
+<div class="flex-1 p-6 overflow-y-auto">
+<div class="h-full flex flex-col items-center justify-center text-center text-on-surface-variant/50">
+<span class="material-symbols-outlined text-6xl mb-4 opacity-50">data_object</span>
+<p class="font-body-lg text-body-lg">處理後的內容將顯示於此</p>
+<p class="font-body-sm text-body-sm mt-2 max-w-sm">上傳逐字稿並點擊「開始處理」以查看最佳化結果。</p>
+</div>
+</div>
+<div class="p-4 border-t border-outline-variant/20 bg-surface/30 backdrop-blur-sm flex flex-wrap gap-3 items-center justify-center">
+<button class="px-5 py-2.5 rounded-lg border border-outline-variant/30 text-on-surface hover:bg-surface-variant/30 hover:border-outline-variant transition-all font-label-md text-label-md flex items-center gap-2 opacity-50 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]">download</span>
+        匯出 SRT
+      </button>
+<div class="w-px h-6 bg-outline-variant/30 mx-1"></div>
+<button class="px-5 py-2.5 rounded-lg border border-outline-variant/30 text-on-surface hover:bg-surface-variant/30 hover:border-outline-variant transition-all font-label-md text-label-md flex items-center gap-2 opacity-50 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]">find_replace</span>
+        批次取代
+      </button>
+<button class="px-5 py-2.5 rounded-lg border border-outline-variant/30 text-on-surface hover:bg-surface-variant/30 hover:border-outline-variant transition-all font-label-md text-label-md flex items-center gap-2 opacity-50 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]">summarize</span>
+        生成摘要
+      </button>
+<button class="px-5 py-2.5 rounded-lg border border-outline-variant/30 text-on-surface hover:bg-surface-variant/30 hover:border-outline-variant transition-all font-label-md text-label-md flex items-center gap-2 opacity-50 cursor-not-allowed" disabled="">
+<span class="material-symbols-outlined text-[18px]">format_list_numbered</span>
+        生成章節
+      </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+
+</body></html>

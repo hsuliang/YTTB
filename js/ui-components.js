@@ -10,19 +10,21 @@ const moonIcon = document.getElementById('moon-icon');
 
 // 函式 (新增)
 window.applyMode = function(mode) {
-    if (mode === 'dark') {
-        sunIcon.classList.add('hidden');
-        moonIcon.classList.remove('hidden');
-        // 如果當前是亮色主題，切換到預設的暗色主題
-        if (document.body.dataset.theme !== 'dark-knight') {
-             window.applyTheme('dark-knight');
-        }
-    } else {
-        sunIcon.classList.remove('hidden');
-        moonIcon.classList.add('hidden');
-        // 如果當前是暗色主題，切換回預設的亮色主題
-        if (document.body.dataset.theme === 'dark-knight') {
-            window.applyTheme(localStorage.getItem('selectedLightTheme') || 'old-newspaper');
+    if (sunIcon && moonIcon) {
+        if (mode === 'dark') {
+            sunIcon.classList.add('hidden');
+            moonIcon.classList.remove('hidden');
+            // 如果當前是亮色主題，切換到預設的暗色主題
+            if (document.body.dataset.theme !== 'dark-knight') {
+                 window.applyTheme('dark-knight');
+            }
+        } else {
+            sunIcon.classList.remove('hidden');
+            moonIcon.classList.add('hidden');
+            // 如果當前是暗色主題，切換回預設的亮色主題
+            if (document.body.dataset.theme === 'dark-knight') {
+                window.applyTheme(localStorage.getItem('selectedLightTheme') || 'old-newspaper');
+            }
         }
     }
     localStorage.setItem('selectedMode', mode);
@@ -53,13 +55,15 @@ window.applyTheme = function(themeName) {
 
 // 函式 (新增)
 window.updateModeIcons = function() {
-     const currentMode = localStorage.getItem('selectedMode') || 'light';
-     if (currentMode === 'dark') {
-        sunIcon.classList.add('hidden');
-        moonIcon.classList.remove('hidden');
-     } else {
-        sunIcon.classList.remove('hidden');
-        moonIcon.classList.add('hidden');
+     if (sunIcon && moonIcon) {
+         const currentMode = localStorage.getItem('selectedMode') || 'light';
+         if (currentMode === 'dark') {
+            sunIcon.classList.add('hidden');
+            moonIcon.classList.remove('hidden');
+         } else {
+            sunIcon.classList.remove('hidden');
+            moonIcon.classList.add('hidden');
+         }
      }
 }
 
@@ -167,7 +171,7 @@ window.showToast = function(message, options = {}) {
 
 window.showModal = function(options) {
     window.stopPromptRotation();
-    const { title, message, showCopyButton = false, showProgressBar = false, buttons = [], taskType = null, isHtml = false } = options;
+    const { title, message, showCopyButton = false, showProgressBar = false, buttons = [], taskType = null, isHtml = false, large = false } = options;
     
     const modal = document.getElementById('modal');
     const modalTitle = document.getElementById('modal-title');
@@ -184,6 +188,18 @@ window.showModal = function(options) {
     }
     if (modalModelName) {
         modalModelName.textContent = '';
+    }
+
+    // Adjust width for large modals
+    const modalCard = modal.querySelector('.glass-panel, .main-card') || modal.firstElementChild;
+    if (modalCard) {
+        if (large) {
+            modalCard.classList.remove('md:w-1/2', 'max-w-lg');
+            modalCard.classList.add('md:w-[65%]', 'max-w-3xl');
+        } else {
+            modalCard.classList.remove('md:w-[65%]', 'max-w-3xl');
+            modalCard.classList.add('md:w-1/2', 'max-w-lg');
+        }
     }
 
     modalTitle.textContent = title;
@@ -213,7 +229,7 @@ window.showModal = function(options) {
         buttons.forEach(btnInfo => {
             const button = document.createElement('button');
             button.textContent = btnInfo.text;
-            button.className = `font-bold py-2 px-4 rounded ${btnInfo.class}`;
+            button.className = `font-bold py-2 px-4 rounded-lg text-xs hover:brightness-110 shadow-md transition-all ${btnInfo.class}`;
             button.addEventListener('click', btnInfo.callback);
             modalCustomButtons.appendChild(button);
         });
@@ -249,6 +265,18 @@ window.copyModalContent = function() {
 window.toggleAccordion = function(btn, panel) {
     btn.classList.toggle('open');
     panel.classList.toggle('open');
+    panel.classList.toggle('hidden');
+    
+    // Rotate the arrow icon if present
+    const arrow = btn.querySelector('.material-symbols-outlined, svg');
+    if (arrow) {
+        if (arrow.classList.contains('material-symbols-outlined')) {
+            arrow.style.transform = panel.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+        } else {
+            // For old SVG arrow compatibility
+            arrow.style.transform = btn.classList.contains('open') ? 'rotate(90deg)' : '';
+        }
+    }
 }
 
 window.populateSelectWithOptions = function(selectElement, options) {

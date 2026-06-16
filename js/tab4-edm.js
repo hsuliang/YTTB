@@ -31,7 +31,8 @@ function initializeTab4() {
 
     // --- UI 更新函式 ---
     function renderEdmVersionTabs() {
-        edmVersionsTabsContainer.innerHTML = '';
+        const tabsContainer = document.getElementById('edm-version-tabs-list') || edmVersionsTabsContainer;
+        tabsContainer.innerHTML = '';
         state.edmVersions.forEach((version, index) => {
             const tab = document.createElement('button');
             tab.className = 'tab-btn text-sm py-2 px-4';
@@ -40,7 +41,7 @@ function initializeTab4() {
                 tab.classList.add('active');
             }
             tab.addEventListener('click', () => switchEdmVersionView(index));
-            edmVersionsTabsContainer.appendChild(tab);
+            tabsContainer.appendChild(tab);
         });
     }
     
@@ -180,8 +181,9 @@ function initializeTab4() {
         const currentContent = state.edmVersions[state.currentEdmVersionIndex].htmlContent;
         navigator.clipboard.writeText(currentContent).then(() => {
             showToast('HTML 原始碼已複製！');
-            copyEdmHtmlBtn.textContent = '已複製!';
-            setTimeout(() => { copyEdmHtmlBtn.textContent = '複製 HTML'; }, 2000);
+            const originalHtml = copyEdmHtmlBtn.innerHTML;
+            copyEdmHtmlBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">check</span>已複製!';
+            setTimeout(() => { copyEdmHtmlBtn.innerHTML = originalHtml; }, 2000);
         });
     }
 

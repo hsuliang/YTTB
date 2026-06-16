@@ -540,14 +540,27 @@
 
         // 依目前語言填入提示詞並切換頁籤樣式
         if (enTab && zhTab) {
-            if (activePromptLang === 'zh') {
-                enTab.className = 'px-3 py-1 text-xs font-semibold rounded bg-[var(--gray-bg)] border border-[var(--card-border)] text-[var(--body-text)] focus:outline-none';
-                zhTab.className = 'px-3 py-1 text-xs font-semibold rounded bg-[var(--link-color)] text-white focus:outline-none';
-                if (promptTextarea) promptTextarea.value = currentVersion.promptTextZh || currentVersion.promptTextEn || '';
+            const isLumina = enTab.classList.contains('rounded-md') || document.querySelector('.bg-secondary');
+            if (isLumina) {
+                if (activePromptLang === 'zh') {
+                    enTab.className = 'px-3 py-1 rounded-md text-xs font-semibold text-on-surface-variant hover:text-on-surface bg-transparent transition-colors';
+                    zhTab.className = 'px-3 py-1 rounded-md text-xs font-semibold bg-secondary text-[#341100] shadow-sm transition-colors';
+                    if (promptTextarea) promptTextarea.value = currentVersion.promptTextZh || currentVersion.promptTextEn || '';
+                } else {
+                    enTab.className = 'px-3 py-1 rounded-md text-xs font-semibold bg-secondary text-[#341100] shadow-sm transition-colors';
+                    zhTab.className = 'px-3 py-1 rounded-md text-xs font-semibold text-on-surface-variant hover:text-on-surface bg-transparent transition-colors';
+                    if (promptTextarea) promptTextarea.value = currentVersion.promptTextEn || '';
+                }
             } else {
-                enTab.className = 'px-3 py-1 text-xs font-semibold rounded bg-[var(--link-color)] text-white focus:outline-none';
-                zhTab.className = 'px-3 py-1 text-xs font-semibold rounded bg-[var(--gray-bg)] border border-[var(--card-border)] text-[var(--body-text)] focus:outline-none';
-                if (promptTextarea) promptTextarea.value = currentVersion.promptTextEn || '';
+                if (activePromptLang === 'zh') {
+                    enTab.className = 'px-3 py-1 text-xs font-semibold rounded bg-[var(--gray-bg)] border border-[var(--card-border)] text-[var(--body-text)] focus:outline-none';
+                    zhTab.className = 'px-3 py-1 text-xs font-semibold rounded bg-[var(--link-color)] text-white focus:outline-none';
+                    if (promptTextarea) promptTextarea.value = currentVersion.promptTextZh || currentVersion.promptTextEn || '';
+                } else {
+                    enTab.className = 'px-3 py-1 text-xs font-semibold rounded bg-[var(--link-color)] text-white focus:outline-none';
+                    zhTab.className = 'px-3 py-1 text-xs font-semibold rounded bg-[var(--gray-bg)] border border-[var(--card-border)] text-[var(--body-text)] focus:outline-none';
+                    if (promptTextarea) promptTextarea.value = currentVersion.promptTextEn || '';
+                }
             }
         }
     }

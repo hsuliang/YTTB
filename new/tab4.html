@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-TW" style=""><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>YTTB 內容創作助手 - 電子報生成</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-fixed-variant": "#004395",
+                      "on-secondary-fixed": "#341100",
+                      "on-primary-fixed": "#001a42",
+                      "on-primary": "#002e6a",
+                      "on-secondary": "#552100",
+                      "surface-variant": "#2d3449",
+                      "outline-variant": "#424754",
+                      "surface-tint": "#adc6ff",
+                      "inverse-surface": "#dae2fd",
+                      "surface-container-lowest": "#060e20",
+                      "on-secondary-container": "#4a1c00",
+                      "surface-container-low": "#131b2e",
+                      "on-surface-variant": "#c2c6d6",
+                      "primary-container": "#4d8eff",
+                      "surface-container": "#171f33",
+                      "error-container": "#93000a",
+                      "surface": "#0b1326",
+                      "primary": "#adc6ff",
+                      "background": "#0b1326",
+                      "surface-dim": "#0b1326",
+                      "on-background": "#dae2fd",
+                      "primary-fixed": "#d8e2ff",
+                      "secondary": "#ffb690",
+                      "on-tertiary": "#003824",
+                      "inverse-on-surface": "#283044",
+                      "tertiary-fixed": "#6ffbbe",
+                      "outline": "#8c909f",
+                      "secondary-fixed": "#ffdbca",
+                      "on-primary-container": "#00285d",
+                      "surface-container-high": "#222a3d",
+                      "on-tertiary-container": "#00311f",
+                      "tertiary-fixed-dim": "#4edea3",
+                      "on-secondary-fixed-variant": "#783200",
+                      "secondary-fixed-dim": "#ffb690",
+                      "on-tertiary-fixed": "#002113",
+                      "inverse-primary": "#005ac2",
+                      "surface-bright": "#31394d",
+                      "primary-fixed-dim": "#adc6ff",
+                      "on-tertiary-fixed-variant": "#005236",
+                      "surface-container-highest": "#2d3449",
+                      "on-error": "#690005",
+                      "on-surface": "#dae2fd",
+                      "tertiary": "#4edea3",
+                      "tertiary-container": "#00a572",
+                      "secondary-container": "#ec6a06",
+                      "error": "#ffb4ab",
+                      "on-error-container": "#ffdad6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "inner-padding": "24px",
+                      "nav-width": "280px",
+                      "margin-page": "32px",
+                      "card-gap": "20px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Hanken Grotesk"],
+                      "display-lg": ["Hanken Grotesk"],
+                      "headline-lg-mobile": ["Hanken Grotesk"],
+                      "body-lg": ["Inter"],
+                      "headline-md": ["Hanken Grotesk"],
+                      "body-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "label-md": ["JetBrains Mono"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-surface');
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.surface-variant');
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.outline-variant');
+        }
+
+        /* Glassmorphism utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+        .glass-input:focus {
+            border-color: theme('colors.primary');
+            box-shadow: 0 0 0 4px rgba(173, 198, 255, 0.15);
+            outline: none;
+        }
+
+        .cta-glow:hover {
+            box-shadow: 0 0 20px rgba(236, 106, 6, 0.3);
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<nav class="bg-surface-container-low dark:bg-surface-container-low border-r border-outline-variant/10 fixed left-0 top-0 h-screen w-nav-width flex flex-col h-full py-gutter px-4 z-50">
+<div class="flex items-center gap-3 mb-8 px-2">
+<div class="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-outline-variant/20">
+<img alt="使用者個人檔案" class="w-full h-full object-cover" data-alt="A professional headshot of a young adult with a subtle, confident smile, lit with soft studio lighting against a neutral dark grey background, fitting a sleek corporate profile aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYSh6pcOnrzweEWZ65qTQt7IFCkPP4SaEkEPdnw9WAVb0NeI8NssltNSn16wXn-nnxv0W9_IBRba4avBFYJF-ycTzc7PrQSiH9ga-4vO9cB9DZVFNMbZTgDdoPFS7p5SDE2HtZt9XPuTpnHaA3jviosFXpLTT3bmsv7sbvEpRQu4oWICAiR96C4-ELovbLdf_9wQkSMvilP-NPX7V25ZGmAKtMIQvxAWVo2aXmLQ9MpcGOSoK8A0VTTaFPKaTAHm6JR1r8Ze3o_ejI"/>
+</div>
+<div>
+<h1 class="font-headline-md text-[18px] leading-tight font-bold text-primary whitespace-nowrap">ㄚ亮校長的內容助手</h1>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto">
+<ul class="space-y-1">
+<li class="">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+<span class="font-body-md text-body-md">逐字稿</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">article</span>
+<span class="font-body-md text-body-md">部落格</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">share</span>
+<span class="font-body-md text-body-md">社群貼文</span>
+</a>
+</li>
+<!-- ACTIVE ITEM -->
+<li class="">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary font-bold border-l-4 border-primary bg-primary/10 scale-95 duration-150 relative left-[-4px] w-[calc(100%+4px)]" href="#">
+<span class="material-symbols-outlined text-[20px]" style='font-variation-settings: "FILL" 1;'>mail</span>
+<span class="font-body-md text-body-md">電子報</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">view_carousel</span>
+<span class="font-body-md text-body-md">輪播圖提示詞</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">insert_chart</span>
+<span class="font-body-md text-body-md">資訊圖表提示詞</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="pt-4 mt-auto border-t border-outline-variant/10">
+<ul class="space-y-1">
+<li class="">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-body-md text-body-md">設定</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span class="font-body-md text-body-md">支援</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 ml-nav-width flex flex-col min-h-screen relative bg-surface">
+<!-- Ambient Background Glows -->
+<div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="absolute bottom-0 right-0 w-[600px] h-[400px] bg-secondary-container/5 rounded-full blur-[150px] pointer-events-none"></div>
+<!-- TopAppBar -->
+<!-- Page Content: Split-Card Layout -->
+<main class="flex-1 px-margin-page flex flex-col z-10 pb-4 pt-8">
+<div class="flex justify-between items-end mb-6">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">電子報內容生成</h2>
+</div>
+</div>
+<!-- The Split Card Container -->
+<div class="flex gap-6 w-full" style="min-height: 600px;">
+<!-- Left Column: Settings (Inputs) -->
+<div class="w-[30%] glass-panel rounded-2xl p-8 flex flex-col h-full overflow-y-auto shadow-2xl shadow-black/20">
+<h3 class="font-headline-md text-headline-md text-primary-fixed-dim mb-8 flex items-center gap-2"><span class="material-symbols-outlined text-[22px]">tune</span>電子報設定</h3>
+<div class="space-y-8 flex-1">
+<!-- Content Source -->
+<div class="space-y-3">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">內容來源</label>
+<div class="glass-input rounded-xl p-4 flex items-start gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-variant/50 flex items-center justify-center shrink-0 border border-outline-variant/30">
+<span class="material-symbols-outlined text-primary-fixed-dim">subtitles</span>
+</div>
+<div>
+<p class="font-body-sm text-on-surface font-medium mb-1">字幕來源檔案</p>
+<p class="text-[12px] text-outline">為閱讀流暢度進行最佳化</p>
+</div>
+</div>
+<button class="w-full mt-2 py-2.5 px-4 rounded-lg border border-primary/30 text-primary-fixed-dim font-label-md text-label-md hover:bg-primary/10 transition-colors flex items-center justify-center gap-2 group">
+<span class="material-symbols-outlined text-[18px] group-hover:rotate-180 transition-transform duration-500">auto_awesome</span>
+                                最佳化文字以提升品質
+                            </button>
+</div>
+<hr class="border-outline-variant/20"/>
+<!-- Target Audience -->
+<div class="space-y-3">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider" for="audience">目標受眾</label>
+<div class="relative">
+<select class="glass-input w-full appearance-none rounded-lg py-3 px-4 text-body-sm text-on-surface pr-10 cursor-pointer" id="audience">
+<option class="bg-surface text-on-surface" value="new">新訂閱者</option>
+<option class="bg-surface text-on-surface" value="engaged">高互動客群</option>
+<option class="bg-surface text-on-surface" value="all">一般大眾</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Writing Style -->
+<div class="space-y-3">
+<label class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider" for="style">寫作風格</label>
+<div class="relative">
+<select class="glass-input w-full appearance-none rounded-lg py-3 px-4 text-body-sm text-on-surface pr-10 cursor-pointer" id="style">
+<option class="bg-surface text-on-surface" value="knowledge">知識分享</option>
+<option class="bg-surface text-on-surface" value="story">故事敘述</option>
+<option class="bg-surface text-on-surface" value="promotional">直接推廣</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="pt-8 mt-8 border-t border-outline-variant/20 flex gap-3"><button class="px-4 py-3 rounded-xl border border-outline-variant/30 text-on-surface hover:bg-surface-variant/30 hover:border-outline-variant/60 transition-colors flex items-center justify-center" title="另一個版本"><span class="material-symbols-outlined">sync</span></button>
+<button class="flex-1 bg-secondary-container text-on-secondary-container font-headline-md text-[16px] font-bold py-3.5 rounded-xl hover:opacity-95 transition-all cta-glow flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">mark_email_read</span>
+                            生成電子報
+                        </button>
+</div>
+</div>
+<!-- Right Column: Output/Preview -->
+<div class="w-[70%] glass-panel rounded-2xl p-8 flex flex-col relative shadow-2xl shadow-black/20">
+<div class="flex justify-between items-center mb-8 border-b border-outline-variant/10 pb-4">
+<h3 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2"><span class="material-symbols-outlined text-[20px] text-outline">preview</span>內容預覽</h3>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg text-outline hover:text-on-surface hover:bg-surface-variant/30 transition-colors">
+<span class="material-symbols-outlined text-[20px]">content_copy</span>
+</button>
+<button class="p-2 rounded-lg text-outline hover:text-on-surface hover:bg-surface-variant/30 transition-colors">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+</div>
+</div>
+<!-- Canvas Area (Empty State) -->
+<div class="flex-1 flex flex-col items-center justify-center text-center p-8 glass-input rounded-xl border-dashed border-2 border-outline-variant/20">
+<div class="w-24 h-24 rounded-full bg-surface-variant/30 flex items-center justify-center mb-6 shadow-[0_0_40px_rgba(173,198,255,0.05)] border border-outline-variant/10">
+<span class="material-symbols-outlined text-[48px] text-outline-variant/60" style='font-variation-settings: "wght" 200;'>drafts</span>
+</div>
+<h4 class="font-headline-md text-[20px] text-on-surface mb-3">將您的內容轉化為吸引人的電子報</h4>
+<p class="font-body-md text-body-md text-outline max-w-md mx-auto leading-relaxed">
+                            為獲得最佳效果，AI 將優先使用您先前生成的「部落格文章」或「最佳化文字」。 
+                            <br/><br/>
+                            點擊左側的「最佳化文字」按鈕以提升素材品質，或直接開始生成。
+                        </p>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

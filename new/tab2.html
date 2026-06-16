@@ -1,0 +1,295 @@
+<!DOCTYPE html><html class="dark" lang="zh-TW" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>部落格文章生成 - YTTB 內容創作者助手</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#004395",
+                        "on-secondary-fixed": "#341100",
+                        "on-primary-fixed": "#001a42",
+                        "on-primary": "#002e6a",
+                        "on-secondary": "#552100",
+                        "surface-variant": "#2d3449",
+                        "outline-variant": "#424754",
+                        "surface-tint": "#adc6ff",
+                        "inverse-surface": "#dae2fd",
+                        "surface-container-lowest": "#060e20",
+                        "on-secondary-container": "#4a1c00",
+                        "surface-container-low": "#131b2e",
+                        "on-surface-variant": "#c2c6d6",
+                        "primary-container": "#4d8eff",
+                        "surface-container": "#171f33",
+                        "error-container": "#93000a",
+                        "surface": "#0b1326",
+                        "primary": "#adc6ff",
+                        "background": "#0b1326",
+                        "surface-dim": "#0b1326",
+                        "on-background": "#dae2fd",
+                        "primary-fixed": "#d8e2ff",
+                        "secondary": "#ffb690",
+                        "on-tertiary": "#003824",
+                        "inverse-on-surface": "#283044",
+                        "tertiary-fixed": "#6ffbbe",
+                        "outline": "#8c909f",
+                        "secondary-fixed": "#ffdbca",
+                        "on-primary-container": "#00285d",
+                        "surface-container-high": "#222a3d",
+                        "on-tertiary-container": "#00311f",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "on-secondary-fixed-variant": "#783200",
+                        "secondary-fixed-dim": "#ffb690",
+                        "on-tertiary-fixed": "#002113",
+                        "inverse-primary": "#005ac2",
+                        "surface-bright": "#31394d",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "surface-container-highest": "#2d3449",
+                        "on-error": "#690005",
+                        "on-surface": "#dae2fd",
+                        "tertiary": "#4edea3",
+                        "tertiary-container": "#00a572",
+                        "secondary-container": "#ec6a06",
+                        "error": "#ffb4ab",
+                        "on-error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "inner-padding": "24px",
+                        "nav-width": "280px",
+                        "margin-page": "32px",
+                        "card-gap": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-md": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "label-md": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background-color: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-input {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease-in-out;
+        }
+        .glass-input:focus {
+            border-color: #adc6ff;
+            box-shadow: 0 0 8px rgba(173, 198, 255, 0.3);
+            outline: none;
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen selection:bg-primary/30">
+<!-- TopAppBar -->
+
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-screen w-nav-width bg-surface-container-low dark:bg-surface-container-low border-r border-outline-variant/10 flex flex-col py-gutter px-4 z-50">
+<!-- Brand / Header -->
+<div class="flex items-center gap-3 mb-8 px-2">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-container to-inverse-primary flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(77,142,255,0.2)]">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: &quot;FILL&quot; 1;">architecture</span>
+</div>
+<div>
+<h1 class="font-bold text-primary dark:text-primary leading-tight text-[20px] truncate">ㄚ亮笑長的內容助手</h1>
+
+</div>
+</div>
+<!-- CTA -->
+
+<!-- Main Navigation Tabs -->
+<div class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">description</span>
+<span class="font-label-md text-label-md">逐字稿</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary font-bold border-l-4 border-primary bg-primary/10 active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: &quot;FILL&quot; 1;">article</span>
+<span class="font-label-md text-label-md">部落格</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">share</span>
+<span class="font-label-md text-label-md">社群貼文</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">mail</span>
+<span class="font-label-md text-label-md">電子報</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">view_carousel</span>
+<span class="font-label-md text-label-md">輪播圖提示詞</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary transition-colors">insert_chart</span>
+<span class="font-label-md text-label-md">資訊圖表提示詞</span>
+</a>
+</div>
+<!-- Footer Navigation -->
+<div class="mt-auto pt-4 border-t border-white/5 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-on-surface">settings</span>
+<span class="font-label-md text-label-md">設定</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant font-medium hover:bg-surface-variant/20 hover:text-on-surface transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-on-surface">help</span>
+<span class="font-label-md text-label-md">支援</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-nav-width p-margin-page h-screen box-border flex flex-col relative overflow-hidden flex-1 pt-margin-page h-full"><h1 class="font-headline-lg text-headline-lg text-on-surface mb-8 relative z-10">部落格文章生成</h1>
+<!-- Background Ambient Glow -->
+<div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-tertiary/5 rounded-full blur-[80px] pointer-events-none"></div>
+<!-- Split-Card Layout -->
+<div class="flex gap-card-gap w-full z-10 max-h-full">
+<!-- Left Card: Settings / Inputs -->
+<div class="glass-panel w-[30%] rounded-xl flex flex-col shrink-0 h-full overflow-hidden shadow-lg">
+<!-- Header -->
+<div class="p-inner-padding border-b border-white/5 flex justify-between items-center bg-surface-container-low/30">
+<h2 class="font-headline-md text-headline-md text-on-surface font-semibold">文章設定</h2>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto p-inner-padding space-y-8">
+<!-- Progress / Step Indicator -->
+
+<!-- Input Fields Section -->
+<div class="space-y-6 pt-4">
+<!-- Content Source (Read Only) -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant">內容來源：逐字稿</label>
+<div class="w-full bg-surface-container-high/40 border border-white/5 rounded-lg p-3 flex items-center justify-between text-on-surface-variant">
+<span class="font-body-md text-body-md truncate">最佳化文本 (建議)</span>
+<span class="material-symbols-outlined text-[18px]">lock</span>
+</div>
+</div>
+<!-- Article Title -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="article-title">文章標題</label>
+<input class="w-full glass-input rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50" id="article-title" placeholder="請輸入您的文章標題" type="text">
+</div>
+<!-- YouTube ID / URL -->
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface font-semibold" for="yt-url">YouTube 影片 ID 或網址</label>
+<input class="w-full glass-input rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50" id="yt-url" placeholder="在此貼上完整的 YouTube 網址或影片 ID" type="text">
+</div>
+<!-- Expandable Sections -->
+<div class="space-y-3 pt-2">
+<button class="w-full glass-input rounded-lg px-4 py-3 flex items-center justify-between text-on-surface font-body-md text-body-md font-medium hover:bg-white/10">
+                                AI 風格設定
+                                <span class="material-symbols-outlined">chevron_right</span>
+</button>
+<button class="w-full glass-input rounded-lg px-4 py-3 flex items-center justify-between text-on-surface font-body-md text-body-md font-medium hover:bg-white/10">
+                                SEO 與推廣
+                                <span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="p-inner-padding border-t border-white/5 bg-surface-container-low/30 space-y-3"><div class="flex gap-3">
+<button class="flex-1 py-3 bg-transparent border border-white/15 hover:border-white/40 hover:bg-white/5 text-on-surface font-label-md text-label-md rounded-lg transition-all duration-200 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">swap_vert</span>
+                        另一版本
+                    </button><button class="flex-1 py-3.5 bg-secondary-container hover:bg-[#ff8a33] text-[#341100] font-label-md text-label-md font-bold rounded-lg shadow-[0_0_15px_rgba(236,106,6,0.3)] transition-all duration-300 active:scale-95">
+                        生成</button>
+
+</div></div>
+</div>
+<!-- Right Card: Canvas / Preview -->
+<div class="glass-panel w-[70%] rounded-xl flex flex-col h-full overflow-hidden shadow-lg relative">
+<!-- Internal Luminous Layering (Subtle glow for depth) -->
+<div class="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none"></div>
+<!-- Tabs Header -->
+<div class="border-b border-white/10 px-6 pt-2 flex gap-6">
+<button class="pb-3 pt-2 font-label-md text-label-md text-primary border-b-2 border-primary relative z-10">
+                        文章預覽
+                    </button>
+<button class="pb-3 pt-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors">
+                        HTML 原始碼
+                    </button>
+<button class="pb-3 pt-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors">
+                        Markdown 原始碼
+                    </button>
+<button class="pb-3 pt-2 font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1">
+                        SEO 建議
+                        <div class="w-2 h-2 rounded-full bg-secondary-container"></div>
+</button>
+</div>
+<!-- Content Area (Empty State) -->
+<div class="flex-1 flex flex-col items-center justify-center p-12 text-center">
+<div class="w-24 h-24 mb-6 rounded-2xl bg-surface-container border border-white/5 flex items-center justify-center shadow-inner relative group">
+<div class="absolute inset-0 bg-primary/5 rounded-2xl blur-md group-hover:bg-primary/10 transition-colors"></div>
+<span class="material-symbols-outlined text-[48px] text-on-surface-variant/50 group-hover:text-primary/70 transition-colors z-10">description</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface font-semibold mb-3">
+                        準備好將您的影片轉換為文章了嗎？
+                    </h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md">
+                        請完成左側的設定。點擊「生成部落格文章」按鈕，結果將顯示在此處。
+                    </p>
+</div>
+</div>
+</div>
+</main>
+
+
+
+
+
+
+</body></html>

@@ -53,6 +53,11 @@ window.restoreBlogDraft = function () {
         document.getElementById('blog-cta').value = draft.ctaContent || '';
         if (window.handleCtaChange) window.handleCtaChange();
 
+        const internalLinksEl = document.getElementById('internal-links-source');
+        if (internalLinksEl) {
+            internalLinksEl.value = draft.internalLinksSource || '';
+        }
+
         if (draft.versions && draft.versions.length > 0) {
             state.blogArticleVersions = draft.versions;
             state.currentVersionIndex = draft.currentVersionIndex || 0;
@@ -63,6 +68,11 @@ window.restoreBlogDraft = function () {
             document.getElementById('blog-placeholder').classList.add('hidden');
             document.getElementById('blog-output-container').classList.remove('hidden');
             document.getElementById('generate-blog-variation-btn').disabled = false;
+
+            const analyzeKeywordsBtn = document.getElementById('analyze-keywords-btn');
+            const analyzeInternalLinksBtn = document.getElementById('analyze-internal-links-btn');
+            if (analyzeKeywordsBtn) analyzeKeywordsBtn.disabled = false;
+            if (analyzeInternalLinksBtn) analyzeInternalLinksBtn.disabled = false;
         }
 
         if (window.updateStepperUI) window.updateStepperUI();
@@ -443,6 +453,7 @@ function initializeTab2() {
             tags: state.currentBlogTags, ctaPreset: ctaPresetSelect.value, ctaContent: blogCtaTextarea.value,
             versions: state.blogArticleVersions,
             currentVersionIndex: state.currentBlogVersionIndex,
+            internalLinksSource: internalLinksSource ? internalLinksSource.value : '',
             timestamp: new Date().getTime(),
         };
         try { localStorage.setItem(BLOG_DRAFT_KEY, JSON.stringify(draft)); }
@@ -532,8 +543,41 @@ function initializeTab2() {
                 showModal({
                     title: '文本優化完成',
                     message: result,
-                    showCopyButton: true,
+                    showCopyButton: false,
+                    large: true,
                     buttons: [
+                        {
+                            text: '複製內容',
+                            class: 'btn-secondary',
+                            callback: (e) => {
+                                navigator.clipboard.writeText(result).then(() => {
+                                    const btn = e.target;
+                                    const originalText = btn.textContent;
+                                    btn.textContent = '已複製！';
+                                    setTimeout(() => { btn.textContent = originalText; }, 2000);
+                                }).catch(err => {
+                                    console.error('複製失敗: ', err);
+                                    const btn = e.target;
+                                    btn.textContent = '複製失敗';
+                                    setTimeout(() => { btn.textContent = '複製內容'; }, 2000);
+                                });
+                            }
+                        },
+                        {
+                            text: '下載此版本',
+                            class: 'btn-secondary',
+                            callback: () => {
+                                const blob = new Blob([result], { type: 'text/plain;charset=utf-8' });
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = `${document.getElementById('blog-title').value.trim() || 'optimized_text'}.txt`;
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                                URL.revokeObjectURL(url);
+                            }
+                        },
                         { text: '取消', class: 'btn-secondary', callback: hideModal },
                         { text: '確認使用此版本', class: 'btn-primary', callback: () => confirmUseOptimizedText(result) }
                     ]

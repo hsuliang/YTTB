@@ -113,7 +113,7 @@ ${sourceText}
 }
 
 function renderSocialVersionTabs() {
-    const tabsContainer = document.getElementById('social-versions-tabs-container');
+    const tabsContainer = document.getElementById('social-version-tabs-list') || document.getElementById('social-versions-tabs-container');
     tabsContainer.innerHTML = '';
     state.socialPostVersions.forEach((version, index) => {
         const tab = document.createElement('button');
@@ -356,7 +356,16 @@ function initializeTab3() {
         const currentVersion = state.socialPostVersions[state.currentSocialVersionIndex];
         if (!currentVersion) return;
         const targetContent = currentVersion[state.activeSocialTab];
-        if (targetContent) { navigator.clipboard.writeText(targetContent).then(() => { showToast('已複製到剪貼簿！'); socialCopyBtn.textContent = '已複製!'; setTimeout(() => { socialCopyBtn.textContent = '複製內容'; }, 2000); }); }
+        if (targetContent) {
+            navigator.clipboard.writeText(targetContent).then(() => {
+                showToast('已複製到剪貼簿！');
+                const originalHtml = socialCopyBtn.innerHTML;
+                socialCopyBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">check</span>已複製!';
+                setTimeout(() => {
+                    socialCopyBtn.innerHTML = originalHtml;
+                }, 2000);
+            });
+        }
     }
 
     openSocialWizardBtn.addEventListener('click', openSocialWizard);

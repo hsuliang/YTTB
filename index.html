@@ -17,7 +17,94 @@
 
 <body class="font-sans flex flex-col min-h-screen">
 
-    <div class="container mx-auto p-4 md:p-8 flex-grow">
+    <!-- 歡迎頁面入口 -->
+    <div id="welcome-portal" class="welcome-portal flex flex-col items-center justify-center min-h-screen p-4 select-none">
+        <!-- 背景漸層發光特效 -->
+        <div class="portal-bg-glow glow-1"></div>
+        <div class="portal-bg-glow glow-2"></div>
+
+        <div class="portal-container w-full max-w-4xl text-center z-10 flex flex-col items-center gap-6">
+            <!-- 品牌 Branding -->
+            <div class="flex items-center justify-center gap-4 mb-2">
+                <img src="images/Aliang.png" alt="ㄚ亮笑長 Logo" class="h-20 w-20 rounded-full shadow-2xl">
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-wide text-white leading-tight">
+                    ㄚ亮笑長的內容創作助手
+                </h1>
+            </div>
+            <p class="text-lg text-gray-300 max-w-2xl leading-relaxed mb-4">
+                歡迎使用全方位 AI 數位內容創作助手！一鍵將影片字幕稿整理為部落格文章、社群貼文、電子報、輪播圖與資訊圖表規劃，大幅提升您的創作效率。
+            </p>
+
+            <!-- API 金鑰狀態卡片 -->
+            <div id="portal-key-status-box" class="portal-key-card p-3 rounded-xl border flex items-center justify-center gap-3 transition-all duration-300 border-red-500/20 bg-red-500/5 text-red-300 text-sm">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-500 shrink-0"></span>
+                <span id="portal-key-status-text" class="font-bold">金鑰尚未設定，請先進行設定以啟用 AI 功能</span>
+                <button id="portal-key-setting-btn" class="py-1 px-3 rounded text-xs bg-red-500/25 hover:bg-red-500/40 text-red-200 border border-red-500/30 transition-all">
+                    設定金鑰
+                </button>
+            </div>
+
+            <!-- 六大特色導覽網格 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full mt-4">
+                <div class="portal-card p-5 rounded-xl border border-white/5 bg-white/5 text-left flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl text-[#f97316]">📝</span>
+                        <h3 class="font-bold text-white text-base">逐字稿整理與優化</h3>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-normal">智慧修正錯字、補全標點符號、合併段落，並快速產生影片摘要與精緻章節。</p>
+                </div>
+                <div class="portal-card p-5 rounded-xl border border-white/5 bg-white/5 text-left flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl text-[#3b82f6]">✍️</span>
+                        <h3 class="font-bold text-white text-base">部落格文章生成</h3>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-normal">將逐字稿一鍵轉換為符合 SEO 的結構化部落格文章，支援進階內部連結與關鍵字分析。</p>
+                </div>
+                <div class="portal-card p-5 rounded-xl border border-white/5 bg-white/5 text-left flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl text-[#22c55e]">📱</span>
+                        <h3 class="font-bold text-white text-base">多平台社群貼文</h3>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-normal">針對 Facebook、Instagram、Threads、LinkedIn 平台風格生成合適的社群文案與風格。</p>
+                </div>
+                <div class="portal-card p-5 rounded-xl border border-white/5 bg-white/5 text-left flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl text-[#a855f7]">✉️</span>
+                        <h3 class="font-bold text-white text-base">行銷電子報 (EDM)</h3>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-normal">自動精煉文章精華，生成具備點擊誘因的主旨與精緻 HTML 電子報版型文案。</p>
+                </div>
+                <div class="portal-card p-5 rounded-xl border border-white/5 bg-white/5 text-left flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl text-[#eab308]">🎨</span>
+                        <h3 class="font-bold text-white text-base">社群輪播圖提示詞</h3>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-normal">自動為輪播圖的多個頁面規劃視覺構圖、文字內容與 AI 繪圖提示詞 (Prompt)。</p>
+                </div>
+                <div class="portal-card p-5 rounded-xl border border-white/5 bg-white/5 text-left flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl text-[#f43f5e]">📊</span>
+                        <h3 class="font-bold text-white text-base">資訊圖表規劃結構</h3>
+                    </div>
+                    <p class="text-xs text-gray-400 leading-normal">深度分析文稿，為您規劃出適合製作成 Infographic 的資訊結構報告與繪圖提示詞。</p>
+                </div>
+            </div>
+
+            <!-- 下方主要動作按鈕區 -->
+            <div id="portal-cta-group" class="flex flex-col md:flex-row gap-3 mt-6">
+                <button id="portal-start-btn" class="font-bold py-3 px-8 rounded-xl bg-[#f97316] text-[#341100] hover:brightness-110 shadow-lg text-base transition-all duration-200">
+                    開始全新創作
+                </button>
+                <button id="portal-resume-btn" class="font-bold py-3 px-8 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/10 shadow-lg text-base transition-all duration-200 hidden">
+                    繼續上次編輯
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主應用容器 -->
+    <div id="main-app-container" class="hidden">
+        <div class="container mx-auto p-4 md:p-8 flex-grow">
 
         <header class="relative flex flex-col items-center justify-center mb-8">
             <div class="flex items-center justify-center">
@@ -29,13 +116,7 @@
 
             <div class="header-actions">
                 <p id="api-key-status" class="text-sm">狀態：尚未設定</p>
-                <button id="appearance-btn" class="header-icon-btn" title="外觀設定">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                    </svg>
-                </button>
+
                 <button id="api-key-btn" class="header-icon-btn" title="API Key 設定">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
@@ -50,15 +131,15 @@
 
             <div class="flex border-b border-[var(--card-border)]">
                 <button id="tab1-btn" class="tab-btn active" data-tab="tab1">1. 內容整理與優化</button>
-                <button id="tab2-btn" class="tab-btn" data-tab="tab2" disabled title="請先在分頁 1 輸入內容並設定 API Key">2.
+                <button id="tab2-btn" class="tab-btn" data-tab="tab2" title="請先在分頁 1 輸入內容並設定 API Key">2.
                     部落格文章生成<span id="tab2-dot" class="notification-dot hidden"></span></button>
-                <button id="tab3-btn" class="tab-btn" data-tab="tab3" disabled title="請先在分頁 1 輸入內容並設定 API Key">3.
+                <button id="tab3-btn" class="tab-btn" data-tab="tab3" title="請先在分頁 1 輸入內容並設定 API Key">3.
                     社群貼文生成<span id="tab3-dot" class="notification-dot hidden"></span></button>
-                <button id="tab4-btn" class="tab-btn" data-tab="tab4" disabled title="請先在分頁 1 輸入內容並設定 API Key">4.
+                <button id="tab4-btn" class="tab-btn" data-tab="tab4" title="請先在分頁 1 輸入內容並設定 API Key">4.
                     電子報內容生成<span id="tab4-dot" class="notification-dot hidden"></span></button>
-                <button id="tab5-btn" class="tab-btn" data-tab="tab5" disabled title="請先在分頁 1 輸入內容並設定 API Key">5.
+                <button id="tab5-btn" class="tab-btn" data-tab="tab5" title="請先在分頁 1 輸入內容並設定 API Key">5.
                     社群輪播圖提示詞<span id="tab5-dot" class="notification-dot hidden"></span></button>
-                <button id="tab6-btn" class="tab-btn" data-tab="tab6" disabled title="請先在分頁 1 輸入內容並設定 API Key">6.
+                <button id="tab6-btn" class="tab-btn" data-tab="tab6" title="請先在分頁 1 輸入內容並設定 API Key">6.
                     資訊圖表提示詞<span id="tab6-dot" class="notification-dot hidden"></span></button>
             </div>
 
@@ -419,7 +500,7 @@
                                             <button id="download-md-btn"
                                                 class="font-bold py-1 px-3 rounded btn-secondary text-sm">MD</button>
                                         </div>
-                                        <div id="blog-editor-container" class="bg-white rounded-lg">
+                                        <div id="blog-editor-container" class="rounded-lg">
                                             <!-- Quill Editor will be initialized here -->
                                         </div>
                                     </div>
@@ -1169,30 +1250,11 @@
         Design by <a href="https://bit.ly/Aliang" target="_blank" rel="noopener" class="upload-link">ㄚ亮笑長練功坊</a> | <a
             href="readme.html" target="_blank" rel="noopener" class="upload-link"> 程式簡介與使用說明 </a> | 丙午．芒種．0615
     </footer>
+    </div>
 
     <div id="toast-container" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2"></div>
 
-    <div id="appearance-panel" class="appearance-panel hidden">
-        <div class="p-4">
-            <h3 class="text-lg font-semibold mb-2 heading-color">佈景主題</h3>
-            <div class="flex flex-wrap gap-4 theme-swatches-container"></div>
-        </div>
-        <div class="p-4 border-t border-[var(--card-border)]">
-            <h3 class="text-lg font-semibold mb-2 heading-color">模式</h3>
-            <button id="mode-toggle-btn" class="p-2 rounded-lg border border-[var(--card-border)] bg-[var(--gray-bg)]">
-                <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-                <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                </svg>
-            </button>
-        </div>
-    </div>
+
 
     <div id="api-key-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
         <div class="p-6 w-11/12 md:w-1/2 max-w-xl rounded-lg shadow-xl main-card flex flex-col">

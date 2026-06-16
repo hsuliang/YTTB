@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const apiKeyCountdown = document.getElementById('api-key-countdown');
     const toggleApiHelpBtn = document.getElementById('toggle-api-help-btn');
     const apiKeyHelpPanel = document.getElementById('api-key-help-panel');
-    const allTabButtons = document.querySelectorAll('.tab-btn');
+    const allTabButtons = document.querySelectorAll('.tab-btn[data-tab]');
     const allTabContents = document.querySelectorAll('.tab-content');
     const modalCloseBtn = document.getElementById('modal-close-btn');
     const modalCopyBtn = document.getElementById('modal-copy-btn');
@@ -185,22 +185,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderModalApiKeys() {
         apiKeysListContainer.innerHTML = '';
+        const isLumina = document.querySelector('.glass-panel') || document.querySelector('#api-key-modal.backdrop-blur-sm');
+        
         if (modalApiKeys.length === 0) {
-            apiKeysListContainer.innerHTML = '<p class="text-xs text-[var(--gray-text)] text-center py-2">尚未設定任何金鑰</p>';
+            if (isLumina) {
+                apiKeysListContainer.innerHTML = '<p class="text-xs text-on-surface-variant/50 text-center py-2">尚未設定任何金鑰</p>';
+            } else {
+                apiKeysListContainer.innerHTML = '<p class="text-xs text-[var(--gray-text)] text-center py-2">尚未設定任何金鑰</p>';
+            }
             return;
         }
         modalApiKeys.forEach((entry, index) => {
             const item = document.createElement('div');
-            item.className = 'flex items-center justify-between bg-[var(--gray-bg)] p-2 rounded text-xs border border-[var(--card-border)]';
+            if (isLumina) {
+                item.className = 'flex items-center justify-between bg-surface-container-lowest/50 p-2 rounded text-xs border border-outline-variant/10';
+            } else {
+                item.className = 'flex items-center justify-between bg-[var(--gray-bg)] p-2 rounded text-xs border border-[var(--card-border)]';
+            }
             
             const masked = entry.key.length > 10 
                 ? `${entry.key.substring(0, 6)}...${entry.key.substring(entry.key.length - 4)}`
                 : entry.key;
             
-            item.innerHTML = `
-                <span class="font-mono text-[var(--body-text)]">${masked} <span class="text-[var(--gray-text)]">(使用: ${entry.count || 0}次)</span></span>
-                <button type="button" class="text-red-500 hover:text-red-700 font-bold delete-key-item-btn" data-index="${index}">刪除</button>
-            `;
+            if (isLumina) {
+                item.innerHTML = `
+                    <span class="font-mono text-on-surface">${masked} <span class="text-on-surface-variant/70">(使用: ${entry.count || 0}次)</span></span>
+                    <button type="button" class="text-red-400 hover:text-red-300 font-bold delete-key-item-btn" data-index="${index}">刪除</button>
+                `;
+            } else {
+                item.innerHTML = `
+                    <span class="font-mono text-[var(--body-text)]">${masked} <span class="text-[var(--gray-text)]">(使用: ${entry.count || 0}次)</span></span>
+                    <button type="button" class="text-red-500 hover:text-red-700 font-bold delete-key-item-btn" data-index="${index}">刪除</button>
+                `;
+            }
             apiKeysListContainer.appendChild(item);
         });
     }
@@ -350,20 +367,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function startApiKeyCountdown() {
         if (state.apiKeyCountdownInterval) { clearInterval(state.apiKeyCountdownInterval); }
+        if (apiKeyCountdown) { apiKeyCountdown.classList.remove('hidden'); }
         
         const updateCountdownUI = () => {
-            const expiryTime = getStorageItem('apiKeyExpiry');
+            let expiryTime = getStorageItem('apiKeyExpiry');
             
             if (!expiryTime) {
-                apiKeyCountdown.textContent = '';
-                return false;
+                const savedMode = getStorageItem('apiKeyExpiryMode') || 'never';
+                setStorageItem('apiKeyExpiry', savedMode);
+                expiryTime = savedMode;
             }
 
-            if (expiryTime === 'session') {
-                apiKeyCountdown.textContent = '金鑰有效 (分頁關閉即清除)。';
-                return false;
-            } else if (expiryTime === 'never') {
-                apiKeyCountdown.textContent = '金鑰有效 (永久保存模式)。';
+            if (expiryTime === 'session' || expiryTime === 'never') {
+                apiKeyCountdown.textContent = '金鑰有效。';
                 return false;
             }
 
@@ -380,7 +396,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const hours = Math.floor((remaining / (1000 * 60 * 60)) % 24);
             const minutes = Math.floor((remaining / 1000 / 60) % 60);
             const seconds = Math.floor((remaining / 1000) % 60);
-            apiKeyCountdown.textContent = `金鑰有效，尚餘 ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            const countText = `金鑰有效，尚餘 ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            apiKeyCountdown.textContent = countText;
+
+            const portalText = document.getElementById('portal-key-status-text');
+            if (portalText && portalText.textContent.startsWith('已設定')) {
+                const keysJson = getStorageItem('geminiApiKeys');
+                let keysCount = 0;
+                try {
+                    keysCount = keysJson ? JSON.parse(keysJson).length : (getStorageItem('geminiApiKey') ? 1 : 0);
+                } catch(e) {}
+                portalText.textContent = `已設定 (共 ${keysCount} 組金鑰) (金鑰有效，尚餘 ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')})`;
+            }
             return true;
         };
 
@@ -411,25 +438,75 @@ document.addEventListener('DOMContentLoaded', () => {
             keysCount = 1;
         }
 
+        const statusBox = document.getElementById('api-key-status-box');
+
         if (keysCount > 0) {
-            const expiryMode = getStorageItem('apiKeyExpiryMode');
-            let modeText = '';
-            if (expiryMode === 'session') {
-                modeText = ' (分頁關閉即清除)';
-            } else if (expiryMode === 'never') {
-                modeText = ' (永久保存)';
+            if (statusBox) {
+                apiKeyStatus.textContent = `狀態：已設定 (共 ${keysCount} 組金鑰)`;
+                statusBox.className = 'mt-3 p-3 rounded-xl border flex flex-col items-center justify-center text-center gap-1 transition-all duration-300 border-green-500/30 bg-green-500/10 text-green-400';
+                apiKeyStatus.className = 'font-bold text-[12px] block text-green-400';
+                apiKeyCountdown.className = 'text-[10px] text-green-400/80 font-mono block mt-0.5';
+            } else {
+                apiKeyStatus.textContent = `狀態：已設定 (共 ${keysCount} 組金鑰)`;
+                apiKeyStatus.classList.remove('text-[var(--text-color)]');
+                apiKeyStatus.classList.add('text-green-600');
             }
-            apiKeyStatus.textContent = `狀態：已設定 (共 ${keysCount} 組金鑰)${modeText}`;
-            apiKeyStatus.classList.remove('text-[var(--text-color)]');
-            apiKeyStatus.classList.add('text-green-600');
             startApiKeyCountdown();
         } else {
-            apiKeyStatus.textContent = '狀態：尚未設定';
-            apiKeyStatus.classList.add('text-[var(--text-color)]');
-            apiKeyStatus.classList.remove('text-green-600');
+            if (statusBox) {
+                apiKeyStatus.textContent = '金鑰未設定';
+                statusBox.className = 'mt-3 p-3 rounded-xl border flex flex-col items-center justify-center text-center gap-1 transition-all duration-300 border-red-500/30 bg-red-500/10 text-red-400';
+                apiKeyStatus.className = 'font-bold text-[12px] block text-red-400';
+                apiKeyCountdown.className = 'text-[10px] text-green-400/80 font-mono block mt-0.5 hidden';
+                apiKeyCountdown.textContent = '';
+            } else {
+                apiKeyStatus.textContent = '狀態：尚未設定';
+                apiKeyStatus.classList.add('text-[var(--text-color)]');
+                apiKeyStatus.classList.remove('text-green-600');
+                apiKeyCountdown.textContent = '';
+            }
             if (state.apiKeyCountdownInterval) clearInterval(state.apiKeyCountdownInterval);
-            apiKeyCountdown.textContent = '';
         }
+        // 同步歡迎首頁 (Welcome Portal) 金鑰狀態
+        const portalBox = document.getElementById('portal-key-status-box');
+        const portalText = document.getElementById('portal-key-status-text');
+        const portalBtn = document.getElementById('portal-key-setting-btn');
+        if (portalBox && portalText && portalBtn) {
+            const indicator = portalBox.querySelector('span.rounded-full');
+            if (keysCount > 0) {
+                portalBox.className = 'portal-key-card p-3 rounded-xl border flex items-center justify-center gap-3 transition-all duration-300 border-green-500/20 bg-green-500/5 text-green-300 text-sm';
+                if (indicator) {
+                    indicator.className = 'inline-block w-2.5 h-2.5 rounded-full bg-green-500 shrink-0';
+                }
+                
+                let timeText = '';
+                const expiry = getStorageItem('apiKeyExpiry');
+                if (expiry === 'session' || expiry === 'never') {
+                    timeText = ' (金鑰有效)';
+                } else if (expiry) {
+                    const remaining = parseInt(expiry, 10) - Date.now();
+                    if (remaining > 0) {
+                        const hours = Math.floor((remaining / (1000 * 60 * 60)) % 24);
+                        const minutes = Math.floor((remaining / 1000 / 60) % 60);
+                        const seconds = Math.floor((remaining / 1000) % 60);
+                        timeText = ` (金鑰有效，尚餘 ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')})`;
+                    }
+                }
+                
+                portalText.textContent = `已設定 (共 ${keysCount} 組金鑰)${timeText}`;
+                portalBtn.textContent = '管理金鑰';
+                portalBtn.className = 'py-1 px-3 rounded text-xs bg-green-500/25 hover:bg-green-500/40 text-green-200 border border-green-500/30 transition-all';
+            } else {
+                portalBox.className = 'portal-key-card p-3 rounded-xl border flex items-center justify-center gap-3 transition-all duration-300 border-red-500/20 bg-red-500/5 text-red-300 text-sm';
+                if (indicator) {
+                    indicator.className = 'inline-block w-2.5 h-2.5 rounded-full bg-red-500 shrink-0';
+                }
+                portalText.textContent = '金鑰尚未設定，請先進行設定以啟用 AI 功能';
+                portalBtn.textContent = '設定金鑰';
+                portalBtn.className = 'py-1 px-3 rounded text-xs bg-red-500/25 hover:bg-red-500/40 text-red-200 border border-red-500/30 transition-all';
+            }
+        }
+
         window.updateTabAvailability();
         window.updateAiButtonStatus();
     }
@@ -438,17 +515,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasContent = document.getElementById('smart-area').value.trim().length > 0;
         
         const tabs = [
-            { btn: document.getElementById('tab2-btn'), dot: document.getElementById('tab2-dot'), defaultTitle: '將字幕稿轉為部落格文章' },
-            { btn: document.getElementById('tab3-btn'), dot: document.getElementById('tab3-dot'), defaultTitle: '為多個社群平台生成貼文' },
-            { btn: document.getElementById('tab4-btn'), dot: document.getElementById('tab4-dot'), defaultTitle: '將文章內容生成電子報' },
-            { btn: document.getElementById('tab5-btn'), dot: document.getElementById('tab5-dot'), defaultTitle: '社群輪播圖提示詞' },
-            { btn: document.getElementById('tab6-btn'), dot: document.getElementById('tab6-dot'), defaultTitle: '資訊圖表提示詞' }
+            { btn: document.querySelector('.tab-btn[data-tab="tab2"]'), dot: document.getElementById('tab2-dot'), defaultTitle: '將字幕稿轉為部落格文章' },
+            { btn: document.querySelector('.tab-btn[data-tab="tab3"]'), dot: document.getElementById('tab3-dot'), defaultTitle: '為多個社群平台生成貼文' },
+            { btn: document.querySelector('.tab-btn[data-tab="tab4"]'), dot: document.getElementById('tab4-dot'), defaultTitle: '將文章內容生成電子報' },
+            { btn: document.querySelector('.tab-btn[data-tab="tab5"]'), dot: document.getElementById('tab5-dot'), defaultTitle: '社群輪播圖提示詞' },
+            { btn: document.querySelector('.tab-btn[data-tab="tab6"]'), dot: document.getElementById('tab6-dot'), defaultTitle: '資訊圖表提示詞' }
         ];
 
         tabs.forEach(tab => {
             if (tab.btn) {
-                tab.btn.disabled = !hasContent;
+                tab.btn.disabled = false;
                 tab.btn.title = hasContent ? tab.defaultTitle : '請先在分頁 1 貼上您的字幕內容';
+                tab.btn.classList.toggle('opacity-40', !hasContent);
+                tab.btn.classList.toggle('cursor-not-allowed', !hasContent);
             }
         });
         
@@ -581,10 +660,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        allTabButtons.forEach(button => button.addEventListener('click', () => {
-            if (!button.disabled) {
-                window.switchTab(button.dataset.tab);
+        allTabButtons.forEach(button => button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const tabId = button.dataset.tab;
+            if (!tabId) return;
+            const smartArea = document.getElementById('smart-area');
+            const hasContent = smartArea && smartArea.value.trim().length > 0;
+            console.log(`[Tab Click] Target: ${tabId}, hasContent: ${hasContent}`);
+            if (tabId !== 'tab1' && !hasContent) {
+                console.log("[Tab Click] Navigation blocked. Showing Toast.");
+                showToast('請先貼上或整理您的字幕/文稿內容！', { type: 'warning' });
+                return;
             }
+            window.switchTab(tabId);
         }));
         
         if (modalCloseBtn) modalCloseBtn.addEventListener('click', hideModal);
@@ -599,6 +687,81 @@ document.addEventListener('DOMContentLoaded', () => {
                     showToast('頁面已重置！');
                     setTimeout(() => { location.reload(); }, 500);
                 }
+            });
+        }
+
+        // 歡迎首頁 Portal 邏輯與事件綁定
+        const welcomePortal = document.getElementById('welcome-portal');
+        const mainApp = document.getElementById('main-app-container');
+        const portalStartBtn = document.getElementById('portal-start-btn');
+        const portalResumeBtn = document.getElementById('portal-resume-btn');
+        const portalKeyBtn = document.getElementById('portal-key-setting-btn');
+
+        const checkDraftsAndShowResume = () => {
+            const hasBlog = window.hasBlogDraft ? window.hasBlogDraft() : !!localStorage.getItem('blogDraft');
+            const hasSocial = window.hasSocialDraft ? window.hasSocialDraft() : !!localStorage.getItem('socialDraft');
+            const hasInfo = window.hasInfographicDraft ? window.hasInfographicDraft() : !!localStorage.getItem('infographicDraft');
+            
+            if ((hasBlog || hasSocial || hasInfo) && portalResumeBtn) {
+                portalResumeBtn.classList.remove('hidden');
+            } else if (portalResumeBtn) {
+                portalResumeBtn.classList.add('hidden');
+            }
+        };
+
+        checkDraftsAndShowResume();
+
+        if (portalStartBtn) {
+            portalStartBtn.addEventListener('click', () => {
+                if (welcomePortal) {
+                    welcomePortal.classList.add('portal-fade-out');
+                    setTimeout(() => {
+                        welcomePortal.style.display = 'none';
+                    }, 450);
+                }
+                if (mainApp) {
+                    mainApp.classList.remove('hidden');
+                    mainApp.classList.add('app-fade-in');
+                }
+            });
+        }
+
+        if (portalResumeBtn) {
+            portalResumeBtn.addEventListener('click', () => {
+                let targetTab = 'tab1';
+                if (window.hasBlogDraft && window.hasBlogDraft()) {
+                    targetTab = 'tab2';
+                } else if (window.hasSocialDraft && window.hasSocialDraft()) {
+                    targetTab = 'tab3';
+                } else if (window.hasInfographicDraft && window.hasInfographicDraft()) {
+                    targetTab = 'tab6';
+                } else if (localStorage.getItem('blogDraft')) {
+                    targetTab = 'tab2';
+                } else if (localStorage.getItem('socialDraft')) {
+                    targetTab = 'tab3';
+                } else if (localStorage.getItem('infographicDraft')) {
+                    targetTab = 'tab6';
+                }
+                
+                if (welcomePortal) {
+                    welcomePortal.classList.add('portal-fade-out');
+                    setTimeout(() => {
+                        welcomePortal.style.display = 'none';
+                    }, 450);
+                }
+                if (mainApp) {
+                    mainApp.classList.remove('hidden');
+                    mainApp.classList.add('app-fade-in');
+                }
+                
+                window.switchTab(targetTab);
+                showToast('已成功恢復您上次的編輯內容！');
+            });
+        }
+
+        if (portalKeyBtn) {
+            portalKeyBtn.addEventListener('click', () => {
+                showApiKeyModal();
             });
         }
 
