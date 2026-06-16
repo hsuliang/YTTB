@@ -3,7 +3,7 @@
  * 應用程式主邏輯，負責初始化各模組與處理全域事件。
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+const initApp = () => {
 
     // --- 元素選擇 ---
     const appearanceBtn = document.getElementById('appearance-btn');
@@ -560,14 +560,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function initialize() {
-        initializeTab1();
-        initializeTab2();
-        initializeTab3();
-        initializeTab4();
-        initializeTab5();
-        if (window.initializeTab6) { window.initializeTab6(); }
+        try { initializeTab1(); } catch(e) { console.error("Error initializing Tab 1:", e); }
+        try { initializeTab2(); } catch(e) { console.error("Error initializing Tab 2:", e); }
+        try { initializeTab3(); } catch(e) { console.error("Error initializing Tab 3:", e); }
+        try { initializeTab4(); } catch(e) { console.error("Error initializing Tab 4:", e); }
+        try { initializeTab5(); } catch(e) { console.error("Error initializing Tab 5:", e); }
+        try { if (window.initializeTab6) { window.initializeTab6(); } } catch(e) { console.error("Error initializing Tab 6:", e); }
 
-        updateApiKeyStatus();
+        try { updateApiKeyStatus(); } catch(e) { console.error("Error updating API key status:", e); }
 
         if (appearanceBtn) appearanceBtn.addEventListener('click', toggleAppearancePanel);
         if (apiKeyBtn) apiKeyBtn.addEventListener('click', showApiKeyModal);
@@ -774,4 +774,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     initialize();
-});
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
+}
